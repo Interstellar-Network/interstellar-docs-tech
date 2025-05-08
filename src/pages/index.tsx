@@ -5,7 +5,7 @@ export default function Home() {
   const history = useHistory();
 
   useEffect(() => {
-    history.push('/docs/intro'); // Redirect to /docs
+    history.push('/developers/'); // Redirect to /docs
   }, []);
 
   return null;

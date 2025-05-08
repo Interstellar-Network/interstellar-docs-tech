@@ -97,6 +97,16 @@ const config: Config = {
       items: [
 
         {
+          to: '/developers', // <-- This links to your custom page!
+          label: 'Milestone Deliveries',
+          position: 'left',
+          // Remove type, sidebarId, docsPluginId
+        },
+
+
+
+
+        {
           type: 'docSidebar',
           sidebarId: 'tutorialSidebar',
           position: 'left',
@@ -104,12 +114,7 @@ const config: Config = {
         },
 
         
-        {
-          to: '/developers', // <-- This links to your custom page!
-          label: 'Developers',
-          position: 'left',
-          // Remove type, sidebarId, docsPluginId
-        },
+      
 
         
        /*{to: '/blog', label: 'Blog', position: 'left'},*/

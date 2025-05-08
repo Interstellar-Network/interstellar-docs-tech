@@ -29,7 +29,7 @@ export default function DevelopersGate() {
 
   return (
     <div style={{ maxWidth: 400, margin: '4rem auto', textAlign: 'center' }}>
-      <h1>Developers Area</h1>
+      <h1>Interstellar Milestone Deliveries Area</h1>
       <form onSubmit={handleSubmit}>
         <input
           type="password"
