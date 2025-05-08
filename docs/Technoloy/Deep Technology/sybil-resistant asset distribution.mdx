@@ -1,0 +1,41 @@
+---
+sidebar_label: 'Sybil-Resistant Asset Distribution'
+sidebar_position: 5
+---
+
+# Sybil-Resistant Asset Distribution
+
+Interstellar’s airdrop and onboarding engine is designed to be **resilient against Sybil attacks**, using a decentralized combination of **secure hardware attestation**, **dynamic visual cryptography**, and **on-chain enforcement** to validate the presence of a real human on a real device—without relying on traditional KYC, CAPTCHAs, or centralized account reputation systems.
+
+## Threat Model
+A typical Sybil attack in crypto airdrops involves:
+- Spawning thousands of automated wallet instances across virtual machines or emulated environments.
+- Claiming rewards through scripted interactions.
+- Cycling wallets via hard resets or uninstall/reinstall loops to bypass device-based detection.
+
+Traditional Web2 and Web3 protections such as IP rate limiting, CAPTCHAs, or wallet age checks are increasingly ineffective, especially when up against coordinated, scalable mobile farms.
+
+## Interstellar's Approach
+Interstellar neutralizes Sybil strategies through a layered defense:
+- **Device binding**: Each wallet is cryptographically linked to a mobile device via a **non-exportable key** generated in the Secure Element (SE).
+- **One-to-one biometric unlock**: Every operation requires biometric unlock tied to the SE, ensuring the same user is interacting.
+- **Visual Cryptography Authentication (VCA)**: Each asset claim requires human-visible interaction with a one-time visual challenge rendered at 60–120 fps. These shares are generated via **on-chain garbled circuits**, unique per session.
+- **Claim verification on-chain**: The blockchain verifies the SE attestation and garbled circuit proof, ensuring the claim was human, local, and legitimate.
+
+## Economic Defense Layer
+Beyond detection, Interstellar **increases the attack cost**:
+- For a Sybil attacker to succeed, they must control large numbers of physical smartphones with unlocked biometrics.
+- Visual cryptographic proof requires real-time human interaction—difficult to spoof, automate, or batch.
+- Each bypass attempt may require a **0-day exploit** in SE or biometric middleware, which becomes **economically unjustifiable** when attackers can target less secure ecosystems instead.
+
+## Trustless Fairness
+This system enables:
+- **Bot-resistant airdrops** with deterministic rules
+- **Fair onboarding** for campaigns and growth funnels
+- **No vendor lock-in or reliance on centralized identity platforms**
+
+It’s Sybil resistance without surveillance.
+
+## Summary
+Interstellar’s asset distribution model prevents Sybil attacks by combining **device-level security primitives**, **human-visible cryptography**, and **on-chain verification**—all executed without centralized dependencies. This shifts the cost curve permanently in favor of defenders, making airdrops and onboarding campaigns **provably fair and economically secure at scale**.
+

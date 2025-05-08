@@ -1,0 +1,99 @@
+---
+sidebar_label: 'vs. Tradional Wallets'
+sidebar_position: 1
+---
+import "@site/src/css/output.css"; // Tailwind utilities only — no base/components!
+
+# How Interstellar compares to traditional wallets with  passkey
+
+
+import "@site/src/css/output.css"; // Tailwind utilities only — no base/components!
+import { Button } from "@site/src/components/ui/button";
+
+
+
+import { Table, TableHeader, TableRow, TableCell, TableBody } from "@site/src/components/ui/table";
+import { Badge } from "@site/src/components/ui/badge";
+
+## Security & Feature Comparison
+
+A comparison between the **Interstellar Framework** and a typical **Wallet App with Passkey**, highlighting core features and security posture.
+
+
+<Table>
+  <TableHeader>
+    <TableRow>
+      <TableCell>Feature</TableCell>
+      <TableCell>Interstellar</TableCell>
+      <TableCell>Classic Wallet App with Passkey</TableCell>
+    </TableRow>
+  </TableHeader>
+  <TableBody>
+    <TableRow>
+      <TableCell>Security Model</TableCell>
+      <TableCell>Fully decentralized; no reliance on local storage, passkeys, or centralized servers.</TableCell>
+      <TableCell>Centralized; tied to passkey ecosystem but exposes private keys during signing.</TableCell>
+    </TableRow>
+    <TableRow>
+      <TableCell className="text-sm font-medium text-gray-500 dark:text-gray-400">Security</TableCell>
+      <TableCell><Badge value="very-high" label="Very High" /></TableCell>
+      <TableCell><Badge value="low" label="Low" /></TableCell>
+    </TableRow>
+
+    <TableRow>
+      <TableCell>Transaction Validation</TableCell>
+      <TableCell>Decentralized, eliminates blind signing; users validate cryptographically.</TableCell>
+      <TableCell>Blind signing is default; no cryptographic validation.</TableCell>
+    </TableRow>
+    <TableRow>
+      <TableCell className="text-sm font-medium text-gray-500 dark:text-gray-400">Security</TableCell>
+      <TableCell><Badge value="very-high" label="Very High" /></TableCell>
+      <TableCell><Badge value="low" label="Low" /></TableCell>
+    </TableRow>
+
+    <TableRow>
+      <TableCell>Private Key Exposure</TableCell>
+      <TableCell>Never exposed; signing via secure element.</TableCell>
+      <TableCell>Exposed during every signing operation.</TableCell>
+    </TableRow>
+    <TableRow>
+      <TableCell className="text-sm font-medium text-gray-500 dark:text-gray-400">Security</TableCell>
+      <TableCell><Badge value="very-high" label="Very High" /></TableCell>
+      <TableCell><Badge value="low" label="Low" /></TableCell>
+    </TableRow>
+
+    <TableRow>
+      <TableCell>Threat Mitigation</TableCell>
+      <TableCell>Protects against clipper malware, phishing, and overlays with cryptographic validation and secure signing.</TableCell>
+      <TableCell>No specific protections; vulnerable to malware and phishing.</TableCell>
+    </TableRow>
+    <TableRow>
+      <TableCell className="text-sm font-medium text-gray-500 dark:text-gray-400">Security</TableCell>
+      <TableCell><Badge value="very-high" label="Very High" /></TableCell>
+      <TableCell><Badge value="low" label="Low" /></TableCell>
+    </TableRow>
+
+    <TableRow>
+      <TableCell>Onboarding</TableCell>
+      <TableCell>Instant, passphrase-free, decentralized onboarding.</TableCell>
+      <TableCell>Simplified passkey onboarding but tied to centralized ecosystems.</TableCell>
+    </TableRow>
+    <TableRow>
+      <TableCell className="text-sm font-medium text-gray-500 dark:text-gray-400">Security</TableCell>
+      <TableCell><Badge value="very-high" label="Very High" /></TableCell>
+      <TableCell><Badge value="medium" label="Medium" /></TableCell>
+    </TableRow>
+
+    <TableRow>
+      <TableCell>User Experience</TableCell>
+      <TableCell>Seamless and scalable; avoids key management and blind signing risks.</TableCell>
+      <TableCell>Passkey simplifies onboarding but retains key exposure risks.</TableCell>
+    </TableRow>
+    <TableRow>
+      <TableCell className="text-sm font-medium text-gray-500 dark:text-gray-400">Security</TableCell>
+      <TableCell><Badge value="very-high" label="Very High" /></TableCell>
+      <TableCell><Badge value="low" label="Low" /></TableCell>
+    </TableRow>
+  </TableBody>
+</Table>
+

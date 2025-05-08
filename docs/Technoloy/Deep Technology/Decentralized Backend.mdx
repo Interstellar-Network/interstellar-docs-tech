@@ -1,0 +1,46 @@
+---
+sidebar_label: 'Decentralized Backend'
+sidebar_position: 4
+---
+
+# Decentralized Backend
+
+Interstellar’s architecture is built around a **decentralized backend** designed to manage critical authentication, transaction processing, and smart account functionality with **no reliance on centralized servers or custodians**. Unlike traditional wallet stacks, where security-critical logic is handled by backend APIs or cloud infrastructure, Interstellar decentralizes every sensitive operation into verifiable and tamper-resistant blockchain components.
+
+## Why Decentralization Matters
+
+A decentralized backend enables trustless execution of:
+- **Transaction signing**
+- **Visual cryptography generation and validation**
+- **One-time garbled circuits**
+- **Key attestation verification**
+- **Recovery logic**
+- **Bot-resistant asset distribution**
+
+These features are embedded directly into the Interstellar blockchain runtime and, when required, supported by **TEE-secured Layer 2 sidechains** or **MPC-based execution clusters**. This ensures that no centralized server ever becomes a single point of failure or target for attackers.
+
+## Transaction Security at the Core
+Interstellar’s decentralized backend makes transaction signing one of the most secure processes available in any wallet architecture:
+- Requests are initiated by **hardware-bound keys** (SE-generated and attested)
+- Validation flows through a **garbled circuit** rendered dynamically for that session
+- The **VCA token** used to display validation challenges is generated and signed by the chain itself
+- **Touch input** or biometric verification completes the process on-device
+
+The backend nodes validate each stage, ensuring:
+- The user was presented with accurate information
+- The device used is legitimate and bound to a secure key
+- The final signature was cryptographically authorized by the SE and verified using consensus
+
+This level of decentralized, multi-step validation makes transaction tampering, phishing, or blind signing attempts practically impossible.
+
+## Smart Account Logic, Decentralized
+The Interstellar backend also enables advanced smart account features:
+- **Account recovery** using NFC devices, social proofs, or recovery files
+- **Granular key management**, including recovery-only devices or guardians
+- **Bot-resistant airdrop distribution**, using proof-of-human interaction via VCA
+- **Programmatic transaction limits** and **conditional operations**
+
+All of these features are governed by on-chain logic and executed by decentralized validators or secure enclaves, without ever exposing sensitive operations to the app layer.
+
+## Summary
+By decentralizing the backend layer, Interstellar removes the need to trust external APIs or vendors for its most sensitive logic. Whether it’s a transaction, a recovery request, or a secure airdrop, the system ensures that all critical decisions are cryptographically verified and consensus-approved. This transforms the wallet from a frontend shell into a **trustless, programmable vault** with **unmatched resilience against backend compromise**.

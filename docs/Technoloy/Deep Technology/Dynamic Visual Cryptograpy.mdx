@@ -1,0 +1,44 @@
+---
+sidebar_label: 'Dynamic Visual Cryptography'
+sidebar_position: 3
+---
+
+# Dynamic Visual Cryptography
+
+Interstellar integrates a novel form of **Dynamic Visual Cryptography (DVC)** as a human-centric defense layer for critical wallet interactions. This system uses cryptographic animation-like sequences called **visual cryptographic shares** to render transaction validation information in a way that is perceptible only to the human eye—yet meaningless to software or malware.
+
+## Core Principles
+
+Dynamic Visual Cryptography builds on the classic principles of **visual secret sharing** and **persistence of vision**:
+- A message (such as a one-time code) is split into multiple random-looking frames.
+- When rapidly displayed in sequence (e.g., 60–120 frames per second), the human eye combines them into a recognizable image.
+- Each individual frame appears as noise, and no useful information can be extracted from a single frame.
+
+In Interstellar, the sequence of visual cryptographic shares is generated securely using a **one-time garbled circuit** anchored by a signature from the Secure Element. This guarantees the sequence is fresh, unique, and verifiable by the blockchain.
+
+## Security Model and Robustness
+Unlike classic OTP systems (e.g., Google Authenticator), where a 6-digit code can be intercepted and reused, Interstellar’s one-time visual code is:
+- **Device-bound**: It cannot be replayed or used from another device.
+- **Session-specific**: It’s valid only during a single transaction window.
+- **Screen-bounded**: Malware must reproduce the entire display logic frame-by-frame at high frequency to fake it.
+
+This makes traditional phishing and overlay attacks **impractical**. An attacker would need to:
+- Design custom overlays for each unique VCA output.
+- Synchronize display frames at high framerate with unpredictable content.
+- Inject overlays precisely when the legitimate app is displaying the verification sequence.
+
+Even if a 0-day vulnerability enables display hijacking or side-channel extraction, the benefit is limited: learning a one-time visual code has **no reuse value**. Moreover, these attacks are **costly**, difficult to scale, and economically irrational compared to targeting lower-security systems.
+
+> **Interstellar raises the attack cost significantly**, shifting the threat landscape in favor of defenders.
+
+## Future-Proofing Security
+Visual cryptography is **information-theoretically secure (ITS)** by design. While the current implementation focuses on defense against overlay attacks and localized malware, this foundation can be extended to support:
+- Secure visual communication channels
+- Cognitive challenge-response mechanisms
+- Advanced user profiling through interaction with dynamic visuals
+
+This positions Dynamic Visual Cryptography not just as a defense mechanism, but as a **core security primitive** for the future of secure human-device interaction.
+
+## Summary
+Interstellar’s Dynamic Visual Cryptography introduces a human-visible, machine-invisible verification layer that turns each critical action into a cryptographically unique visual challenge. It removes the scalability and efficiency benefits attackers depend on—making exploitation **technically complex**, **resource-intensive**, and **economically unjustifiable**. As such, it forms a resilient base layer in Interstellar’s deep security stack, with the potential to enable next-generation behavioral authentication built natively on top.
+

@@ -1,0 +1,80 @@
+---
+sidebar_label: 'Adversarial Model'
+sidebar_position: 1
+---
+
+import { Table, TableHeader, TableRow, TableCell, TableBody } from "@site/src/components/ui/table";
+import { Badge } from "@site/src/components/ui/badge";
+
+# Interstellar Adversarial Model
+
+This document outlines the global adversarial model for the Interstellar authentication scheme, which relies on decentralized cryptographic primitives, mobile hardware-secured environments, and dynamic visual cryptographic mechanisms.
+
+The model assumes a **powerful adversary** capable of compromising mobile operating systems, deploying persistent malware (e.g., rootkits, banking trojans), intercepting communication channels, and launching real-time manipulation attacks.
+
+## Key Assumptions
+- The adversary can compromise the **mobile OS** and inject malware with root access.
+- The adversary can observe **user interactions**, network traffic, and screen content.
+- The adversary can attempt **overlay attacks**, **clipper malware**, and **phishing attempts**.
+- The adversary **cannot break hardware-enforced secure enclaves** (e.g., Secure Elements or TEEs).
+- The adversary does **not have access** to Interstellar blockchain private keys or TEE execution logs.
+
+## Attack Vectors & Defenses
+
+<Table>
+  <TableHeader>
+    <TableRow>
+      <TableCell> Threat Vector </TableCell>
+      <TableCell> Attack Description </TableCell>
+      <TableCell> Interstellar Defense Mechanism </TableCell>
+      <TableCell> Mitigation Strength </TableCell>
+    </TableRow>
+  </TableHeader>
+  <TableBody>
+    <TableRow>
+      <TableCell>Rooted Malware</TableCell>
+      <TableCell>Adversary gains root access and attempts to exfiltrate secrets.</TableCell>
+      <TableCell>Private keys are generated and stored in Secure Element; never accessible by OS.</TableCell>
+      <TableCell><Badge value="very-high" label="Very High" /></TableCell>
+    </TableRow>
+    <TableRow>
+      <TableCell>Clipper Malware</TableCell>
+      <TableCell>Malware changes destination addresses in clipboard or overlays.</TableCell>
+      <TableCell>Transaction data is encoded into dynamic visual cryptographic shares only visible to human eyes.</TableCell>
+      <TableCell><Badge value="high" label="High" /></TableCell>
+    </TableRow>
+    <TableRow>
+      <TableCell>Overlay Attacks</TableCell>
+      <TableCell>Fake UI screens trick users into approving false transactions.</TableCell>
+      <TableCell>Garbling and rapid frame refresh (60–120fps) prevent fake overlays from mimicking dynamic VCA output.</TableCell>
+      <TableCell><Badge value="high" label="High" /></TableCell>
+    </TableRow>
+    <TableRow>
+      <TableCell>Man-in-the-Middle (MitM)</TableCell>
+      <TableCell>Interception or manipulation of transaction payloads during communication.</TableCell>
+      <TableCell>Transactions require on-device signing using a non-extractable proxy private key in SE; payloads validated visually.</TableCell>
+      <TableCell><Badge value="high" label="High" /></TableCell>
+    </TableRow>
+    <TableRow>
+      <TableCell>Screen Recording / Scraping</TableCell>
+      <TableCell>Malware attempts to capture screen content during VCA session.</TableCell>
+      <TableCell>Each frame is cryptographically unique; cannot reconstruct one-time code from partial or delayed frames.</TableCell>
+      <TableCell><Badge value="medium" label="Medium" /></TableCell>
+    </TableRow>
+    <TableRow>
+      <TableCell>Phishing via Fake Apps</TableCell>
+      <TableCell>User installs a fake Interstellar app that mimics UI to harvest credentials.</TableCell>
+      <TableCell>Authentication is device-bound using SE attestation; fake apps cannot generate valid attestation or VCA output.</TableCell>
+      <TableCell><Badge value="high" label="High" /></TableCell>
+    </TableRow>
+  </TableBody>
+</Table>
+
+## Model Scope and Limitations
+- Assumes hardware Secure Element (SE) or TEE are **trusted anchors**.
+- Assumes the blockchain network **honestly verifies** VCA tokens and SE attestations.
+- Does not address social engineering tactics outside of screen-level spoofing.
+
+## Summary
+Interstellar’s authentication model is built with adversarial resistance in mind, designed to remain trustworthy even under OS-level compromise. By combining secure enclaves, decentralized key attestation, and visual cryptography bound to human cognition, Interstellar raises the bar against mobile-based Advanced Persistent Threats.
+

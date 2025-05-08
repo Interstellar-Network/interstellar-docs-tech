@@ -1,0 +1,98 @@
+---
+sidebar_label: 'Security Model'
+sidebar_position: 2
+---
+
+import { Table, TableHeader, TableRow, TableCell, TableBody } from "@site/src/components/ui/table";
+import { Badge } from "@site/src/components/ui/badge";
+
+# Interstellar Security Model
+
+This document defines the core security model of the Interstellar authentication and transaction authorization system. It is structured around a **strong adversarial model** that assumes the attacker has significant control over the mobile device and surrounding environment.
+
+## Security Philosophy
+Interstellar's security model is built to operate under the assumption that the **operating system can be compromised**. Instead of relying on malware detection, Interstellar builds cryptographic assurances into every user interaction that matters—from authentication to transaction signing—creating a secure enclave for critical actions, even in a hostile runtime environment.
+
+Key principle: **Security must be verifiable, hardware-anchored, and human-auditable.**
+
+## Security Layers
+
+### 1. **Secure Element-Based Proxy Key System**
+- A non-extractable private key is generated and stored inside the mobile device’s Secure Element (SE).
+- All critical operations (authentication, transaction signing) are signed with this key.
+- Biometric unlocking occurs inside the SE, never exposed to the OS.
+
+**Benefits:**
+- No user secrets stored in app memory or storage.
+- Malware or rootkits cannot extract the private key.
+
+### 2. **On-Chain Key Attestation and Verification**
+- Each mobile SE proxy key is paired with a cryptographic attestation issued by the SE.
+- The Interstellar blockchain verifies this attestation during registration and signing events.
+
+**Benefits:**
+- Only valid, hardware-bound devices can authenticate.
+- Prevents impersonation or spoofed devices.
+
+### 3. **Dynamic Visual Cryptography Authentication (VCA)**
+- Transaction payload and one-time validation code are encoded as high-speed visual frames (60–120 fps).
+- Frames are generated using garbled circuits on-chain.
+- Only a human eye can reconstruct the content using persistence of vision.
+
+**Benefits:**
+- Prevents screen-scraping and overlay attacks.
+- Protects transaction integrity from clipper malware and UI tampering.
+
+### 4. **TEE and MPC-backed Execution for Sensitive Logic**
+- Trusted Execution Environments run the core cryptographic functions (e.g., VCA rendering, MPC signing logic).
+- Multi-Party Computation (MPC) distributes key management across multiple trusted nodes for higher-value accounts.
+- Key shares are stored and processed within **dedicated sidechains**, ensuring isolation.
+- Attacker would need to compromise multiple sidechain nodes **and** trick consensus mechanisms backed by Polkadot’s economic security model.
+
+**Benefits:**
+- No single device or actor can compromise a high-value key.
+- Greatly mitigates side-channel risks.
+- Makes targeted key theft economically unfeasible.
+
+## Core Defense Goals
+
+<Table>
+  <TableHeader>
+    <TableRow>
+      <TableCell> Security Objective </TableCell>
+      <TableCell> Interstellar Mechanism </TableCell>
+      <TableCell> Strength </TableCell>
+    </TableRow>
+  </TableHeader>
+  <TableBody>
+    <TableRow>
+      <TableCell>Key Theft Resistance</TableCell>
+      <TableCell>SE-stored proxy key, inaccessible from OS or app memory</TableCell>
+      <TableCell><Badge value="very-high" label="Very High" /></TableCell>
+    </TableRow>
+    <TableRow>
+      <TableCell>UI Integrity</TableCell>
+      <TableCell>Visual cryptography shares prevent overlay and spoofing</TableCell>
+      <TableCell><Badge value="high" label="High" /></TableCell>
+    </TableRow>
+    <TableRow>
+      <TableCell>Device Impersonation Defense</TableCell>
+      <TableCell>SE attestation verified on-chain; only real devices are accepted</TableCell>
+      <TableCell><Badge value="high" label="High" /></TableCell>
+    </TableRow>
+    <TableRow>
+      <TableCell>Payload Tampering Detection</TableCell>
+      <TableCell>Transaction details visually rendered via VCA, verifiable by the user</TableCell>
+      <TableCell><Badge value="high" label="High" /></TableCell>
+    </TableRow>
+    <TableRow>
+      <TableCell>Side-channel Attack Resistance</TableCell>
+      <TableCell>TEE enclaves isolate logic; MPC distributes key shares across sidechains—requires compromise of multiple nodes + economic consensus violation</TableCell>
+      <TableCell><Badge value="medium" label="Medium" /></TableCell>
+    </TableRow>
+  </TableBody>
+</Table>
+
+## Summary
+The Interstellar security model operates on the assumption that the surrounding system is **untrusted**. By embedding authentication into hardware, decentralizing key operations, and leveraging human-only cryptographic display channels, it redefines what endpoint security means in a post-EDR era. It provides strong guarantees against a wide range of sophisticated mobile-based threats, ensuring trust without reliance on the mobile OS.
+

@@ -1,0 +1,145 @@
+---
+sidebar_label: 'vs. Passkey & OAuth2 Positioning'
+sidebar_position: 3
+---
+
+//import "@site/src/css/output.css"; // Tailwind utilities only — no base/components
+
+
+
+
+# Interstellar vs OAuth2/PKCE vs Passkeys
+
+## Executive Summary
+
+In the evolving landscape of digital identity and authentication, traditional OAuth2 flows—even when reinforced with PKCE (RFC 7636)—are no longer sufficient to counter emerging threats such as mobile malware, session hijacking, and AI-based impersonation. At the same time, the security and usability bar is rising, with **Passkey** and **WebAuthn** adoption accelerating across platforms and industries.
+
+**Interstellar’s authentication infrastructure is fully aligned with the WebAuthn/Passkey paradigm**, while offering additional, decentralized, and AI-resilient capabilities that place it beyond the limitations of both OAuth2 and traditional Passkey implementations.
+
+
+
+## 1. OAuth2 + PKCE Limitations
+
+OAuth2 with PKCE was designed to mitigate the interception of authorization codes in public clients (mobile, SPA). However, the model still has significant limitations:
+
+- Depends on **redirect flows** and **centralized IdPs**
+- Exposes tokens as **bearer credentials** vulnerable to replay
+- Assumes a **trusted browser and device environment**
+- Cannot prevent **AI-driven phishing, deep fakes, or device compromise**
+- Offers **no built-in attestation** of device or user identity
+
+While PKCE strengthens transport-layer security, it is fundamentally a patch over an aging trust model.
+
+###  RFC 7636 as a Symptom, Not a Cure
+
+It is important to recognize that [RFC 7636](https://datatracker.ietf.org/doc/html/rfc7636), while widely adopted, is not just a technical enhancement — it is a formal **acknowledgement of a deeper structural issue** in OAuth2:
+
+> _“The need for PKCE itself is a signal that OAuth 2.0's Authorization Code flow is inherently vulnerable when used in environments that cannot guarantee secure handling of secrets or redirection.”_
+
+By introducing the concept of a `code_verifier` and `code_challenge`, the RFC demonstrates that **authorization codes are at risk of interception** — a class of attacks that modern adversaries (including malware, malicious browser extensions, and network-level attackers) actively exploit.
+
+However, PKCE does not:
+- Prevent **token replay** if the access token is stolen,
+- Detect **phishing or impersonation**,
+- Authenticate the **user's true intent or identity**,
+- Resist **AI-driven behavioral attacks**.
+
+###  Interstellar’s Perspective
+
+In contrast, **Interstellar’s design removes the need for code exchanges entirely**, and:
+- Shifts the trust anchor to a **cryptographic, behavioral, and hardware-bound identity model**,
+- Prevents credential leakage by **eliminating bearer tokens**,
+- And ensures **every session** is cryptographically and behaviorally verified.
+
+Thus, while PKCE **proves the class of problems** we're addressing, **Interstellar renders them obsolete** by operating under an entirely different and more secure trust model.
+
+
+## 2. Rise of Passkeys & WebAuthn
+
+The modern answer to OAuth2’s shortcomings is WebAuthn and Passkeys:
+
+- **FIDO2-compliant** hardware-backed cryptographic keys
+- **Phishing-resistant** challenge-response authentication
+- **Bound to biometric verification and secure enclaves**
+- Native support across **Apple, Google, and Microsoft ecosystems**
+
+This marks a critical shift: identity becomes device-bound, and secrets never leave the user's hardware.
+
+In the Web3 space, projects are now exploring Passkey-based flows for:
+- Wallet authentication
+- dApp login
+- Smart contract control with biometric attestation
+
+
+
+## 3. Interstellar’s Strategic Edge
+
+Interstellar does not merely match the WebAuthn/Passkey standard—it **goes beyond it**:
+
+###  Passkey-Compatible by Design
+- Same cryptographic structure: asymmetric challenge/response
+- Biometric and device-bound key generation
+- Optional integration with FIDO/WebAuthn endpoints
+- Can serve as a decentralized Web3-native Passkey provider
+
+###  Stronger Than Hardware Tokens
+- Visual cryptography using **garbled circuits**, immune to screen capture or AI scraping
+- **Behavioral biometric profiles** (typing patterns, cognitive load) unique to each user
+- On-device authentication with **on-chain secure element (SE) attestation**
+- No need for passwords, browser redirects, or centralized IdPs
+
+###  Full-stack Zero-Trust Security
+- Session-level cryptographic proof of identity
+- Device profile fingerprinting at hardware level (SRAM/DRAM timings)
+- Attack surface reduction: no token replay, no bearer tokens
+
+
+## 4. Competitive Comparison
+import { Table, TableHeader, TableRow, TableCell, TableBody } from "@site/src/components/ui/table";
+import { Badge } from "@site/src/components/ui/badge";
+
+<Table  className="rounded-lg" >
+  <TableHeader>
+    <TableRow>
+      <TableCell>Feature</TableCell>
+      <TableCell>OAuth2</TableCell>
+      <TableCell>Passkey</TableCell>
+      <TableCell>Interstellar</TableCell>
+    </TableRow>
+  </TableHeader>
+  <TableBody>
+    <TableRow>
+      <TableCell>Biometric Support</TableCell>
+      <TableCell><Badge value="no" /></TableCell>
+      <TableCell><Badge value="yes" /></TableCell>
+      <TableCell><Badge value="yes" label="Yes + Cognitive" /></TableCell>
+    </TableRow>
+    <TableRow>
+      <TableCell>AI-Resistance</TableCell>
+      <TableCell><Badge value="no" /></TableCell>
+      <TableCell><Badge value="partial" /></TableCell>
+      <TableCell><Badge value="very-high" /></TableCell>
+    </TableRow>
+  </TableBody>
+</Table>
+
+
+## 5. Strategic Outlook
+
+As adoption of Passkeys and WebAuthn accelerates, Interstellar is positioned to:
+
+- Integrate seamlessly with Passkey-compatible platforms
+- Offer superior security for high-value digital assets and transactions
+- Lead the standardization of **decentralized Passkeys for Web3**
+- Enable partners to adopt strong authentication **without central trust anchors**
+
+Despite SDK-related integration constraints, the architectural alignment with FIDO2 standards gives Interstellar a powerful advantage in future-proof deployments.
+
+
+
+## Conclusion
+
+Passkeys are replacing OAuth2 as the new security foundation. Interstellar provides a compliant, decentralized, and next-generation authentication infrastructure that both **embraces and exceeds** the Passkey standard. This positions the platform to lead Web3’s shift into secure, seamless, and zero-trust identity. 
+
+> Interstellar is not just compatible with Passkeys. It’s what Passkeys evolve into.
+

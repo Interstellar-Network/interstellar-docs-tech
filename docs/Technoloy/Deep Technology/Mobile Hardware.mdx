@@ -1,0 +1,73 @@
+---
+sidebar_label: 'Mobile Hardware Security'
+sidebar_position: 1
+---
+import { Table, TableHeader, TableRow, TableCell, TableBody } from "@site/src/components/ui/table";
+import { Badge } from "@site/src/components/ui/badge";
+
+# Mobile Hardware Security
+
+Interstellar leverages the **Secure Element (SE)** or **Trusted Execution Environment (TEE)** embedded in modern smartphones to generate and store a **proxy private key** that is never accessible to the OS or app layer. This proxy key enables passwordless, tamper-resistant authentication that is **compliant with FIDO2/WebAuthn elliptic curve standards** and can be integrated as a **decentralized passkey solution**.
+
+## Compliant by Design, Stronger by Architecture
+The cryptographic keys used by Interstellar are generated inside the SE and paired with **hardware attestation**. This attestation is **verified on-chain**, eliminating reliance on centralized attestation authorities or backends. Unlike centralized passkey services that store or relay keys through vendor-controlled infrastructure (e.g. Apple iCloud Keychain, Google Password Manager), Interstellar decentralizes the full lifecycle of key generation, attestation, and use.
+
+We use elliptic curve cryptography compatible with **FIDO2/WebAuthn (e.g., P-256)** and support full compliance with the passkey standard. Interstellar’s design enables the ability to **expose public keys** to WebAuthn-compatible websites or services without breaking the decentralized trust model.
+
+## Comparison to Centralized Passkey Systems
+
+<Table>
+  <TableHeader>
+    <TableRow>
+      <TableCell> Component </TableCell>
+      <TableCell> Centralized Passkey </TableCell>
+      <TableCell> Interstellar </TableCell>
+    </TableRow>
+  </TableHeader>
+  <TableBody>
+    <TableRow>
+      <TableCell>Key Storage</TableCell>
+      <TableCell>Device SE + Synced to Cloud</TableCell>
+      <TableCell>Device SE only, never leaves the chip</TableCell>
+    </TableRow>
+    <TableRow>
+      <TableCell>Attestation</TableCell>
+      <TableCell>Signed by platform vendor (e.g. Apple/Google)</TableCell>
+      <TableCell>Signed by SE + verified on-chain by smart contract</TableCell>
+    </TableRow>
+    <TableRow>
+      <TableCell>Vendor Lock-in</TableCell>
+      <TableCell>Yes (ecosystem-dependent)</TableCell>
+      <TableCell>No (keys are app-specific and portable)</TableCell>
+    </TableRow>
+    <TableRow>
+      <TableCell>Key Privacy</TableCell>
+      <TableCell>Vendor can potentially link identity to usage</TableCell>
+      <TableCell>No linkage; fully anonymous proxy accounts</TableCell>
+    </TableRow>
+    <TableRow>
+      <TableCell>Use in Web3</TableCell>
+      <TableCell>Indirect and centralized</TableCell>
+      <TableCell>Direct, decentralized signing of blockchain transactions</TableCell>
+    </TableRow>
+  </TableBody>
+</Table>
+
+## Architecture Benefits
+- **Tamper resistance**: Private keys are generated in tamper-resistant hardware. Even with full root access, malware cannot extract them.
+- **No key exportability**: Keys are non-exportable by design, reducing attack surface.
+- **One-device-to-one-user link**: Keys are biometrically unlocked and tied to a single device, offering phishing resistance and strong user binding.
+- **On-chain verification**: Unlike WebAuthn platforms that rely on centralized metadata services, Interstellar performs **decentralized, verifiable attestation**.
+- **No backend dependencies**: No reliance on Apple/Google for attestation verification or passkey lifecycle management.
+
+## WebAuthn & Passkey Compatibility
+Interstellar is designed to be **interoperable** with the emerging WebAuthn ecosystem. While our focus remains on decentralized usage within Web3, our infrastructure can expose **public key credentials** that follow the FIDO/WebAuthn model.
+
+This means Interstellar:
+- **Can be used as a decentralized passkey provider**.
+- Offers **stronger privacy guarantees** by eliminating vendor metadata linkage.
+- Retains **secure device binding** without compromising decentralization.
+
+## Summary
+Interstellar brings the best of mobile-native security into Web3: **biometric, passwordless access**, **hardware-bound authentication**, and **on-chain attestation**. It meets and exceeds the design goals of FIDO2/WebAuthn while offering a fully decentralized alternative that can secure wallets, Dapps, and identity use cases far beyond what centralized solutions can achieve.
+
