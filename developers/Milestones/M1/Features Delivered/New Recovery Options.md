@@ -1,6 +1,6 @@
 ---
 sidebar_label: 'New Recovery Options'
-sidebar_position: 2
+sidebar_position: 3
 ---
 
 # New Recovery Options
@@ -11,8 +11,6 @@ For power users, dApp team members, or enterprise users, recovery security can b
 
 ![alt text](/img/recovery_threshold_Black.png#gh-dark-mode-only)
 ![alt text](/img/recovery_threshold_White.png#gh-light-mode-only)
-
-
 
 
 This flexible, user-friendly system reduces drop-off after wallet loss or device changes and gives both new and advanced users **peace of mind**. For Dapps and wallets, it means fewer support requests and more confident users staying in your ecosystem.
