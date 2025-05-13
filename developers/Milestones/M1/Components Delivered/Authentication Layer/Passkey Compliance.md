@@ -10,10 +10,12 @@ Interstellar accounts are designed to be compatible with the **WebAuthn/Passkey 
 ## Cryptographic Alignment with Passkeys
 
 Interstellar uses the same elliptic curve as the FIDO2/WebAuthn specification:
+
 - **NIST P-256 (secp256r1 / ECDSA)**
 - Keypairs are generated directly within the device’s **Secure Element (SE)**
 
 This ensures compatibility with modern authentication ecosystems, including:
+
 - WebAuthn-compatible browsers and devices
 - Passkey APIs (Android, iOS, Web)
 - Wallet connectors that validate using ECDSA
@@ -21,6 +23,7 @@ This ensures compatibility with modern authentication ecosystems, including:
 ## Decentralized Key Generation
 
 Unlike traditional Passkey implementations that depend on platform-specific credential storage (e.g., Apple Keychain, Google Password Manager), Interstellar generates and stores credentials:
+
 - **On-device**, in a hardware-backed **Secure Enclave**
 - **Without relying on any platform or third-party IDP**
 - **With attestations signed by the SE**, and verified on-chain during account registration
@@ -30,6 +33,7 @@ This approach gives users **full control and self-custody** of their authenticat
 ## Attestation and Registration
 
 When registering an account:
+
 1. The SE generates a new ECDSA keypair.
 2. It returns a **hardware-bound attestation**, signed with an embedded attestation key.
 3. This attestation is submitted with the `MOB-REG` extrinsic, anchoring the key to the user’s mobile proxy account.
@@ -39,6 +43,7 @@ No secrets are stored off-device, and no trust is delegated to cloud-based infra
 ## Pure Proxy Delegation Model
 
 Authentication flows rely on the **mobile proxy account**, which is securely delegated by a root **Pure Proxy account**. This separation ensures:
+
 - Flexibility in key rotation or device re-enrollment
 - Isolation of recovery and signing roles
 - Compatibility with Substrate’s multi-signer and threshold models

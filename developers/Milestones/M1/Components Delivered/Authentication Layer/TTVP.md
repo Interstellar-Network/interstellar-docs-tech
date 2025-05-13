@@ -3,13 +3,14 @@ sidebar_label: 'TTVP Protocol'
 sidebar_position: 1
 ---
 
-# Trusted Transaction Validation Protocol (TTVP)
+# Trusted Transaction Validation Protocol
 
 The **Trusted Transaction Validation Protocol (TTVP)** enforces user intent verification and transaction-level authentication inside a trusted execution environment (TEE). It enables **DSP-SCA-compliant** validation by binding biometric confirmation and touch input directly to the device’s Secure Element (SE), ensuring that sensitive actions are cryptographically confirmed by the user.
 
 ## Objective
 
 TTVP is designed to:
+
 - Protect against malware or remote takeover of mobile apps
 - Ensure that **every sensitive transaction** is verified by the human user
 - Guarantee that validation inputs are **signed by hardware**, not emulated by software
@@ -19,6 +20,7 @@ TTVP is designed to:
 TTVP relies on a dedicated `AUTH` extrinsic executed in the TEE. When called, the runtime triggers the following flow:
 
 ### 1. Biometric Unlock
+
 The user authenticates with biometric (e.g., Face ID, fingerprint), unlocking access to the SE.
 
 ### 2. One-Time Keypad Display
