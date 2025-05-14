@@ -24,24 +24,37 @@ TTVP relies on a dedicated `AUTH` extrinsic executed in the TEE. When called, th
 The user authenticates with biometric (e.g., Face ID, fingerprint), unlocking access to the SE.
 
 ### 2. One-Time Keypad Display
+
 A **randomized keypad** is shown in the app, where the user enters a short validation code (e.g., 4–6 digits).
 
 - The layout is shuffled per session to mitigate screen recording or malware risks.
 - This input is not passed to the backend; it is captured and evaluated within the SE.
 
 ### 3. SE-Signed Confirmation
+
 The entered code is:
+
 - Encrypted and signed by the Secure Element
 - Sent as part of the `AUTH` extrinsic payload
 
 The TEE runtime verifies this signature against the user’s attested SE key.
 
 ### 4. Extrinsic Authorization
+
 If the code is valid and the SE signature is correct:
+
 - The `AUTH` extrinsic succeeds
 - The transaction (or recovery) is approved on-chain
 
 Otherwise, the attempt fails securely, with no leakage.
+
+## Flow Diagram
+
+![Transaction Validation](/img/TxVal.png)
+
+:::note
+The `AUTH-REQ` extrinsic can be submitted either by the mobile app (via the mobile SDK) or alternatively by a DApp with unsigned extrinsic. For the sake of clarity in the diagram, it is represented here as being sent via a DApp.
+:::
 
 ## Security and Compliance
 

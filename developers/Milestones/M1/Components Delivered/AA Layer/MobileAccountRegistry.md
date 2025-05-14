@@ -36,6 +36,12 @@ The resulting mobile account acts as a delegated signer for the user’s root id
    - Participation in recovery setups
    - Serving as a root identity for mobile wallet UX
 
+## Flow Diagram
+
+![Onboarding](/img/Onboarding.png)
+
+
+
 ## Security Properties
 
 - **Hardware-anchored identity**: Accounts cannot be spoofed or recovered without physical device access.

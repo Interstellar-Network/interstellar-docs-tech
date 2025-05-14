@@ -28,6 +28,7 @@ Mobile interactions are designed to be cryptographically verifiable. Keys are ge
 ## Execution Environment
 
 All logic runs within an **Integritee enclave**, enabling:
+
 - Remote attestation of operations
 - Confidential state transitions
 - Cryptographic integrity for identity and transaction workflows

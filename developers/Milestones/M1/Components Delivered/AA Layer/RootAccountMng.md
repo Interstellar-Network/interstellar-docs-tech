@@ -27,6 +27,7 @@ This enables a **truly decentralized Passkey alternative** that is interoperable
 ## Attestation Workflow
 
 During account registration:
+
 1. The mobile app interfaces with the Secure Element to generate a new key pair.
 2. The SE produces a **device-bound attestation**, cryptographically linking the key to the trusted hardware.
 3. This attestation is submitted via the `MOB-REG` extrinsic and stored in the Interstellar runtime.
@@ -36,11 +37,11 @@ This flow provides cryptographic assurance that the registered account is bound 
 ## On-Chain Identity Model
 
 Each Interstellar identity is therefore composed of:
+
 - A **root account** (pure proxy controller)
-- One or more **mobile proxy accounts**, attested and registered via SE
+- One or more* **mobile proxy accounts**, attested and registered via SE
 - Associated recovery metadata (covered in the Recovery Layer)
-
-This model allows users to interact fluidly with the network while maintaining robust security guarantees anchored in hardware-based trust.
-
-
-
+  
+:::tip
+***Advanced users** or **entities** can associate multiple mobile proxy accounts i.e **mobile devices** with a single root account to strengthen security during sensitive operations, enhance recovery mechanisms, and enable a more **user-friendly** and **resilient** multisignature scheme.
+:::
