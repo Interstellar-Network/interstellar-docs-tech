@@ -1,6 +1,6 @@
 ---
 sidebar_label: 'Milestone 1 Tutorial'
-sidebar_position: 3
+sidebar_position: 4
 ---
 # Milestones 1 Demo Tutorial
 
@@ -217,13 +217,11 @@ ssh -N -R 9990:localhost:9990 -R 5001:localhost:5001 -R 2090:localhost:2090 [win
  on your Device/Emulator to check it works properly.
  Otherwise fix network issues.
 
-
 #### 3. Launch Android App
+
 Swipe from bottom to top and click on `Wallet Interstellar`
 
-
 <img src="/img/SelectAndroidApp.png" alt="wallet menu"  width="120"/>
-
 
 #### 4. Send a Currency and wait for the Transaction confirmation screen to validate the transaction
 

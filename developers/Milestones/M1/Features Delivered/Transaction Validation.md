@@ -1,6 +1,6 @@
 ---
 sidebar_label: 'Transaction Validation'
-sidebar_position: 4
+sidebar_position: 3
 ---
 
 # Transaction or Sensitive Action Validation
