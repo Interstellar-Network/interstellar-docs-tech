@@ -9,6 +9,6 @@ When users approve a transaction or a sensistive operation with Interstellar, th
 
 Even if malware is present on the device, it cannot alter or hide the transaction details from the user. This provides a powerful last line of defense against phishing, clipper malware, and overlay attacks—giving users full confidence in every action they approve.
 
-:::tip
+:::important
 This framework is designed to comply with payment standard requirements like **PSD2 Strong Customer Authentication (SCA)** standards, while offering enhanced protection through decentralized attestation and hardware-rooted multi-factor verification—surpassing the resilience of traditional SCA methods.
 :::

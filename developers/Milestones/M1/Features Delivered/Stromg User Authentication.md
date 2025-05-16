@@ -10,6 +10,6 @@ Interstellar uses hardware-backed biometrics already built into modern smartphon
 This method ensures that only the real device owner can authorize wallet access—without the need for passwords or PIN codes. For apps, it means fewer failed logins, no password resets, and a frictionless path to secure interaction with the blockchain.
 
 
-:::tip
+:::important
 This authentication method is interoperable with the **Passkey** (WebAuthn/FIDO2) standard, while providing stronger security guarantees. By eliminating centralized key storage and enhancing resistance to phishing and malware, it offers a more resilient alternative to traditional Passkey implementations.
 :::
