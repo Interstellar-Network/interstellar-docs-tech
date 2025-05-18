@@ -20,7 +20,7 @@ This ensures compatibility with modern authentication ecosystems, including:
 - Passkey APIs (Android, iOS, Web)
 - Wallet connectors that validate using ECDSA
 
-## Decentralized Key Generation
+## Decentralized Key Management
 
 Unlike traditional Passkey implementations that depend on platform-specific credential storage (e.g., Apple Keychain, Google Password Manager), Interstellar generates and stores credentials:
 

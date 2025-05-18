@@ -23,9 +23,9 @@ TTVP relies on a dedicated `AUTH` extrinsic executed in the TEE. When called, th
 
 The user authenticates with biometric (e.g., Face ID, fingerprint), unlocking access to the SE.
 
-### 2. One-Time Keypad Display
+### 2. One-Time Keypad and Transaction message Display (VCA Token)
 
-A **randomized keypad** is shown in the app, where the user enters a short validation code (e.g., 4–6 digits).
+A **randomized keypad**  and **transaction message** is shown in the app, where the user enters a short validation code (e.g., 2–4 digits).
 
 - The layout is shuffled per session to mitigate screen recording or malware risks.
 - This input is not passed to the backend; it is captured and evaluated within the SE.
@@ -74,3 +74,9 @@ The `AUTH-REQ` extrinsic can be submitted either by the mobile app (via the mobi
 ---
 
 TTVP ensures that Interstellar users retain full control over transaction authorization, using a privacy-preserving flow that is verifiable, decentralized, and resistant to device-level compromise.
+
+:::info
+if you want to learn more about the technolgy that power the **VCA Token** i.e one time keypad and message display:  
+- [Garbled Gircuit](https://interstellar-docs-tech.pages.dev/docs/Technoloy/Deep%20Technology/Garbled%20Circuits)
+- [Dynamic Visual Cryptography](https://interstellar-docs-tech.pages.dev/docs/Technoloy/Deep%20Technology/Dynamic%20Visual%20Cryptograpy)
+:::
