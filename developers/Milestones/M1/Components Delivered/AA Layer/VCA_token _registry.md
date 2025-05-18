@@ -48,7 +48,7 @@ Rather than storing full secrets or executable code on-chain, the registry holds
 The VCA Token Registry provides a standardized interface for integrating privacy-preserving, file-based recovery logic into the Interstellar account model—supporting secure fallback paths without centralized infrastructure or hardcoded secrets.
 
 :::info
-if you want to learn more about the technolgy that power the **VCA Token** i.e one time keypad and message display:  
+if you want to learn more about the technolgy and cryptography that powers the **VCA Token** that manages the one time keypad and message display:  
 - [Garbled Gircuit](https://interstellar-docs-tech.pages.dev/docs/Technoloy/Deep%20Technology/Garbled%20Circuits)
 - [Dynamic Visual Cryptography](https://interstellar-docs-tech.pages.dev/docs/Technoloy/Deep%20Technology/Dynamic%20Visual%20Cryptograpy)
 :::

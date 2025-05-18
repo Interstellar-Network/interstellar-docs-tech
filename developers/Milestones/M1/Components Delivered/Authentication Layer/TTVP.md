@@ -76,7 +76,7 @@ The `AUTH-REQ` extrinsic can be submitted either by the mobile app (via the mobi
 TTVP ensures that Interstellar users retain full control over transaction authorization, using a privacy-preserving flow that is verifiable, decentralized, and resistant to device-level compromise.
 
 :::info
-if you want to learn more about the technolgy that power the **VCA Token** i.e one time keypad and message display:  
+if you want to learn more about the technolgy and cryptography that power the **VCA Token** that manages the one time keypad and message display:  
 - [Garbled Gircuit](https://interstellar-docs-tech.pages.dev/docs/Technoloy/Deep%20Technology/Garbled%20Circuits)
 - [Dynamic Visual Cryptography](https://interstellar-docs-tech.pages.dev/docs/Technoloy/Deep%20Technology/Dynamic%20Visual%20Cryptograpy)
 :::
