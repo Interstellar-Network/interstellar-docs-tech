@@ -10,16 +10,20 @@ The architecture of Interstellar’s secure Web3 account system is built on a mo
 
 ## Layered Design
 
-The system is organized into three primary functional layers:
+The system is organized into four primary functional layers:
 
 - **Account Abstraction Layer (AA Layer)**  
-  Manages user identity and registration flows, including support for Pure Proxy-based root accounts, SE-attested mobile proxy accounts, and registration of recovery items such as NFC tags or VCA tokens.
+Manages user identity and registration flows, including support for Pure Proxy-based root accounts, SE-attested mobile proxy accounts, and registration of recovery items such as NFC tags or VCA tokens.
 
-- **Authentication Layer**  
-  Provides on-device authentication and **transaction validation** via the Secure Element. It includes the `AUTH` extrinsic and enforces compliance with **DSP-SCA** by validating user input (e.g., biometric unlock + keypad) directly within the TEE.
+- **Authentication Layer**   
+Provides on-device authentication and transaction validation via the Secure Element. It includes the AUTH extrinsic and enforces compliance with DSP-SCA by validating user input (e.g., biometric unlock + randomized keypad) directly within the TEE.
 
 - **Recovery Layer**  
   Implements a flexible, threshold-based recovery mechanism using combinations of NFC tags and VCA-based secure backup files. Recovery flows are handled entirely within the trusted execution environment, without reliance on external services or seed phrases.
+
+- **VCA System Layer**  
+    Defines the execution model for Visual Cryptographic Authentication Tokens — one-time-use programs generated from a master circuit and executed on the user's device. Each VCA Token displays a randomized keypad and a transaction- or action-specific message, which is never stored in memory and rendered only through garbled circuit logic. The output is signed using a Secure Element–derived random input, allowing the TEE to verify correct execution. This system serves as the trusted, privacy-preserving execution layer for both authentication and recovery flows.
+
 
 ## Secure Mobile Integration
 

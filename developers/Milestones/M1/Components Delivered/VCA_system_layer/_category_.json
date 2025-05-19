@@ -1,0 +1,8 @@
+{
+    "label": "VCA System Layer",
+    "position": 6,
+    "link": {
+      "type": "generated-index",
+      "description": "Components of the VCA system layer"
+    }
+  }
