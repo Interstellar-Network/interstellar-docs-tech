@@ -1,9 +1,9 @@
 ---
-sidebar_label: 'Local Demo with Docker'
+sidebar_label: 'Android App with Local Node'
 sidebar_position: 2
 ---
 
-# Local Demo with Docker
+# Android App with Local Node
 
 This guide explains how to run the full Interstellar stack **locally** using Docker or Podman. You will be able to launch the Substrate node, Integritee TEE worker, and IPFS service, then interact with the system using the **Interstellar Android demo app**.
 
@@ -48,29 +48,53 @@ Idle (0 peers), best: #X, finalized #Y...
 
 You can verify the runtime is ready using [Polkadot.js](https://polkadot.js.org/apps/?rpc=ws://localhost:9990)
 
-## 3. Prepare Mobile App Access (via `adb reverse`)
 
+
+## 3. Install the Android Demo App 
+
+### Option 1: Physical Device
+
+1. Download the APK from the official [Interstellar GitHub Release](https://github.com/Interstellar-Network/wallet-app/releases/tag/milestone1) (specific APK preconfigured to connect to `localhost`)
+2. Transfer it to your phone or open it via QR/link
+3. Allow app installation from external sources
+4. Install the APK
+
+### Option 2: Emulator
+
+1. Install [Android Studio](https://developer.android.com/studio)
+2. Create a `Pixel 5` or equivalent emulator (`x86_64`, API 31+)
+3. Launch the emulator
+4. Drag and drop the APK onto the emulator window to install
+
+---
+
+## 2. Link App to your local Interstellar stack:
+
+The Android app is preconfigured to connect to `localhost`
 To allow the Android app to connect to your local blockchain and IPFS stack:
+
+### Step 1: `adb reverse` (on the host system running the emulator or device)
 
 ```bash
 adb reverse tcp:9990 tcp:9990   # Substrate WS
-adb reverse tcp:2090 tcp:2090   # Integritee node
+adb reverse tcp:2090 tcp:2090   # Integritee node port
 adb reverse tcp:5001 tcp:5001   # IPFS
 ```
+
+:::warning
+Make sure ADB is properly configured and the emulator or device is detected (adb devices)
+:::
 
 > This works for both emulators and real devices connected via USB
 
 ## 4. Run the Android App Demo
 
-### Step 1: Install the App
-Follow the instructions from the [Mobile Demo Guide](./mobile-demo-with-vps.md) to install the APK.
-
-### Step 2: Connect & Onboard
+### Step 1: Connect & Onboard
 - Launch the app
 - Register a new mobile proxy account
 - Validate biometric & SE-attested registration
 
-### Step 3: Test Recovery and Transaction Validation
+### Step 2: Test Recovery and Transaction Validation
 - Register a recovery item (e.g., NFC tag or secure file)
 - Send a test transaction to trigger the TTVP screen
 - Enter the one-time code (2-digit), or experiment with trial/feedback

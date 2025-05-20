@@ -7,10 +7,13 @@ sidebar_position: 1
 
 This guide walks you through testing **Milestone 1** of Interstellar’s secure Web3 account features using the **Android demo app** and a pre-configured remote testnet (hosted on a VPS). This is the fastest way to evaluate the delivered features without setting up the blockchain stack locally.
 
+:::note
+The demo app is already wired to connect to the hosted testnet — no local configuration or Docker setup is required.
+:::
+
 ## Prerequisites
 
 - Android phone (recommended) or an emulator via Android Studio
-- ADB (`adb reverse`) must be available on your machine
 - The VPS is publicly reachable and already runs:
   - Interstellar node with Integritee pallets
   - TEE enclave and IPFS backend
@@ -36,23 +39,7 @@ This guide walks you through testing **Milestone 1** of Interstellar’s secure 
 
 ---
 
-## 2. Link App to Remote Testnet
-
-The Android app is preconfigured to connect to `localhost`. To redirect those connections to the VPS testnet:
-
-### Step 1: `adb reverse` (on the host system running the emulator or device)
-
-```bash
-adb reverse tcp:9990 tcp:9990   # Substrate WS
-adb reverse tcp:2090 tcp:2090   # Integritee node port
-adb reverse tcp:5001 tcp:5001   # IPFS
-```
-
-:::warning
-Make sure ADB is properly configured and the emulator or device is detected (adb devices)
-:::
-
-## 3. Run the Demo
+## 2. Run the Demo
 
 ### Step 1: Launch the App
 
@@ -82,9 +69,7 @@ Enter the 2-digit one-time code (displayed or guessed)
 
 ## Troubleshooting
 
-- If the validation screen appears broken or unreadable, it's a known limitation of the current garbled circuit rendering
 
 - For debugging, you may check Polkadot.js Apps at localhost:9990
 
-- Ensure network forwarding is active and accessible on both ends
 

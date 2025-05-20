@@ -1,5 +1,5 @@
 ---
-sidebar_label: 'Milestone 1 Tutorial'
+sidebar_label: 'To delette'
 sidebar_position: 4
 ---
 # Milestones 1 Demo Tutorial

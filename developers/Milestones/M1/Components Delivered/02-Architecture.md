@@ -13,7 +13,7 @@ The architecture of Interstellar’s secure Web3 account system is built on a mo
 The system is organized into four primary functional layers:
 
 - **Account Abstraction Layer (AA Layer)**  
-Manages user identity and registration flows, including support for Pure Proxy-based root accounts, SE-attested mobile proxy accounts, and registration of recovery items such as NFC tags or VCA tokens.
+Manages user identity and registration flows, including support for Pure Proxy-based root accounts, SE-attested mobile proxy accounts, and registration of recovery items such as NFC tags or VCA tokens (secure file for cloud backup)
 
 - **Authentication Layer**   
 Provides on-device authentication and transaction validation via the Secure Element. It includes the AUTH extrinsic and enforces compliance with DSP-SCA by validating user input (e.g., biometric unlock + randomized keypad) directly within the TEE.
