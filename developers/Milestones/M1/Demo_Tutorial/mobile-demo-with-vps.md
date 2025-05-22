@@ -25,17 +25,28 @@ The demo app is already wired to connect to the hosted testnet — no local conf
 
 ### Option 1: Physical Device
 
+[How to install an APK on Android](https://www.lifewire.com/install-apk-on-android-4177185)
+
 1. Download the APK from the official [Interstellar GitHub Release](https://github.com/Interstellar-Network/wallet-app/releases/tag/milestone1)
-2. Transfer it to your phone or open it via QR/link
+2. Transfer it to your phone.
 3. Allow app installation from external sources
 4. Install the APK
+
+:::warning
+Ensure that your device is configured for english language
+:::
+
 
 ### Option 2: Emulator
 
 1. Install [Android Studio](https://developer.android.com/studio)
-2. Create a `Pixel 5` or equivalent emulator (`x86_64`, API 31+)
+2. [Create](https://developer.android.com/studio/run/managing-avds#createavd) a `Pixel 5` or equivalent emulator (`x86_64`, API 31+)
+
 3. Launch the emulator
+![Launch pixel 5 API 31 emulator](/img/Android_device_manager.png)
 4. Drag and drop the APK onto the emulator window to install
+
+
 
 ---
 
@@ -68,6 +79,30 @@ Wait for the validation screen
 Enter the 2-digit one-time code (displayed or guessed)
 
 ## Troubleshooting
+
+### Check Toast message order whith Action Validation Screen
+
+- Processing...
+- Registered
+- [error] No circuits available after 10s; exiting!
+
+[after taping one-time code digits]
+
+- Validating transaction...
+- Transaction done!
+
+:::warning
+If you are using an emulator, or a low-end or outdated Android device with a basic GPU, the user experience may be significantly degraded. Although the validation screen may be harder to read in such conditions, you should still be able to complete the test process.
+:::
+:::note
+Please note that the current Android application is still under active development, and the present user experience does not reflect the final experience that will be delivered with the production-ready mobile SDK.
+
+To simplify testing, the app is intentionally closed after a validation screen is completed. Additionally, during transaction screen testing, the input amount and recipient address are not yet displayed in the confirmation message.
+:::
+:::tip
+In the future, we plan to introduce a **trusted beneficiary** feature. This will enable users to register known recipient addresses on-chain through a secure validation process, preventing attackers from substituting contact names with malicious public keys. This enhancement will make the wallet both more secure and user-friendly.
+:::
+
 
 
 - For debugging, you may check Polkadot.js Apps at localhost:9990
