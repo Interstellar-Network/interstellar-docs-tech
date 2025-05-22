@@ -58,3 +58,12 @@ This mechanism guarantees that only a valid device executing the correct circuit
 ## Summary
 
 The VCA Token acts as a **verifiable cryptographic contract**, executed on the user’s device and cryptographically sealed. It bridges UX simplicity (2-digit codes, visual validation) with deep security guarantees (garbled logic, SE verification, on-chain proof), and plays a central role in Interstellar’s authentication, recovery, and transaction control architecture.
+
+:::info
+To learn more about the advanced technology and cryptographic mechanisms that power the VCA Token — which securely manages the one-time keypad and dynamic message display — we invite you to explore the following concepts:
+
+- **Garbled Circuits**: A privacy-preserving computation technique used to ensure that sensitive data is never exposed during processing, even on potentially compromised devices.
+- **Dynamic Visual Cryptography**: A novel method for rendering secure information (such as digits or transaction messages) that is only decipherable by the human eye under specific visual and cognitive conditions, making it resistant to automated interception or spoofing.
+
+These technologies are foundational to the VCA Token’s ability to deliver military-grade transaction security on consumer-grade mobile devices.
+:::
