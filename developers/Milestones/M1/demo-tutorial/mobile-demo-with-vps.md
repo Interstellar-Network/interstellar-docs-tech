@@ -1,5 +1,5 @@
 ---
-sidebar_label: 'Mobile Demo with VPS'
+sidebar_label: 'Android App + Testnet'
 sidebar_position: 1
 ---
 
