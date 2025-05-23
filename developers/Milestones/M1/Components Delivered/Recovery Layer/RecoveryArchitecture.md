@@ -39,10 +39,10 @@ This policy is enforced inside the TEE and stored in encrypted runtime state. Du
 
 ## Key Recovery Steps
 
-1. **Recovery Initiation**: Triggered via the mobile app using biometric + recovery item scan.
+1. **Recovery Initiation**: Triggered via the mobile app on a new device using biometric + recovery item scan.
 2. **Item Verification**: Each recovery item (tag, file) is re-hashed and matched against on-chain registration.
 3. **Threshold Check**: If the required number of verified items are present, recovery is unlocked.
-4. **New Key Registration**: A new SE-based mobile proxy account is generated and registered with the root account.
+4. **New Key Registration**: The new device's SE-based mobile proxy account is bound to the root account.
 
 ## Advantages
 
