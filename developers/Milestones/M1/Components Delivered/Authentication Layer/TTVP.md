@@ -1,60 +1,90 @@
 ---
-sidebar_label: 'TTVP Protocol'
+sidebar_label: 'TAVP Protocol'
 sidebar_position: 1
 ---
 
-# Trusted Transaction Validation Protocol
+# Trusted Action Validation Protocol
 
-The **Trusted Transaction Validation Protocol (TTVP)** enforces user intent verification and transaction-level authentication inside a trusted execution environment (TEE). It enables **DSP-SCA-compliant** validation by binding biometric confirmation and touch input directly to the device’s Secure Element (SE), ensuring that sensitive actions are cryptographically confirmed by the user.
+The **Trusted Action Validation Protocol (TAVP)** — formerly referred to as **Trusted Transaction Validation Protocol (TTVP)** — enforces user intent verification and transaction-level authentication inside a **Trusted Execution Environment (TEE)**. It enables **DSP-SCA-compliant** validation by binding biometric confirmation and user input directly to the device’s **Secure Element (SE)**, ensuring that sensitive actions are cryptographically confirmed by the user.
+
+---
 
 ## Objective
 
-TTVP is designed to:
+TAVP is designed to:
 
-- Protect against malware or remote takeover of mobile apps
-- Ensure that **every sensitive transaction** is verified by the human user
-- Guarantee that validation inputs are **signed by hardware**, not emulated by software
+- Protect against malware or remote compromise of mobile wallets
+- Ensure that **each sensitive transaction or action** is explicitly verified by the user
+- Guarantee that inputs are **signed by secure hardware**, not emulated or spoofed by software
+
+:::note
+While originally described as TTVP in earlier milestone documentation, the protocol has been generalized to **TAVP** to reflect its broader applicability — including transaction signing, recovery flows, and other action-level confirmations.
+:::
+
+---
 
 ## How It Works
 
-TTVP relies on a dedicated `AUTH` extrinsic executed in the TEE. When called, the runtime triggers the following flow:
+TAVP is based on two dedicated extrinsics, `AUTH-REQ` and `AUTH-RSP`, executed within the TEE. The protocol follows this multi-step flow:
 
-### 1. Biometric Unlock
+### 1. Action Validation Request
 
-The user authenticates with biometric (e.g., Face ID, fingerprint), unlocking access to the SE.
+A transaction or sensitive action message is sent to the Interstellar runtime through the `AUTH-REQ` extrinsic. This unsigned extrinsic may optionally include a signed extension if submitted by the user’s mobile app.
 
-### 2. One-Time Keypad and Transaction message Display (VCA Token)
+### 2. VCA Token Creation
 
-A **randomized keypad**  and **transaction message** is shown in the app, where the user enters a short validation code (e.g., 2–4 digits).
+The TEE generates a **garbled circuit** containing both a randomized keypad layout and a user-readable message (e.g., transaction summary). This one-time-use VCA Token is uploaded to IPFS and the CID is sent back to the user’s mobile app.
 
-- The layout is shuffled per session to mitigate screen recording or malware risks.
-- This input is not passed to the backend; it is captured and evaluated within the SE.
+### 3. Biometric Unlock
 
-### 3. SE-Signed Confirmation
+The user authenticates locally using biometrics (e.g., Face ID, fingerprint), unlocking the Secure Element for touch validation.
 
-The entered code is:
+### 4. Visual Action Challenge
 
-- Encrypted and signed by the Secure Element
-- Sent as part of the `AUTH` extrinsic payload
+The VCA Token is evaluated on the mobile device. It renders a **randomized keypad** and **message confirmation screen**:
 
-The TEE runtime verifies this signature against the user’s attested SE key.
+- The user sees the action summary (e.g., "Send 300 DOT to Alice")
+- A 2–4 digit code is entered using a **shuffled keypad** to prevent replay or recording attacks
 
-### 4. Extrinsic Authorization
+### 5. SE-Signed Confirmation
 
-If the code is valid and the SE signature is correct:
+The touch positions of the user-entered code are:
 
-- The `AUTH` extrinsic succeeds
-- The transaction (or recovery) is approved on-chain
+- Signed by the **Secure Element**, using the mobile proxy key
+- Optionally encrypted and returned via the `AUTH-RSP` extrinsic
 
-Otherwise, the attempt fails securely, with no leakage.
+The signature proves both user presence and SE-bound authorization.
+
+### 6. Extrinsic Authorization
+
+The Interstellar runtime verifies:
+
+- The SE signature against the user’s attested SE key
+- The correctness of the entered validation code
+
+If valid:
+
+- The `AUTH-RSP` extrinsic succeeds
+- A cryptographic approval is triggered in the runtime
+
+The original transaction or action is then **signed** and either returned to the initiator or **broadcast to the blockchain** directly.
+
+---
 
 ## Flow Diagram
 
 ![Transaction Validation](/img/TxVal.png)
 
 :::note
-The `AUTH-REQ` extrinsic can be submitted either by the mobile app (via the mobile SDK) or alternatively by a DApp with unsigned extrinsic. For the sake of clarity in the diagram, it is represented here as being sent via a DApp.
+The `AUTH-REQ` extrinsic may be submitted by the **mobile app** (via the SDK) or by an external **DApp** as an unsigned transaction. For clarity, the diagram shows the DApp submitting the extrinsic.
 :::
+
+The `AUTH-REQ` extrinsic carries the transaction or action payload to be signed or executed. Upon user validation, Interstellar signs it internally and may either return the signature to the caller or submit it directly using its embedded blockchain client.
+
+:::info
+TAVP will be fully exposed through the **mobile SDK** and API endpoints in the next milestone phase, enabling seamless integration for wallet providers and dApps.
+:::
+
 
 ## Security and Compliance
 
@@ -73,5 +103,5 @@ The `AUTH-REQ` extrinsic can be submitted either by the mobile app (via the mobi
 
 ---
 
-TTVP ensures that Interstellar users retain full control over transaction authorization, using a privacy-preserving flow that is verifiable, decentralized, and resistant to device-level compromise.
+TAVP ensures that Interstellar users retain full control over transaction or sensitive action authorization, using a privacy-preserving flow that is verifiable, decentralized, and resistant to device-level compromise.
 

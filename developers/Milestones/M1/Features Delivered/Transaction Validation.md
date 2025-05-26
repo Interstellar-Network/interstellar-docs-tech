@@ -1,5 +1,5 @@
 ---
-sidebar_label: 'Transaction Validation'
+sidebar_label: 'Action/Transaction Validation'
 sidebar_position: 3
 ---
 
