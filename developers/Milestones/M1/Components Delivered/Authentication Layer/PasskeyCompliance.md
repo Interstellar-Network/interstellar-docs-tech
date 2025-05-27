@@ -1,6 +1,6 @@
 ---
 sidebar_label: 'Passkey-Compatible Authentication'
-sidebar_position: 0
+sidebar_position: 4
 ---
 
 # Passkey-Compatible Authentication
