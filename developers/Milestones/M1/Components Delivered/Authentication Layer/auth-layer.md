@@ -1,5 +1,5 @@
 ---
-sidebar_label: 'Authentication Layer'
+sidebar_label: 'Overview'
 sidebar_position: 0
 ---
 

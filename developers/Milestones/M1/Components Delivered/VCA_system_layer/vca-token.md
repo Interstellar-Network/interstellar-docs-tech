@@ -18,8 +18,8 @@ Unlike traditional signature schemes or passcode validation logic, a VCA Token e
 
 ## Use Cases
 
-### Transaction Validation (TTVP)
-Used in the **Trusted Transaction Validation Protocol**, the VCA Token presents a transaction or sensitive action message associated with a randomized keypad for the user to enter a short code. The input is evaluated securely and signed via SE.
+### Action and Transaction Validation (TAVP)
+Used in the **Trusted Action Validation Protocol**, the VCA Token presents a transaction or sensitive action message associated with a randomized keypad for the user to enter a short code. The input is evaluated securely and signed via SE.
 
 ### Recovery File
 Used as a **secure file for recovery**, the VCA Token is stored in the cloud or locally. When executed during a recovery flow, it confirms user intent and provides a proof of interaction, without ever exposing the recovery secret.
@@ -42,7 +42,7 @@ Used as a **secure file for recovery**, the VCA Token is stored in the cloud or 
    - Output is signed using SE-derived entropy
 
 5. **Verified On-Chain**
-   - The result is submitted to the runtime using an `AUTH` or recovery extrinsic
+   - The result is submitted to the runtime using  `AUTH` or recovery extrinsics
    - The node verifies both the **fingerprint** and the **SE-bound signature**
 
 ## Execution Integrity
