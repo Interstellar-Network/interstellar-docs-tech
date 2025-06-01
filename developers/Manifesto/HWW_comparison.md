@@ -114,4 +114,3 @@ While hardware and airgap wallets have served the crypto community well, they do
 
 As attacks shift from stealing keys to stealing *intent*, Interstellar offers the layer that today’s wallets lack — and that tomorrow’s wallets will require.
 
-Explore the [Manifesto](../manifesto) and [Architecture](../architecture) to learn more.
