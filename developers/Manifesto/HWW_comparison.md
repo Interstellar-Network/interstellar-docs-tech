@@ -41,7 +41,7 @@ In Feb 2025, a high-profile exploit targeted users of **Gnosis Safe multisigs** 
 * Exploit **poor UX visibility on Ledger's limited display**
 * Trigger approvals that appeared legitimate but were in fact malicious
 
-**Reference**: The attack has been analyzed in depth by multiple technical researchers including BlockSec and SlowMist. We recommend reviewing credible write-ups such as the [SlowMist Labs 2024 Q4 Threat Report](https://slowmist.medium.com/bybits-1-5-billion-theft-unveiled-safe-wallet-front-end-code-tampered-84b78f0fa9c2).
+**Reference**: The attack has been analyzed in depth by multiple technical researchers including BlockSec and SlowMist. We recommend reviewing credible write-ups such as the [SlowMist Labs Bybits Exploit Report](https://slowmist.medium.com/bybits-1-5-billion-theft-unveiled-safe-wallet-front-end-code-tampered-84b78f0fa9c2).
 
 > **Key lesson:** Even with trusted hardware, the weakest link remains **the perception and approval interface** — not the cryptographic key.
 
