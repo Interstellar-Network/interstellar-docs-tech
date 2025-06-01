@@ -33,9 +33,9 @@ This document compares Interstellar’s Guardian Layer architecture to these tra
 
 ---
 
-## Real-World Example: Bybit + Safe + Ledger Exploit (Late 2024)
+## Real-World Example: Bybit + Safe + Ledger Exploit (Feb 2025)
 
-In late 2024, a high-profile exploit targeted users of **Gnosis Safe multisigs** and **Ledger hardware wallets** within the Bybit ecosystem. Despite leveraging secure hardware and multisig design, attackers were able to:
+In Feb 2025, a high-profile exploit targeted users of **Gnosis Safe multisigs** and **Ledger hardware wallets** within the Bybit ecosystem. Despite leveraging secure hardware and multisig design, attackers were able to:
 
 * Manipulate dApp frontend logic to **misrepresent transaction intent**
 * Exploit **poor UX visibility on Ledger's limited display**
