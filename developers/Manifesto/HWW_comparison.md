@@ -24,7 +24,7 @@ This document compares Interstellar’s Guardian Layer architecture to these tra
 | **Supply Chain Risk**          | Requires trusted shipping + firmware integrity | Requires secure offline setup            | Uses existing mobile; avoids external hardware; TEE + SE integrity            |
 | **UI/UX Clarity**              | Tiny screen, limited messages; easy to mislead | QR shows raw data; moderately clear      | Full-screen visual cryptographic display; cognitive validation                |
 | **Approval Attack Resistance** | Susceptible to spoofed UI or dApp manipulation | Less exposed but requires user vigilance | Validates visual intent cryptographically; protected from spoofing            |
-| **Recovery Model**             | Seed phrase (phishable, misstored)             | Manual recovery with airgapped QR flow   | No exported secret; deterministic recovery from behavioral profile            |
+| **Recovery Model**             | Seed phrase (phishable, misstored)             | Manual recovery with airgapped QR flow   | No exported secret; deterministic recovery from secure file backup and NFC items            |
 | **Device Cost & Distribution** | \$80–\$300 per unit + logistics                | Requires 2 secure smartphones            | Zero hardware cost; mobile-native SDK                                         |
 | **Security Cost Efficiency**   | High per-user hardware cost                    | High cost to ensure device integrity     | Scales via existing hardware + secure software stack                          |
 | **Transaction Validation UX**  | Confusing for complex multisigs                | Clearer but still manual                 | Transaction message rendered per-session via garbled circuits                 |
