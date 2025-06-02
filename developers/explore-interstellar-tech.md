@@ -52,7 +52,7 @@ Explore the cryptographic and architectural innovations behind the milestone del
 
 Understand how Interstellar's system is designed to withstand real-world threats:
 
-- **[Security & Adversarial Model](https://interstellar-docs-tech.pages.dev/docs/category/security)** — Learn about the threat model we protect against, including phishing, spoofing, malware injection, and AI-driven attacks — and how our system architecture mitigates them by design.
+- **[Security & Adversarial Model](https://interstellar-docs-tech.pages.dev/docs/category/security)** — Learn about the threat model we protect against, including phishing, spoofing, malware injection, and AI-driven attacks — and how our system architecture mitigates them by design. As part of our adversarial and defense-in-depth approach, we map key components of the Interstellar architecture to known attacker tactics and techniques, particularly those documented in the [MITRE ATT&CK Mobile](https://attack.mitre.org/matrices/mobile/) and [Enterprise](https://attack.mitre.org/matrices/enterprise/) matrices.
 
 ---
 
