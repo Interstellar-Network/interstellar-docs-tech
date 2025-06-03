@@ -19,7 +19,7 @@ Rather than storing full secrets or executable code on-chain, the registry holds
 
 ## Registration Flow
 
-1. **Token Generation (Off-chain)**  
+1. **Token Generation**  
    A secure file is created, encapsulating a garbled circuit logic flow. This file is typically stored in the cloud or exported to a backup medium.
 
 2. **Hashing and Metadata Extraction**  

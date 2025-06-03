@@ -1,6 +1,6 @@
 ---
 sidebar_label: 'Summary'
-sidebar_position: 0
+sidebar_position: 1
 ---
 
 # Summary
@@ -26,7 +26,8 @@ The underlying technical components are implemented as **TEE-executed Substrate 
 
 - Pallets for managing **mobile proxy accounts**, **Pure Proxy delegation**, **recovery item registration**, and **threshold logic**
 - Runtime integration of SE-based attestation, key management, and validation flow
-- The `MOB-REG` and `AUTH` extrinsics, enabling verifiable registration and action confirmation
+- The `MOB-REG` and `AUTH` extrinsics, enabling verifiable registration and action confirmation through **Trusted Action Validation Protocol (TAVP)**
+- **VCA system** to generate **VCA Token** for (TAVP) and recovery
 - Reference integration via an Android application
 
 ## Demo Tutorial

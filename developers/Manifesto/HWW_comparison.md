@@ -114,3 +114,11 @@ While hardware and airgap wallets have served the crypto community well, they do
 
 As attacks shift from stealing keys to stealing *intent*, Interstellar offers the layer that today’s wallets lack — and that tomorrow’s wallets will require.
 
+
+:::tip Skip the Docs?
+
+Ready to see Interstellar in action? Jump to the [Shortcut Path for Reviewers](../Milestones/M1/quick-start-evaluator.md) to evaluate Milestone 1 directly — no need to read the full documentation upfront.
+
+:::
+
+
