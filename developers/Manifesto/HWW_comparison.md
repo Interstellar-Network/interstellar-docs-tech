@@ -27,7 +27,9 @@ This document compares Interstellar’s Guardian Layer architecture to these tra
 | **Recovery Model**             | Seed phrase (phishable, misstored)             | Manual recovery with airgapped QR flow   | No exported secret; deterministic recovery from secure file backup and NFC items            |
 | **Device Cost & Distribution** | \$80–\$300 per unit + logistics                | Requires 2 secure smartphones            | Zero hardware cost; mobile-native SDK                                         |
 | **Security Cost Efficiency**   | High per-user hardware cost                    | High cost to ensure device integrity     | Scales via existing hardware + secure software stack                          |
-| **Transaction Validation UX**  | Confusing for complex multisigs                | Clearer but still manual                 | Transaction message rendered per-session via garbled circuits                 |
+| **Transaction Validation UX**  | Confusing for complex multisigs                | Clearer but still manual                 | Transaction message rendered per-session via garbled circuits |
+| **Multisig UX Consistency**      | Each signer sees reduced info; no shared rendering | Separate device views; no enforced consistency | All signers see the same message rendered via **device-specific garbled circuits** — ensuring shared, validated intent |
+| **Legacy Device Integration**    | Native signer only                | Native signer only               | Compatible as signer via **mobile-mediated interface** (e.g. Ledger/Vault via Interstellar UX layer) |         
 | **Multisig Compatibility**     | Used in Ledger + Safe stacks                   | Used in Substrate multisig               | Flexible signer model: e.g., 2 Interstellar + 1 NFC tag + 1 SE card + 1 Vault |
 | **Attack Vectors Covered**     | Private key extraction, MITM                   | Remote signing compromise, app spoofing  | Adds defense against perception fraud, UI spoofing, adversarial AI            |
 
@@ -52,23 +54,31 @@ In Feb 2025, a high-profile exploit targeted users of **Gnosis Safe multisigs** 
 * The system validates the *intent*, not just the cryptographic validity of the transaction
 
 ---
-
 ## Multisig Integration: From Legacy Devices to Guardian Nodes
 
-Interstellar is designed to support **multi-party approval flows** that include:
+Interstellar is designed to support **multi-party approval flows** that include both advanced mobile-native validation and legacy signer compatibility.
 
-* Interstellar mobile devices with behavioral circuit validation
-* **NFC tags or smartcards** for physical-local validation
-* Ledger or Polkadot Vault devices as **ecosystem-specific signers**
+In an Interstellar-based multisig flow, **all participants receive the same transaction message**, but each message is **rendered via a distinct garbled circuit** bound to their device. This ensures a consistent, human-verifiable intent is shared across signers — while preserving cryptographic isolation and preventing spoofing.
 
-> Example: A multisig setup could include:
+This design addresses a critical weakness in traditional multisig setups, where signers often operate in isolation, with inconsistent or ambiguous transaction displays (e.g., as exploited in the Bybit + Safe + Ledger attack).
+
+Interstellar also allows legacy signers such as **Ledger** or **Polkadot Vault** to be used via the mobile interface, benefiting from the visual cryptographic approval layer — even if the signing is completed externally.
+> 📦 **Example Multisig Configuration (5 Signers)**  
+> All participants receive the same transaction message rendered via **device-specific garbled circuits**, ensuring consistent perception and validated intent.
 >
-> * 2 Interstellar mobile wallets
-> * 1 NFC tag (bound to a trusted device)
-> * 1 SE-enabled smartcard
-> * 1 Polkadot Vault signer (ecosystem-specific cold signer)
+> 1. **Mobile Wallet A** — Interstellar mobile-only (no additional hardware)  
+> 2. **Mobile Wallet B** — Interstellar mobile-only (no additional hardware)  
+> 3. **Mobile Wallet C** — Bound to **NFC tag** for physical-local validation  
+> 4. **Mobile Wallet D** — Bound to **SE-enabled smartcard** (Interstellar-trusted)  
+> 5. **Mobile Wallet E** — Bound to **Polkadot Vault signer** (via Interstellar-trusted interface)
 
-This hybrid approach balances **ecosystem compatibility** with **user-centric security**, ensuring both the *crypto* and the *cognitive* layers are secure.
+
+
+![multisig set up](/img/multisig_set_up.png)
+
+
+This hybrid approach balances **ecosystem compatibility** with **user-centric security**, ensuring that both the *cryptographic layer* and the *human perception layer* are secured by design.
+
 
 ---
 
