@@ -35,10 +35,10 @@ We are building the **first decentralized cryptographic protection layer** aroun
 * A **sensory firewall** that invalidates adversarial stimuli
 * A **zero-trust validation system** that proves *you are acting freely*
 
-This Guardian Layer is not theoretical — it is already partially implemented in our architecture. While the vision includes **future multimodal protections** (visual, audio, cognitive) possibly supported by intelligent co-agents, Interstellar’s foundation is already in place:
+This Guardian Layer is not theoretical — it is already partially implemented in our decentralized architecture. While the vision includes **future multimodal protections** (visual, audio, cognitive) possibly supported by intelligent co-agents, Interstellar’s foundation is already in place:
 
-* Trusted Execution Environments (TEE) for secure processing (MPC planned for the mainet)
-* Garbled circuits for cryptographic rendering of information (only visual)
+* Trusted Execution Environments (TEE) for secure processing (MPC planned for the mainnet)
+* Garbled circuits for cryptographic rendering of information (only visual for now)
 * Stateless, privacy-preserving behavioral filters (work in progress)
 
 These layers form the **foundational components of the Guardian Layer**. 
