@@ -37,11 +37,11 @@ We are building the **first decentralized cryptographic protection layer** aroun
 
 This Guardian Layer is not theoretical — it is already partially implemented in our architecture. While the vision includes **future multimodal protections** (visual, audio, cognitive) possibly supported by intelligent co-agents, Interstellar’s foundation is already in place:
 
-* Trusted Execution Environments (TEE) for secure processing
-* Garbled circuits for cryptographic rendering of information
-* Stateless, privacy-preserving behavioral filters
+* Trusted Execution Environments (TEE) for secure processing (MPC planned for the mainet)
+* Garbled circuits for cryptographic rendering of information (only visual)
+* Stateless, privacy-preserving behavioral filters (work in progress)
 
-These layers are the **primitives of the Guardian Layer**. While not part of the current testnet implementation, they are positioned to support future mainnet releases — pending funding, adoption, and ecosystem readiness.
+These layers form the **foundational components of the Guardian Layer**. 
 
 ---
 
@@ -71,7 +71,7 @@ We believe in:
 * **Effortless onboarding** without passwords, codes, or PINs
 * **User-controlled security** anchored in hardware and cryptography
 * **Decentralized trust** attested on-chain
-* **Resilience against adversarial AI** that targets the human layer
+* **Resilience against adversarial AI and malware** that targets the human layer
 
 Interstellar makes **humans the root of trust** — not the weak link.
 
@@ -84,10 +84,13 @@ This manifesto is a **living document** — a snapshot of a vision that’s evol
 We invite:
 
 * Strategic partners in finance, identity, and mobile
-* Deeptech funders and institutional supporters (BPI, EU Horizon, NGI)
+* Deeptech funders and institutional supporters (BPI, EU Horizon)
 * Researchers and developers working on secure human-AI interaction
 
-This vision is **not part of our testnet milestone**, but represents a direction we are actively shaping — one that may evolve into production during future phases depending on adoption and support.
+
+This vision builds on the foundation laid by our current testnet milestones, which establishes the core decentralized infrastructure — including decentralized secure execution, authentication and validation flows — that leverage the unique properties of human cognition and will support the evolution toward this broader Guardian Layer architecture.
+
+
 
 Let’s build a trust layer that stands not just against hackers — but against *cognitive manipulation*.
 
