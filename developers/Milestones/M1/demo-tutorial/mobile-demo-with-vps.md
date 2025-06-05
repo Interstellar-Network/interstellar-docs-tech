@@ -17,7 +17,7 @@ The demo app is already wired to connect to the hosted testnet — no local conf
 - The VPS is publicly reachable and already runs:
   - Interstellar node with Integritee pallets
   - TEE enclave and IPFS backend
-- Internet connection and browser access to [Polkadot.js Apps](https://polkadot.js.org/apps/)
+
 
 ---
 
@@ -73,6 +73,10 @@ Initiate recovery by tapping tag or selecting cloud backup
 ### Step 4: Transaction Validation
 
 Send a test transaction to a contact
+
+
+<img src="/img/Send_Currency_Demo.gif" alt="wallet menu"  width="300"/>
+
 
 Wait for the validation screen
 

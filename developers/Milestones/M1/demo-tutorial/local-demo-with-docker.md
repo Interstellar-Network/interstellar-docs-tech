@@ -73,7 +73,7 @@ You can verify the runtime is ready using [Polkadot.js](https://polkadot.js.org/
 The Android app is preconfigured to connect to `localhost`
 To allow the Android app to connect to your local blockchain and IPFS stack:
 
-### Step 1: `adb reverse` (on the host system running the emulator or device)
+### Option 1: `adb reverse` (on the host system running the emulator or device)
 
 ```bash
 adb reverse tcp:9990 tcp:9990   # Substrate WS
@@ -85,7 +85,17 @@ adb reverse tcp:5001 tcp:5001   # IPFS
 Make sure ADB is properly configured and the emulator or device is detected (adb devices)
 :::
 
-> This works for both emulators and real devices connected via USB
+> This works for both emulators and real devices connected via USB or WiFi
+
+### Option 2: `ssh` port forwarding (on the host system/VM running blockchain and IPFS)
+
+An exanple when blockchain is running on WSL2 and emulator or device is running on windows connected with adb through through USB or WiFi:
+```bash
+export WSL_HOST_IP="$(tail -1 /etc/resolv.conf | cut -d' ' -f2)"
+```
+```bash
+ssh -N -R 9990:localhost:9990 -R 5001:localhost:5001 -R 2090:localhost:2090 [windows_user_name]@$WSL_HOST_IP
+```
 
 ## 4. Run the Android App Demo
 

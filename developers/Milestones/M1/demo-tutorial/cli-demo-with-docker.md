@@ -5,11 +5,13 @@ sidebar_position: 2
 
 # CLI-Based Demo with Local Docker
 
-This guide allows you to test the backend components of Interstellar’s secure Web3 account system directly from your terminal, without relying on the Android app. It runs the full stack locally using Docker or Podman, and walks through account registration and transaction validation using a CLI script.
+This guide allows you to test the backend components of Interstellar’s secure Web3 account system directly from your terminal, without relying on the Android app. It runs the full stack locally using Docker or Podman, and walks through account registration, recovery and transaction validation using a CLI script.
+
 
 :::info
-This method is ideal for reviewers who want to verify Milestone 1 logic without using a mobile device
+This method is ideal for reviewers who either do not have access to an Android device or emulator, or who want to explore the Milestone 1 runtime logic in greater depth — including log inspection and backend validation — after testing the mobile demo via the hosted VPS.
 :::
+
 
 ---
 
@@ -38,9 +40,9 @@ sudo apt-get install jq curl wget
 mkdir interstellar_demo && cd interstellar_demo
 curl -o docker-compose.yml https://raw.githubusercontent.com/Interstellar-Network/Interstellar-Book/docker-compose/docker-compose.yml
 curl -o docker-ipfs-init.sh https://raw.githubusercontent.com/Interstellar-Network/Interstellar-Book/docker-compose/docker-ipfs-init.sh
+chmod +x docker-ipfs-init.sh
 ```
-
-Ensure both files are in the same directory:
+Ensure both files `docker-compose.yml` and `docker-ipfs-init.sh` are in the same directory:
 
 ```bash
 ls -al
@@ -72,7 +74,6 @@ Wait until you see repeated log lines like:
 
 You can inspect chain state via a browser UI:
 
-- [Substrate Frontend Template](https://substrate-developer-hub.github.io/substrate-front-end-template/?rpc=ws://localhost:9990)
 - [Polkadot.js](https://polkadot.js.org/apps/?rpc=ws%3A%2F%2Flocalhost%3A9990#/chainstate)
 
 :::note

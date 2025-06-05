@@ -6,6 +6,13 @@ sidebar_position: 0
 # Demo Tutorial Overview
 
 This section guides you through testing Milestone 1 of Interstellar’s secure Web3 account features. You can interact with the system using three different paths depending on your technical environment and available hardware.
+:::tip Suggested Reviewer Flow
+
+Even for technically experienced reviewers, we recommend starting with the **Android app + hosted testnet** path to evaluate the user-facing features quickly.
+
+You can then run the **CLI + local Docker** setup to inspect runtime behavior, validate trusted extrinsics, and view node logs — without the additional complexity of setting up the full Android + local node stack via ADB.
+
+:::
 
 ---
 
@@ -23,7 +30,8 @@ The Android app connects directly to the hosted testnet. No manual configuration
 
 ---
 
-## 🧪 Alternative: CLI Demo with Local Docker
+## 🧪 Alternative/Complementary: CLI Demo with Local Docker
+_(Use without a mobile device or as a runtime validation companion.)_
 
 This method runs the entire stack locally using Docker or Podman, and allows you to test the core runtime flows via CLI scripts — including circuit initialization, input validation, and recovery logic.
 
