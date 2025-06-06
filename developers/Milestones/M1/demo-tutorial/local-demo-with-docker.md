@@ -102,7 +102,7 @@ ssh -N -R 9990:localhost:9990 -R 5001:localhost:5001 -R 2090:localhost:2090 [win
 ### Step 1: Connect & Onboard
 - Launch the app
 - Register a new mobile proxy account
-- Validate biometric & SE-attested registration
+- Validate biometric & SE-based registration
 
 ### Step 2: Test Recovery and Transaction Validation
 - Register a recovery item (e.g., NFC tag or secure file)

@@ -3,9 +3,9 @@ sidebar_label: 'Advanced CLI Demo'
 sidebar_position: 3
 ---
 
-# Advanced CLI Demo (if requested)
+# Advanced CLI Demo (for future use)
 
-This guide describes how to interact with the Interstellar runtime at a low level using CLI tools, enabling direct testing of **garbled circuit evaluation**, **AUTH extrinsics**, and **TEE enclave responses**. It is designed for advanced users and technical reviewers familiar with Substrate and trusted execution environments.
+This guide describes how to interact with the Interstellar runtime at a low level using CLI tools, enabling direct testing of **garbled circuit evaluation**, **AUTH extrinsics**, and **TEE enclave responses**. It is designed for advanced users and technical reviewers familiar with Substrate, trusted execution environments and logical circuit design with VHDL tools.
 
 ---
 

@@ -23,6 +23,7 @@ The resulting mobile account acts as a delegated signer for the user’s root id
 
 2. **Attestation Construction**  
    The SE returns a signed attestation proof certifying the key’s origin and binding it to the hardware enclave.
+   > (work in progress) will be fully implemented in following milestones
 
 3. **Registration via `MOB-REG` Extrinsic**  
    The attestation, along with the public key, is submitted on-chain via a `MOB-REG` transaction, which:

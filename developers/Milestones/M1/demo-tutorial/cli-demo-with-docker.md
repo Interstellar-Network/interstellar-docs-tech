@@ -75,6 +75,7 @@ Wait until you see repeated log lines like:
 You can inspect chain state via a browser UI:
 
 - [Polkadot.js](https://polkadot.js.org/apps/?rpc=ws%3A%2F%2Flocalhost%3A9990#/chainstate)
+- Or your prefered Substrate front end UI
 
 :::note
 When using WSL, **use `localhost`**, not `127.0.0.1`, or the port forwarding may fail.
@@ -103,6 +104,7 @@ Calling extrinsic...
 ```
 
 Wait ~45–60 seconds, then re-run the command.
+>or check the front-end: Query for `DisplaySkcdValue`
 
 You should eventually see a successful message:
 ```
@@ -157,3 +159,9 @@ This matches the visual logic used in the Android app.
 
 
 - **You must enter** `8 3` **when prompted to validate**
+  
+
+:::info
+If you’ve jumped directly into evaluation without first reading the documentation, we recommend reviewing the [**Milestone 1 documentation**](/Milestones/M1/Summary.md). It provides essential context on the architecture, backend logic, and trusted execution flows implemented in Milestone 1.
+:::
+
