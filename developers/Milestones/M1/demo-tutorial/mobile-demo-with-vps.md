@@ -110,7 +110,7 @@ In the future, we plan to introduce a **trusted beneficiary** feature. This will
 :::info
 Want to better understand the technology powering this experience?
 
-📘 Explore the [Interstellar Technology Overview](https://interstellar-docs-tech.pages.dev/docs/category/about-deep-tech) to learn how Trusted Execution Environments, Secure Elements, and Visual Cryptographic Authentication (VCA) work together to secure your account — without seed phrases.
+📘 Explore the [**Interstellar Technology Overview**](https://interstellar-docs-tech.pages.dev/docs/category/about-deep-tech) to learn how Trusted Execution Environments, Secure Elements, and Visual Cryptographic Authentication (VCA) work together to secure your account — without seed phrases.
 :::
 
 
