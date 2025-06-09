@@ -1,3 +1,21 @@
+import React, { useEffect } from 'react';
+import { useHistory } from '@docusaurus/router';
+
+export default function Home() {
+  const history = useHistory();
+
+  useEffect(() => {
+    history.push('/developers/intro'); // Redirect to /docs
+  }, []);
+
+  return null;
+}
+
+
+////To Activated a password protected page, uncomment the following code and comment out the above code
+
+/**  
+
 import React, { useState } from 'react';
 import { useHistory } from '@docusaurus/router';
 
@@ -44,4 +62,4 @@ export default function DevelopersGate() {
       {error && <div style={{ color: 'red', marginTop: 16 }}>{error}</div>}
     </div>
   );
-}
+}*/

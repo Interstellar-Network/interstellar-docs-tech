@@ -11,7 +11,7 @@ export default function Home() {
   return null;
 }
 
-{/**
+/*{/**
 import Layout from "@theme/Layout";
 import Link from "@docusaurus/Link";
 import { Card, CardContent } from "@site/src/components/ui/card";
@@ -92,4 +92,4 @@ export default function DocumentationHub() {
       </main>
     </Layout>
   );
-} **/}
+} **/
