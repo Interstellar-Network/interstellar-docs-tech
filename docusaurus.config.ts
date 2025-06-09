@@ -10,7 +10,8 @@ const config: Config = {
   favicon: 'img/favicon.ico',
 
   // Set the production url of your site here
-  url: 'https://docs.interstellar.network',
+  //url: 'https://docs.interstellar.network', // future url when set-up
+  url: 'https://interstellar-docs-tech.pages.dev',
   // Set the /<baseUrl>/ pathname under which your site is served
   // For GitHub pages deployment, it is often '/<projectName>/'
   baseUrl: '/',
