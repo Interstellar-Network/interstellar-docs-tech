@@ -41,7 +41,8 @@ const config: Config = {
         docs: {
           //routeBasePath: '/', // This makes /docs your homepage
           //sidebarPath: require.resolve('./sidebars.ts'),
-
+          remarkPlugins: [require('remark-math')],
+          rehypePlugins: [require('rehype-katex')],
 
           sidebarPath: require.resolve('./sidebars.ts'),
           // Please change this to your repo.
@@ -65,17 +66,38 @@ const config: Config = {
           onUntruncatedBlogPosts: 'warn',
         },*/
         //links: { },
+
+       
+
+
+
+
         theme: {
           customCss: './src/css/custom.css',
         },
+        
+
+
+
         sitemap: {
           changefreq: 'weekly',
           priority: 0.5,
           filename: 'sitemap.xml',
         },
 
+
       } satisfies Preset.Options,
     ],
+  ],
+
+  stylesheets: [
+    {
+      href: 'https://cdn.jsdelivr.net/npm/katex@0.16.4/dist/katex.min.css',
+      type: 'text/css',
+      integrity:
+        'sha384-vZTG03m2ucqNcWgF9ZpRrZJ4Kmz1VKrRR/NqNd8KTxYz9fpE2E4JfP9ylX+3wJAn',
+      crossorigin: 'anonymous',
+    },
   ],
 
   plugins: [
@@ -126,10 +148,6 @@ const config: Config = {
           label: 'Documentation Hub',
         },
 
-        
-      
-
-        
        /*{to: '/blog', label: 'Blog', position: 'left'},*/
        /*{to: 'links', label: 'Ressources', position: 'left'},*/
 
