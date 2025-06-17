@@ -123,18 +123,7 @@ After re-running the script, you’ll be prompted to input digits:
 Inputs to use? [space separated list of int; eg 0 1 2 3]
 ```
 
-- If you enter an invalid code:
-  ```
-  Trusted call ... is Invalid
-  ```
-- If correct:
-  ```
-  Trusted call ... is InSidechainBlock(...)
-  ```
-
----
-
-## How to Find the Correct Code for the node
+### How to Find the Correct Code for the node
 
 When the script pauses for input, check logs like this:
 
@@ -160,6 +149,25 @@ This matches the visual logic used in the Android app.
 
 - **You must enter** `8 3` **when prompted to validate**
   
+## 4 Check if the code is correct
+
+**Go to the integritee service logs again and look for:** 
+
+
+- If you enter an invalid code:
+  ```
+  [tx-validation] TxFail
+  ```
+- If correct:
+  ```
+  [tx-validation] TxPass
+  ```
+
+---
+
+
+
+
 
 :::info
 If you’ve jumped directly into evaluation without first reading the documentation, we recommend reviewing the [**Milestone 1 documentation**](/Milestones/M1/Summary.md). It provides essential context on the architecture, backend logic, and trusted execution flows implemented in Milestone 1.
