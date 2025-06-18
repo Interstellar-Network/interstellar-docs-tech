@@ -38,8 +38,8 @@ sudo apt-get install jq curl wget
 
 ```bash
 mkdir interstellar_demo && cd interstellar_demo
-curl -o docker-compose.yml https://github.com/Interstellar-Network/containers/blob/add-compose/docker-compose.yml
-curl -o docker-ipfs-init.sh https://github.com/Interstellar-Network/containers/blob/add-compose/docker-ipfs-init.sh
+curl -L -o docker-compose.yml https://raw.githubusercontent.com/Interstellar-Network/containers/refs/heads/add-compose/docker-compose.yml
+curl -L -o docker-ipfs-init.sh https://raw.githubusercontent.com/Interstellar-Network/containers/refs/heads/add-compose/docker-ipfs-init.sh
 chmod +x docker-ipfs-init.sh
 ```
 Ensure both files `docker-compose.yml` and `docker-ipfs-init.sh` are in the same directory:

@@ -28,8 +28,8 @@ This setup enables full offline testing without relying on a hosted VPS.
 mkdir interstellar_m1_demo && cd interstellar_m1_demo
 
 # Step 2: Download the stack config
-curl -O https://raw.githubusercontent.com/Interstellar-Network/Interstellar-Book/docker-compose/docker-compose.yml
-curl -O https://raw.githubusercontent.com/Interstellar-Network/Interstellar-Book/docker-compose/docker-ipfs-init.sh
+curl -L -o docker-compose.yml https://raw.githubusercontent.com/Interstellar-Network/containers/refs/heads/add-compose/docker-compose.yml
+curl -L -o docker-ipfs-init.sh https://raw.githubusercontent.com/Interstellar-Network/containers/refs/heads/add-compose/docker-ipfs-init.sh
 chmod +x docker-ipfs-init.sh
 
 # Step 3: Start Docker (if needed)
@@ -40,11 +40,11 @@ sudo docker compose down --timeout 1 && sudo docker compose up --force-recreate
 ```
 
 Wait for logs to show messages like:
-
-```text
-[ocw-circuits] Hello from pallet-ocw-circuits.
-Idle (0 peers), best: #X, finalized #Y...
 ```
+[ocw-circuits] Hello from pallet-ocw-circuits.
+🛌 Idle (0 peers), best: #6 (...), finalized #3 (...), ⬇ 0 ⬆ 0
+```
+
 
 You can verify the runtime is ready using [Polkadot.js](https://polkadot.js.org/apps/?rpc=ws://localhost:9990)
 
@@ -54,7 +54,11 @@ You can verify the runtime is ready using [Polkadot.js](https://polkadot.js.org/
 
 ### Option 1: Physical Device
 
-1. Download the APK from the official [Interstellar GitHub Release](https://github.com/Interstellar-Network/wallet-app/releases/tag/milestone1) (specific APK preconfigured to connect to `localhost`)
+1. Download the APK from the official [Interstellar GitHub Release](https://github.com/Interstellar-Network/containers/releases/tag/dev1) (specific APK preconfigured to connect to `localhost`)
+- `androidApp-arm64-release.apk` for Android devices or emulator on Mac M1/M2/M3
+- `androidApp-x86_64-release.apk` for emulators on Windows or Mac intel
+
+
 2. Transfer it to your phone or open it via QR/link
 3. Allow app installation from external sources
 4. Install the APK
