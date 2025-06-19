@@ -77,7 +77,7 @@ You can verify the runtime is ready using [Polkadot.js](https://polkadot.js.org/
 The Android app is preconfigured to connect to `localhost`
 To allow the Android app to connect to your local blockchain and IPFS stack:
 
-### Option 1: `adb reverse` (on the host system running the emulator or device)
+### setup 1: `adb reverse` (on the host system running the emulator or device)
 
 If Android Studio is already installed, you can enable adb in your terminal by adding it to your PATH with the following command (adjust the path if needed):
 
@@ -87,7 +87,7 @@ $env:Path += ";$env:LOCALAPPDATA\Android\Sdk\platform-tools"
 >This will work for the current PowerShell session. To make it permanent, you can update your system environment variables.
 
 ```bash
-adb reverse tcp:9990 tcp:9990   # Substrate WS
+adb reverse tcp:9990 tcp:9944   # Substrate WS
 adb reverse tcp:2090 tcp:2090   # Integritee node port
 adb reverse tcp:5001 tcp:5001   # IPFS
 
@@ -99,14 +99,14 @@ Make sure `adb` is properly configured and the emulator or device is detected (`
 
 > This works for both emulators and real devices connected via USB or WiFi
 
-### Option 2: `ssh` port forwarding (on the host system/VM running blockchain and IPFS)
-
+### Step 2 (optional): `ssh` port forwarding (on the host system/VM running blockchain and IPFS)
+In case the machine running the emulators is different from the one running the backend stack
 An exanple when blockchain is running on WSL2 and emulator or device is running on windows connected with adb through through USB or WiFi:
 ```bash
 export WSL_HOST_IP="$(tail -1 /etc/resolv.conf | cut -d' ' -f2)"
 ```
 ```bash
-ssh -N -R 9990:localhost:9990 -R 5001:localhost:5001 -R 2090:localhost:2090 [windows_user_name]@$WSL_HOST_IP
+ssh -N -R 9944:localhost:9944 -R 5001:localhost:5001 -R 2090:localhost:2090 [windows_user_name]@$WSL_HOST_IP
 ```
 
 ## 4. Run the Android App Demo
