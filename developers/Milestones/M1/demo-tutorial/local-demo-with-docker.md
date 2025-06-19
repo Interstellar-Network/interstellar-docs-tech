@@ -108,6 +108,9 @@ export WSL_HOST_IP="$(tail -1 /etc/resolv.conf | cut -d' ' -f2)"
 ```bash
 ssh -N -R 9944:localhost:9944 -R 5001:localhost:5001 -R 2090:localhost:2090 [windows_user_name]@$WSL_HOST_IP
 ```
+:::warning
+Make sure Remote Port Forwarding is enabled on the system running emulator or device
+:::
 
 ## 4. Run the Android App Demo
 
