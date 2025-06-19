@@ -88,14 +88,13 @@ $env:Path += ";$env:LOCALAPPDATA\Android\Sdk\platform-tools"
 >This will work for the current PowerShell session. To make it permanent, you can update your system environment variables.
 
 ```bash
-adb reverse tcp:9990 tcp:9944   # Substrate WS
+adb reverse tcp:9944 tcp:9944   # Substrate WS
 adb reverse tcp:2090 tcp:2090   # Integritee node port
 adb reverse tcp:5001 tcp:5001   # IPFS
 
 ```
-
 :::warning
-Make sure `adb` is properly configured and the emulator or device is detected (`adb devices`)
+Make sure `adb` is properly configured and the emulator or device is detected with `adb devices` and/or `adb reverse --list`
 :::
 
 > This works for both emulators and real devices connected via USB or WiFi
