@@ -81,6 +81,7 @@ To allow the Android app to connect to your local blockchain and IPFS stack:
 
 If Android Studio is already installed, you can enable adb in your terminal by adding it to your PATH with the following command (adjust the path if needed):
 
+Powershell example:
 ```powershell
 $env:Path += ";$env:LOCALAPPDATA\Android\Sdk\platform-tools"
 ```
@@ -99,7 +100,7 @@ Make sure `adb` is properly configured and the emulator or device is detected (`
 
 > This works for both emulators and real devices connected via USB or WiFi
 
-### Step 2 (optional): `ssh` port forwarding (on the host system/VM running blockchain and IPFS)
+### Step 2 (optional): `ssh` port forwarding (on the host system or VM running blockchain and IPFS)
 In case the machine running the emulators is different from the one running the backend stack
 An exanple when blockchain is running on WSL2 and emulator or device is running on windows connected with adb through through USB or WiFi:
 ```bash
@@ -130,7 +131,7 @@ You can inspect chain state and transactions via:
 
 ## Notes
 
-- All services run in Docker containers and use local ports `9990`, `2090`, and `5001`
+- All services run in Docker containers and use local ports `9944`, `2090`, and `5001`
 - This setup replicates the same runtime environment used in hosted testnets but fully self-contained
 - Ideal for offline testing, developer evaluation, or deeper inspection of runtime logs
 
