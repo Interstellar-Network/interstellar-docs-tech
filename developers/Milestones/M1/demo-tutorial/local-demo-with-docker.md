@@ -77,7 +77,7 @@ You can verify the runtime is ready using [Polkadot.js](https://polkadot.js.org/
 The Android app is preconfigured to connect to `localhost`
 To allow the Android app to connect to your local blockchain and IPFS stack:
 
-### setup 1: `adb reverse` (on the host system running the emulator or device)
+### Step 1: `adb reverse` (on the host system running the emulator or device)
 
 If Android Studio is already installed, you can enable adb in your terminal by adding it to your PATH with the following command (adjust the path if needed):
 
