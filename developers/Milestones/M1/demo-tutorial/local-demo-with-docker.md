@@ -66,7 +66,7 @@ You can verify the runtime is ready using [Polkadot.js](https://polkadot.js.org/
 ### Option 2: Emulator
 
 1. Install [Android Studio](https://developer.android.com/studio)
-2. Create a `Pixel 5` or equivalent emulator (`x86_64`, API 31+)
+2. Create a `Android Emulator - Medium_Phone_API36` or equivalent emulator (`x86_64`, API 31+)
 3. Launch the emulator
 4. Drag and drop the APK onto the emulator window to install
 
@@ -79,14 +79,22 @@ To allow the Android app to connect to your local blockchain and IPFS stack:
 
 ### Option 1: `adb reverse` (on the host system running the emulator or device)
 
+If Android Studio is already installed, you can enable adb in your terminal by adding it to your PATH with the following command (adjust the path if needed):
+
+```powershell
+$env:Path += ";$env:LOCALAPPDATA\Android\Sdk\platform-tools"
+```
+>This will work for the current PowerShell session. To make it permanent, you can update your system environment variables.
+
 ```bash
 adb reverse tcp:9990 tcp:9990   # Substrate WS
 adb reverse tcp:2090 tcp:2090   # Integritee node port
 adb reverse tcp:5001 tcp:5001   # IPFS
+
 ```
 
 :::warning
-Make sure ADB is properly configured and the emulator or device is detected (adb devices)
+Make sure `adb` is properly configured and the emulator or device is detected (`adb devices`)
 :::
 
 > This works for both emulators and real devices connected via USB or WiFi
