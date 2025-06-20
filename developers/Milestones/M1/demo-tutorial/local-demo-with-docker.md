@@ -85,16 +85,17 @@ Ensure that your device is configured for english language
 The Android app is preconfigured to connect to `localhost`
 To allow the Android app to connect to your local blockchain and IPFS stack:
 
-### Step 1: `adb reverse` (on the host system running the emulator or device is connected)
+### Step 1: `adb reverse` set-up (on the desktop connected to the device or running the emulator)
 
-If Android Studio is already installed, you can enable adb in your terminal by adding it to your PATH with the following command (adjust the path if needed):
+If Android Studio is already installed, you can enable adb in your terminal 
+by adding it to your PATH with the following command (adjust the path if needed):
 
-**Windows Powershell example:**
+** Add PATH on windows powershell example:**
 ```powershell
 $env:Path += ";$env:LOCALAPPDATA\Android\Sdk\platform-tools"
 ```
 >This will work for the current PowerShell session. To make it permanent, you can update your system environment variables.
-
+** adb reverse set-up**
 ```bash
 adb reverse tcp:9944 tcp:9944   # Substrate WS
 adb reverse tcp:2090 tcp:2090   # Integritee node port
@@ -107,11 +108,14 @@ Make sure `adb` is properly configured and the emulator or device is detected wi
 
 > This works for both emulators and real devices connected via USB or WiFi
 
-### Step 2 (optional): `ssh` port forwarding (on the host system or VM running blockchain stack)
+### Step 2 (optional): `ssh` port forwarding (on the system or VM running blockchain stack)
 
-If the emulator or device is running on a different network interface than the backend (e.g., the backend runs in WSL2 and the Android emulator or device is connected via USB or Wi-Fi to Windows), you may need to configure port forwarding between desktop localhost and blockchain localhost.
+If the emulator is running (or the device is connected) on a different network interface than the backend 
+(e.g., the backend runs in WSL2 and the Android emulator or device is connected 
+via USB or Wi-Fi to Windows), 
+you may need to configure port forwarding between the desktop and the blockchain.
 
-**Windows <> WSL2 example:**
+**WSL2 ---> Windows example:**
 ```bash
 export WSL_HOST_IP=$(ip route | awk '/default/ {print $3}')
 ```
@@ -119,15 +123,15 @@ export WSL_HOST_IP=$(ip route | awk '/default/ {print $3}')
 ssh -N -R 9944:localhost:9944 -R 5001:localhost:5001 -R 2090:localhost:2090 [windows_user_name]@$WSL_HOST_IP
 ```
 
-:::warning Trobleshooting: firewall potential issue (Quick Workaround)
+:::warning Troubleshooting: Firewall potential issue
 
-To avoid issues with `ssh` or `adb reverse` during this local test, you can temporarily **disable the Firewall**:
+To avoid issues with `ssh` or `adb reverse` during this local test, you can temporarily disable the Firewall:
 
-** Example on windows with powerShell (as Administrator):**
+**Example on Windows with PowerShell (as Administrator):**
 ```powershell
 Set-NetFirewallProfile -Profile Domain,Private,Public -Enabled False
 ```
-You can re-enable it later with:
+**You can re-enable it later with:**
 ```powershell
 Set-NetFirewallProfile -Profile Domain,Private,Public -Enabled True
 ```
