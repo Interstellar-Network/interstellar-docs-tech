@@ -89,7 +89,7 @@ To allow the Android app to connect to your local blockchain and IPFS stack:
 
 If Android Studio is already installed, you can enable adb in your terminal by adding it to your PATH with the following command (adjust the path if needed):
 
-Windows Powershell example:
+**Windows Powershell example:**
 ```powershell
 $env:Path += ";$env:LOCALAPPDATA\Android\Sdk\platform-tools"
 ```
