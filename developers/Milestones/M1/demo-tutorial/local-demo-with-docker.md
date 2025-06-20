@@ -107,24 +107,23 @@ Make sure `adb` is properly configured and the emulator or device is detected wi
 
 > This works for both emulators and real devices connected via USB or WiFi
 
-### Step 2 (optional): `ssh` port forwarding (on the host system or VM running blockchain and IPFS)
-In case the machine running the emulators or device is connected  is different from the one running the backend stack
-An exanple when blockchain is running on WSL2 and emulator or device is running on windows connected with adb through through USB or WiFi:
+### Step 2 (optional): `ssh` port forwarding (on the host system or VM running blockchain stack)
+
+If the emulator or device is running on a different network interface than the backend (e.g., the backend runs in WSL2 and the Android emulator or device is connected via USB or Wi-Fi to Windows), you may need to configure port forwarding between desktop localhost and blockchain localhost.
+
+**Windows <> WSL2 example:**
 ```bash
-export WSL_HOST_IP="$(tail -1 /etc/resolv.conf | cut -d' ' -f2)"
+export WSL_HOST_IP=$(ip route | awk '/default/ {print $3}')
 ```
 ```bash
 ssh -N -R 9944:localhost:9944 -R 5001:localhost:5001 -R 2090:localhost:2090 [windows_user_name]@$WSL_HOST_IP
 ```
-:::warning
-Make sure Remote Port Forwarding is enabled on the system running emulator or device
-:::
 
-:::warning Windows Firewall (Quick Workaround)
+:::warning Trobleshooting: firewall potential issue (Quick Workaround)
 
-To avoid issues with `ssh` or `adb reverse` during this local test, you can temporarily **disable the Windows Firewall**:
+To avoid issues with `ssh` or `adb reverse` during this local test, you can temporarily **disable the Firewall**:
 
-**PowerShell (as Administrator):**
+** Example on windows with powerShell (as Administrator):**
 ```powershell
 Set-NetFirewallProfile -Profile Domain,Private,Public -Enabled False
 ```
