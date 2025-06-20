@@ -105,9 +105,10 @@ adb reverse tcp:2090 tcp:2090   # Integritee node port
 adb reverse tcp:5001 tcp:5001   # IPFS
 
 ```
-:::warning
+:::warning Trobeleshooting
 Make sure `adb` is properly configured and the emulator or device is detected
- with `adb devices` and/or `adb reverse --list`
+ with `adb devices`
+ You can also check the reverse set-up with `adb reverse --list`
 :::
 
 > This works for both emulators and real devices connected via USB or WiFi
