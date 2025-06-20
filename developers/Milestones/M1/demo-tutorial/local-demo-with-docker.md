@@ -70,7 +70,7 @@ You can verify the runtime is ready using [Polkadot.js](https://polkadot.js.org/
 ### Option 2: Emulator
 
 1. Install [Android Studio](https://developer.android.com/studio)
-2. Create a `Android Emulator - Medium Phone` or equivalent emulator (`x86_64`, API 31+)
+2. Create a `Android Emulator - Medium Phone` or equivalent emulator Like `Pixel 6` (x86_64, API 31+)
 3. Launch the emulator
 4. Drag and drop the APK onto the emulator window to install
 
@@ -85,18 +85,20 @@ Ensure that your device is configured for english language
 The Android app is preconfigured to connect to `localhost`
 To allow the Android app to connect to your local blockchain and IPFS stack:
 
-### Step 1: `adb reverse` set-up (on the desktop connected to the device or running the emulator)
+### Step 1: `adb reverse` Set-Up
+> **On** the **Desktop** connected to the **Device** or running the **Emulator** 
+(Windows, Mac OS, Linux)
 
 If Android Studio is already installed, you can enable adb in your terminal 
 by adding it to your PATH with the following command (adjust the path if needed):
 
-**Add PATH on windows powershell example:**
+**Add `adb` path (windows powershell example):**
 ```powershell
 $env:Path += ";$env:LOCALAPPDATA\Android\Sdk\platform-tools"
 ```
 >This will work for the current PowerShell session. To make it permanent, you can update your system environment variables.
 
-**adb reverse set-up**
+**Set-up `adb reverse`**
 ```bash
 adb reverse tcp:9944 tcp:9944   # Substrate WS
 adb reverse tcp:2090 tcp:2090   # Integritee node port
@@ -104,12 +106,14 @@ adb reverse tcp:5001 tcp:5001   # IPFS
 
 ```
 :::warning
-Make sure `adb` is properly configured and the emulator or device is detected with `adb devices` and/or `adb reverse --list`
+Make sure `adb` is properly configured and the emulator or device is detected
+ with `adb devices` and/or `adb reverse --list`
 :::
 
 > This works for both emulators and real devices connected via USB or WiFi
 
-### Step 2 (optional): `ssh` port forwarding (on the system or VM running blockchain stack)
+### Step 2 (optional): `ssh` Port Forwarding 
+> **On** the **System** or **VM** running the **Blockchain stack** (WSL2, Remote VM)
 
 If the emulator is running (or the device is connected) on a different network interface than the backend 
 (e.g., the backend runs in WSL2 and the Android emulator or device is connected 
