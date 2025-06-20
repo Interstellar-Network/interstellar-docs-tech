@@ -95,6 +95,7 @@ by adding it to your PATH with the following command (adjust the path if needed)
 $env:Path += ";$env:LOCALAPPDATA\Android\Sdk\platform-tools"
 ```
 >This will work for the current PowerShell session. To make it permanent, you can update your system environment variables.
+
 **adb reverse set-up**
 ```bash
 adb reverse tcp:9944 tcp:9944   # Substrate WS
