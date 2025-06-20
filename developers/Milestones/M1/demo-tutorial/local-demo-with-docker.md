@@ -59,16 +59,24 @@ You can verify the runtime is ready using [Polkadot.js](https://polkadot.js.org/
 - `androidApp-x86_64-release.apk` for emulators on Windows or Mac intel
 
 
-2. Transfer it to your phone or open it via QR/link
+2. Transfer it to your phone
 3. Allow app installation from external sources
 4. Install the APK
+
+:::info if you need more details
+[How to install an APK on Android](https://www.lifewire.com/install-apk-on-android-4177185)
+:::
 
 ### Option 2: Emulator
 
 1. Install [Android Studio](https://developer.android.com/studio)
-2. Create a `Android Emulator - Medium_Phone_API36` or equivalent emulator (`x86_64`, API 31+)
+2. Create a `Android Emulator - Medium Phone` or equivalent emulator (`x86_64`, API 31+)
 3. Launch the emulator
 4. Drag and drop the APK onto the emulator window to install
+
+:::warning
+Ensure that your device is configured for english language
+:::
 
 ---
 
@@ -77,11 +85,11 @@ You can verify the runtime is ready using [Polkadot.js](https://polkadot.js.org/
 The Android app is preconfigured to connect to `localhost`
 To allow the Android app to connect to your local blockchain and IPFS stack:
 
-### Step 1: `adb reverse` (on the host system running the emulator or device)
+### Step 1: `adb reverse` (on the host system running the emulator or device is connected)
 
 If Android Studio is already installed, you can enable adb in your terminal by adding it to your PATH with the following command (adjust the path if needed):
 
-Powershell example:
+Windows Powershell example:
 ```powershell
 $env:Path += ";$env:LOCALAPPDATA\Android\Sdk\platform-tools"
 ```
@@ -100,7 +108,7 @@ Make sure `adb` is properly configured and the emulator or device is detected wi
 > This works for both emulators and real devices connected via USB or WiFi
 
 ### Step 2 (optional): `ssh` port forwarding (on the host system or VM running blockchain and IPFS)
-In case the machine running the emulators is different from the one running the backend stack
+In case the machine running the emulators or device is connected  is different from the one running the backend stack
 An exanple when blockchain is running on WSL2 and emulator or device is running on windows connected with adb through through USB or WiFi:
 ```bash
 export WSL_HOST_IP="$(tail -1 /etc/resolv.conf | cut -d' ' -f2)"
@@ -110,6 +118,20 @@ ssh -N -R 9944:localhost:9944 -R 5001:localhost:5001 -R 2090:localhost:2090 [win
 ```
 :::warning
 Make sure Remote Port Forwarding is enabled on the system running emulator or device
+:::
+
+:::warning Windows Firewall (Quick Workaround)
+
+To avoid issues with `ssh` or `adb reverse` during this local test, you can temporarily **disable the Windows Firewall**:
+
+**PowerShell (as Administrator):**
+```powershell
+Set-NetFirewallProfile -Profile Domain,Private,Public -Enabled False
+```
+You can re-enable it later with:
+```powershell
+Set-NetFirewallProfile -Profile Domain,Private,Public -Enabled True
+```
 :::
 
 ## 4. Run the Android App Demo
