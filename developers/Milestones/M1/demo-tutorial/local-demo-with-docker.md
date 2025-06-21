@@ -80,8 +80,10 @@ Ensure that your device is configured for english language
 
 1. Install [Android Studio](https://developer.android.com/studio)
 2. [Create](https://developer.android.com/studio/run/managing-avds#createavd)  a `Pixel 7` or equivalent emulator `API 31+` - `API 35` 
-3. Launch the emulator
-4. Drag and drop the APK onto the emulator window to install
+3. Edit the emulator and select an API 31+ below the default API 36
+<img src="/img/API35.png" alt="API 35"  width="250"/>
+4. Launch the emulator
+5. Drag and drop the APK onto the emulator window to install
 
 :::info API 36 Compatibility Notice
 Support for Android **API 36 is pending** due to memory alignment issues introduced with 16K page size adoption. Our low-level Rust-based garbled circuit evaluator and frame renderer currently rely on 4K alignment assumptions, leading to crashes under the new memory model. A fix is in progress
