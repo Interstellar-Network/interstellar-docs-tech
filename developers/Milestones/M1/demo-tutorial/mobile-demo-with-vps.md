@@ -1,9 +1,18 @@
 ---
 sidebar_label: 'Android App + Testnet'
-sidebar_position: 1
+sidebar_position: 3
 ---
 
-# Mobile Demo with VPS Testnet
+:::warning Demo Not Functional
+This demo tutorial is provided for reference and future use only.  
+**App download links and Docker Compose commands are currently non-functional.**  
+Do not rely on this version for testing or deployment.
+:::
+
+
+
+
+# Mobile Demo with VPS Testnet (for future use)
 
 This guide walks you through testing **Milestone 1** of Interstellar’s secure Web3 account features using the **Android demo app** and a pre-configured remote testnet (hosted on a VPS). This is the fastest way to evaluate the delivered features without setting up the blockchain stack locally.
 
@@ -23,14 +32,20 @@ The demo app is already wired to connect to the hosted testnet — no local conf
 
 ## 1. Install the Android Demo App
 
+### Downlaad the APK
+
+From the official [Interstellar GitHub Release](https://github.com/Interstellar-Network/containers/releases/tag/dev1) (specific APK preconfigured to connect to `localhost`)
+- `androidApp-arm64-release.apk` for Android devices or emulators on Mac M1/M2/M3
+- `androidApp-x86_64-release.apk` for emulators on Windows or Mac intel
+
+
 ### Option 1: Physical Device
 
 [How to install an APK on Android](https://www.lifewire.com/install-apk-on-android-4177185)
 
-1. Download the APK from the official [Interstellar GitHub Release](https://github.com/Interstellar-Network/wallet-app/releases/tag/milestone1)
-2. Transfer it to your phone.
-3. Allow app installation from external sources
-4. Install the APK
+1. Transfer it to your phone.
+2. Allow app installation from external sources
+3. Install the APK
 
 :::warning
 Ensure that your device is configured for english language
@@ -40,10 +55,10 @@ Ensure that your device is configured for english language
 ### Option 2: Emulator
 
 1. Install [Android Studio](https://developer.android.com/studio)
-2. [Create](https://developer.android.com/studio/run/managing-avds#createavd) a `Pixel 5` or equivalent emulator (`x86_64`, API 31+)
+2. [Create](https://developer.android.com/studio/run/managing-avds#createavd) a `Pixel 7` or equivalent emulator (`x86_64`, API 31+ - API 35)
 
 3. Launch the emulator
-![Launch pixel 5 API 31 emulator](/img/Android_device_manager.png)
+
 4. Drag and drop the APK onto the emulator window to install
 
 
@@ -63,6 +78,8 @@ Create a new account
 Biometric prompt will trigger Secure Element key generation
 
 `MOB-REG` extrinsic is submitted
+
+
 
 ### Step 3: Recovery Flow (Optional)
 

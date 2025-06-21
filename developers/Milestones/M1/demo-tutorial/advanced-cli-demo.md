@@ -1,7 +1,16 @@
 ---
 sidebar_label: 'Advanced CLI Demo'
-sidebar_position: 3
+sidebar_position: 5
 ---
+
+:::warning Demo Not Functional
+This demo tutorial is provided for reference and future use only.  
+**App download links and Docker Compose commands are currently non-functional.**  
+Do not rely on this version for testing or deployment.
+:::
+
+
+
 
 # Advanced CLI Demo (for future use)
 

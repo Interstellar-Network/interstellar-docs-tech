@@ -4,7 +4,7 @@ sidebar_position: 0
 ---
 
 # Demo Tutorial Overview
-
+<!--
 This section guides you through testing Milestone 1 of Interstellar’s secure Web3 account features. You can interact with the system using three different paths depending on your technical environment and available hardware.
 :::tip Suggested Reviewer Flow
 
@@ -41,6 +41,12 @@ This method runs the entire stack locally using Docker or Podman, and allows you
 
 ---
 
+
+Each path is documented in the subsections that follow. We recommend starting with the hosted testnet unless you require deep integration testing or offline validation.
+
+
+-->
+
 ## 🧱 Full Stack: Android App with Local Node
 
 This approach replicates the full mobile + node integration, running the blockchain stack locally and using the Android app to interact with it.
@@ -49,6 +55,5 @@ This approach replicates the full mobile + node integration, running the blockch
 - Requires local Docker or Podman setup
 - Best suited for developers or reviewers who want to test the full integration stack on their own machine
 
----
 
-Each path is documented in the subsections that follow. We recommend starting with the hosted testnet unless you require deep integration testing or offline validation.
+

@@ -1,9 +1,16 @@
 ---
 sidebar_label: 'CLI Demo with Local Docker'
-sidebar_position: 2
+sidebar_position: 4
 ---
 
-# CLI-Based Demo with Local Docker
+:::warning Demo Not Functional
+This demo tutorial is provided for reference and future use only.  
+**App download links and Docker Compose commands are currently non-functional.**  
+Do not rely on this version for testing or deployment.
+:::
+
+
+# CLI-Based Demo with Local Docker (for future use)
 
 This guide allows you to test the backend components of Interstellar’s secure Web3 account system directly from your terminal, without relying on the Android app. It runs the full stack locally using Docker or Podman, and walks through account registration, recovery and transaction validation using a CLI script.
 

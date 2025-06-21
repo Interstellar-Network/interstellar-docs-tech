@@ -1,13 +1,20 @@
 ---
 sidebar_label: 'Android App with Local Node'
-sidebar_position: 2
+sidebar_position: 1
 ---
 
-# Android App with Local Node
+# Android App with Local Nodes
 
 This guide explains how to run the full Interstellar stack **locally** using Docker or Podman. You will be able to launch the Substrate node, Integritee TEE worker, and IPFS service, then interact with the system using the **Interstellar Android demo app**.
 
 This setup enables full offline testing without relying on a hosted VPS.
+
+:::info Tested Environment
+Ubuntu 24.04 LTS using either Docker (docker-compose) or Podman (with manually installed podman-compose)*.
+Compatibility with older distributions or alternative OSes is untested and not officially supported.
+
+*Compose tools are required to manage service startup dependencies (e.g., health checks).
+:::
 
 ## 1. Prerequisites
 
@@ -49,33 +56,35 @@ Wait for logs to show messages like:
 You can verify the runtime is ready using [Polkadot.js](https://polkadot.js.org/apps/?rpc=ws://localhost:9990)
 
 
+## 3. Install the Android Demo App
 
-## 3. Install the Android Demo App 
+### Downlaad the APK
+
+From the official [Interstellar GitHub Release](https://github.com/Interstellar-Network/containers/releases/tag/dev1) (specific APK preconfigured to connect to `localhost`)
+- `androidApp-arm64-release.apk` for Android devices or emulators on Mac M1/M2/M3
+- `androidApp-x86_64-release.apk` for emulators on Windows or Mac intel
 
 ### Option 1: Physical Device
 
-1. Download the APK from the official [Interstellar GitHub Release](https://github.com/Interstellar-Network/containers/releases/tag/dev1) (specific APK preconfigured to connect to `localhost`)
-- `androidApp-arm64-release.apk` for Android devices or emulator on Mac M1/M2/M3
-- `androidApp-x86_64-release.apk` for emulators on Windows or Mac intel
-
-
-2. Transfer it to your phone
-3. Allow app installation from external sources
-4. Install the APK
+1. Transfer it to your phone
+2. Allow app installation from external sources
+3. Install the APK
 
 :::info if you need more details
 [How to install an APK on Android](https://www.lifewire.com/install-apk-on-android-4177185)
 :::
-
+:::warning
+Ensure that your device is configured for english language
+:::
 ### Option 2: Emulator
 
 1. Install [Android Studio](https://developer.android.com/studio)
-2. Create a `Android Emulator - Medium Phone` or equivalent emulator Like `Pixel 6` (x86_64, API 31+)
+2. [Create](https://developer.android.com/studio/run/managing-avds#createavd)  a `Pixel 7` or equivalent emulator `API 31+` - `API 35` 
 3. Launch the emulator
 4. Drag and drop the APK onto the emulator window to install
 
-:::warning
-Ensure that your device is configured for english language
+:::info API 36 Compatibility Notice
+Support for Android **API 36 is pending** due to memory alignment issues introduced with 16K page size adoption. Our low-level Rust-based garbled circuit evaluator and frame renderer currently rely on 4K alignment assumptions, leading to crashes under the new memory model. A fix is in progress
 :::
 
 ---
@@ -85,7 +94,7 @@ Ensure that your device is configured for english language
 The Android app is preconfigured to connect to `localhost`
 To allow the Android app to connect to your local blockchain and IPFS stack:
 
-### Step 1: `adb reverse` Set-Up
+### Step 1: `adb reverse` SetUp
 > **On** the **Desktop** connected to the **Device** or running the **Emulator** 
 (Windows, Mac OS, Linux)
 
@@ -110,7 +119,7 @@ Make sure `adb` is properly configured and the emulator or device is detected
  with `adb devices`
 
  
- You can also check the reverse set-up with `adb reverse --list`
+ You can also check the reverse setup with `adb reverse --list`
 :::
 
 > This works for both emulators and real devices connected via USB or WiFi
@@ -149,13 +158,66 @@ Set-NetFirewallProfile -Profile Domain,Private,Public -Enabled True
 
 ### Step 1: Connect & Onboard
 - Launch the app
-- Register a new mobile proxy account
-- Validate biometric & SE-based registration
+  - Register a new mobile proxy account
+  - Validate biometric & SE-based registration
+- Check toasted message
+  - **Registering**
+  - **Registered**
 
-### Step 2: Test Recovery and Transaction Validation
-- Register a recovery item (e.g., NFC tag or secure file)
-- Send a test transaction to trigger the TTVP screen
+### Step 2: Test Transaction Validation
+
+- Trigger the Trusted Action Validation Protocol (TAVP) screen
+
+Send a test transaction to a contact
+<img src="/img/Send_Currency_Demo.gif" alt="wallet menu"  width="300"/>
+
 - Enter the one-time code (2-digit), or experiment with trial/feedback
+### Check Toast message order whith Action Validation Screen
+
+- **Processing...**
+- Registered
+- [error] No circuits available after 10s; exiting!
+
+[after taping one-time code digits]
+
+- Validating transaction...
+- Transaction done!
+### Step 3 Test Recovery 
+- Register a recovery item (e.g., NFC Item or Cloud Backup)
+- Relaunch your App (simulating creation of new App)
+- Recovery Screen to recover your account with your Cloud Backup and/or NFC Items
+
+
+:::info Recovery Testing Note
+To simplify recovery flow testing, the app generates and registers a new Secure Element (SE) key pair each time it is launched. This avoids the need to delete and reinstall the app between tests.
+
+**Important:** Once a user registers with a specific NFC tag (or manually entered serial), they cannot register again with the same one until the backend stack is restarted (e.g., by restarting the Docker Compose setup).
+:::
+
+## Interpreting Logs
+
+When interacting with the mobile app (e.g., authentication, transaction validation, recovery), key log messages are printed by both `integritee-node` and `integritee-service`. These logs help verify that Trusted Action flows are working as expected.
+
+### Key messages to look for:
+
+#### Challenge screen rendering (garbled circuit evaluation):
+
+```
+[tx-validation] store_metadata_aux: message_digits = [9, 7], pinpad_digits = [8, 4, 6, 7, 3, 1, 5, 2, 9, 0]
+```
+
+#### Succesful or Failed Validations (timing or incorrect code touchscreens positions)
+
+- If you enter an invalid code:
+  ```
+  [tx-validation] TxFail
+  ```
+- If correct:
+  ```
+  [tx-validation] TxPass
+  ```
+
+
 
 ## Optional: Front-End Access
 
