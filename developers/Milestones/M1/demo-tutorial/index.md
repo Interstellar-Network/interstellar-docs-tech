@@ -4,8 +4,12 @@ sidebar_position: 0
 ---
 
 # Demo Tutorial Overview
+
+
+This section guides you through testing Milestone 1 of Interstellar’s secure Web3 account features. You can interact with the system using:
 <!--
-This section guides you through testing Milestone 1 of Interstellar’s secure Web3 account features. You can interact with the system using three different paths depending on your technical environment and available hardware.
+three different paths depending on your technical environment and available hardware.
+
 :::tip Suggested Reviewer Flow
 
 Even for technically experienced reviewers, we recommend starting with the **Android app + hosted testnet** path to evaluate the user-facing features quickly.
