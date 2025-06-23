@@ -228,7 +228,7 @@ When interacting with the mobile app (e.g., authentication, transaction validati
   [tx-validation] TxPass
   ```
 
-### Detailed logs for a succesfull validation
+#### Detailed logs for a succesfull validation
 When the user correctly responds to the visual cryptographic challenge, the following logs will appear 
 in the integritee_service container. These confirm that the digits were correctly interpreted and that the result was successfully committed:
 ```bash
@@ -241,11 +241,13 @@ integritee_service-1  | [2025-06-23T15:04:01Z WARN  sp_io::storage] storage::sta
 integritee_service-1  | [2025-06-23T15:04:01Z INFO  pallet_tx_registry::pallet] [tx-registry] store_tx_result: who = , message_pgarbled_cid = "QmSJSSsyHV9aZCqCvv6QZwJ3K7vf4YoqF1DAWAAwsD7m6w", result = <wasm:stripped>
 integritee_service-1  | [2025-06-23T15:04:01Z INFO  pallet_tx_registry::pallet] [tx-registry] store_tx_result: done! [BoundedVec([<wasm:stripped>], 16)]
 ```
-
+```bash
 [tx-validation] check_input: input_digits = [2, 5]          # User's response input
 [tx-validation] computed_inputs_from_permutation = [5, 9]   # Decoded target digits
 [tx-validation] TxPass                                      # Validation succeeded
 [tx-registry]   store_tx_result: done!                      # Result stored
+```
+
 
 
 
