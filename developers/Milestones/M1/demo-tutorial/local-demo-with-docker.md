@@ -228,7 +228,39 @@ When interacting with the mobile app (e.g., authentication, transaction validati
   [tx-validation] TxPass
   ```
 
-#### Detailed logs for a succesfull validation
+### 🛠️ Detailed logs for garbled circuit generation and metadata preparation
+
+The following logs represent the backend activity triggered by a mobile app requesting a new secure visual validation. This includes:
+
+- Garbled circuit rendering for the transaction display.
+- Selection of digits and randomized pinpad.
+- Storage of metadata used later for input validation.
+
+You should see logs similar to the following:
+```bash
+[2025-06-23T15:03:45Z WARN  sp_io::storage] storage::start_transaction unimplemented  
+[2025-06-23T15:03:45Z INFO  pallet_ocw_garble::pallet] [ocw-garble] garble_and_strip_display_circuits_package_signed: ("T0.13 ETH to REPLACEME" for )  
+[2025-06-23T15:03:45Z WARN  pallet_ocw_garble::pallet] get_ocw_circuits_storage_value: storage COULD NOT be read! Fallback to RPC...  
+[2025-06-23T15:03:45Z INFO  pallet_ocw_garble::pallet] get_ocw_circuits_storage_value response : <wasm:stripped>  
+[2025-06-23T15:03:45Z INFO  pallet_ocw_garble::pallet] display_circuits_package: ("Qmaq13hbrSK7th8kA6CyP5cfviMshv46ZzxZ63aRopvpgF",2) ("QmR9DRACkkgwmyoSNGVX9m54AGZ6mkGkAGxwCLXMzi4aUP",10)  
+[2025-06-23T15:03:45Z INFO  pallet_ocw_garble::pallet] pinpad_digits: [6, 2, 5, 4, 1, 9, 7, 3, 8, 0], message_digits: [5, 9]  
+[2025-06-23T15:03:46Z INFO  pallet_ocw_garble::pallet] callback_new_garbled_and_strip_signed: "QmSJSSsyHV9aZCqCvv6QZwJ3K7vf4YoqF1DAWAAwsD7m6w" ; "QmSDGvEFH2sDnNg5zCA4Nr4Zd3mByYs9Mmg994DWL8yiK6" for  
+[2025-06-23T15:03:46Z INFO  pallet_tx_validation::pallet] store_metadata_aux: message_pgarbled_cid = "QmSJSSsyHV9aZCqCvv6QZwJ3K7vf4YoqF1DAWAAwsD7m6w", message_digits = [5, 9], pinpad_digits = [6, 2, 5, 4, 1, 9, 7, 3, 8, 0]  
+[2025-06-23T15:03:46Z INFO  pallet_tx_validation::pallet] store_metadata_aux: done!  
+[2025-06-23T15:03:46Z INFO  pallet_ocw_garble::pallet] callback_new_garbled_and_strip_signed: done!  
+[2025-06-23T15:03:46Z WARN  sp_io::storage] storage::commit_transaction unimplemented  
+```
+---
+
+### ✅ What to Look For
+
+- `display_circuits_package:` confirms the transaction display garbled circuit has been rendered.
+- `message_digits` and `pinpad_digits`: the random digits selected for the user’s challenge.
+- `store_metadata_aux: done!`: metadata was correctly stored for later validation.
+- `callback_new_garbled_and_strip_signed: done!`: confirms generation and signing succeeded.
+
+
+### Detailed logs for a succesfull validation
 When the user correctly responds to the visual cryptographic challenge, the following logs will appear 
 in the integritee_service container. These confirm that the digits were correctly interpreted and that the result was successfully committed:
 ```bash
