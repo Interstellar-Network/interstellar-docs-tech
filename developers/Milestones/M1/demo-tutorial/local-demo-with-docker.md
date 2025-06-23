@@ -29,13 +29,12 @@ The **frontend** (e.g., Android emulator or physical device) can run on any OS s
 | Docker             | [Install Docker](https://docs.docker.com/engine/install/) |
 | Docker Compose     | [Install docker-compose](https://docs.docker.com/compose/install/) |
 | `curl`, `wget`, `jq` | Installed via `apt`/`brew` or default in most environments |
-| Android Studio     | Optional, for emulator usage |
+| Android Studio     |  [Install Android Studio](https://developer.android.com/studio) |
 | ADB (`adb reverse`) | Comes with Android Studio |
 
 > You may also use **Podman** as an alternative to Docker.
 
-## 2. Launch the Interstellar Stack
-
+## 2. Launch the Interstellar Stack Install 
 ```bash
 # Step 1: Create a working directory
 mkdir interstellar_m1_demo && cd interstellar_m1_demo
@@ -69,14 +68,14 @@ You can verify the runtime is ready using [Polkadot.js](https://polkadot.js.org/
 From the official [Interstellar GitHub Release](https://github.com/Interstellar-Network/containers/releases/tag/dev1) (specific APKs preconfigured to connect to `localhost`):
 
 - `androidApp-arm64-release.apk` — for Android devices or emulators running on ARM-based systems (e.g., Mac M1/M2/M3, Linux ARM desktops, Windows on ARM).
-- `androidApp-x86_64-release.apk` — for Android emulators running on x86_64 platforms (e.g., Windows PCs, Intel-based Macs).
+- `androidApp-x86_64-release.apk` — for Android emulators running on x86_64 platforms (e.g., Windows PCs, Intel-based Mac)
 
-  
 ### Option 1: Physical Device
 
-1. Transfer it to your phone
+1. Transfer the APK to your phone or download it directly from the device 
 2. Allow app installation from external sources
 3. Install the APK
+5. [Connect](https://developer.android.com/codelabs/basic-android-kotlin-compose-connect-device#2) your devices to Android Studio
 
 :::info if you need more details
 [How to install an APK on Android](https://www.lifewire.com/install-apk-on-android-4177185)
@@ -86,12 +85,12 @@ Ensure that your device is configured for english language
 :::
 ### Option 2: Emulator
 
-1. Install [Android Studio](https://developer.android.com/studio)
-2. [Create](https://developer.android.com/studio/run/managing-avds#createavd)  a `Pixel 7` or equivalent emulator `API 31+` - `API 35` 
-3. Edit the emulator and select an API 31+ below the default API 36
+1. [Create](https://developer.android.com/studio/run/managing-avds#createavd)  a `Pixel 7` or equivalent emulator `API 31+` - `API 35` 
+2. Edit the emulator and select an API 31+ below the default API 36
 <img src="/img/API35.png" alt="API 35"  width="250"/>
-4. Launch the emulator
-5. Drag and drop the APK onto the emulator window to install
+
+3. Launch the emulator
+4. Drag and drop the APK onto the emulator window to install
 
 :::info API 36 Compatibility Notice
 Support for Android **API 36 is pending** due to memory alignment issues introduced with 16K page size adoption. Our low-level Rust-based garbled circuit evaluator and frame renderer currently rely on 4K alignment assumptions, leading to crashes under the new memory model. A fix is in progress
@@ -104,7 +103,7 @@ Support for Android **API 36 is pending** due to memory alignment issues introdu
 The Android app is preconfigured to connect to `localhost`
 To allow the Android app to connect to your local blockchain and IPFS stack:
 
-### Step 1: `adb reverse` SetUp
+### Step 1: `adb reverse` Setup
 > **On** the **Desktop** connected to the **Device** or running the **Emulator** 
 (Windows, Mac OS, Linux)
 
@@ -132,7 +131,7 @@ Make sure `adb` is properly configured and the emulator or device is detected
  You can also check the reverse setup with `adb reverse --list`
 :::
 
-> This works for both emulators and real devices connected via USB or WiFi
+> This works for both emulators and real devices connected via USB
 
 ### Step 2 (optional): `ssh` Port Forwarding 
 > **On** the **System** or **VM** running the **Blockchain stack** (WSL2, Remote VM)
