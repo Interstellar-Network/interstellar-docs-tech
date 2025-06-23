@@ -205,7 +205,9 @@ To simplify recovery flow testing, the app generates and registers a new Secure 
 
 ## Interpreting Logs
 
-When interacting with the mobile app (e.g., authentication, transaction validation, recovery), key log messages are printed by both `integritee-node` and `integritee-service`. These logs help verify that Trusted Action flows are working as expected.
+When interacting with the mobile app (e.g., authentication, transaction validation, recovery),
+ key log messages are printed by both `integritee-node` and `integritee-service`. 
+ These logs help verify that Trusted Action flows are working as expected.
 
 ### Key messages to look for:
 
@@ -215,7 +217,7 @@ When interacting with the mobile app (e.g., authentication, transaction validati
 [tx-validation] store_metadata_aux: message_digits = [9, 7], pinpad_digits = [8, 4, 6, 7, 3, 1, 5, 2, 9, 0]
 ```
 
-#### Succesful or Failed Validations (timing or incorrect code touchscreens positions)
+#### Succesfull or Failed Validations (timing or incorrect code touchscreens positions)
 
 - If you enter an invalid code:
   ```
@@ -225,6 +227,26 @@ When interacting with the mobile app (e.g., authentication, transaction validati
   ```
   [tx-validation] TxPass
   ```
+
+### Detailed logs for a succesfull validation
+When the user correctly responds to the visual cryptographic challenge, the following logs will appear 
+in the integritee_service container. These confirm that the digits were correctly interpreted and that the result was successfully committed:
+```bash
+integritee_service-1  | [2025-06-23T15:04:01Z INFO  pallet_tx_validation::pallet] [tx-validation] check_input: who = , ipfs_cid = "QmSJSSsyHV9aZCqCvv6QZwJ3K7vf4YoqF1DAWAAwsD7m6w", input_digits = [2, 5]
+integritee_service-1  | [2025-06-23T15:04:01Z INFO  pallet_tx_validation::pallet] [tx-validation] check_input: input_digits_str = "\u{2}\u{5}", input_digits_int = [2, 5], pinpad_permutation = BoundedVec([6, 2, 5, 4, 1, 9, 7, 3, 8, 0], 10)
+integritee_service-1  | [2025-06-23T15:04:01Z INFO  pallet_tx_validation::pallet] [tx-validation] check_input: computed_inputs_from_permutation = [5, 9], message_digits = BoundedVec([5, 9], 10)
+integritee_service-1  | [2025-06-23T15:04:01Z INFO  pallet_tx_validation::pallet] [tx-validation] TxPass
+integritee_service-1  | [2025-06-23T15:04:01Z WARN  sp_io::storage] storage::commit_transaction unimplemented
+integritee_service-1  | [2025-06-23T15:04:01Z WARN  sp_io::storage] storage::start_transaction unimplemented
+integritee_service-1  | [2025-06-23T15:04:01Z INFO  pallet_tx_registry::pallet] [tx-registry] store_tx_result: who = , message_pgarbled_cid = "QmSJSSsyHV9aZCqCvv6QZwJ3K7vf4YoqF1DAWAAwsD7m6w", result = <wasm:stripped>
+integritee_service-1  | [2025-06-23T15:04:01Z INFO  pallet_tx_registry::pallet] [tx-registry] store_tx_result: done! [BoundedVec([<wasm:stripped>], 16)]
+```
+
+[tx-validation] check_input: input_digits = [2, 5]          # User's response input
+[tx-validation] computed_inputs_from_permutation = [5, 9]   # Decoded target digits
+[tx-validation] TxPass                                      # Validation succeeded
+[tx-registry]   store_tx_result: done!                      # Result stored
+
 
 
 
