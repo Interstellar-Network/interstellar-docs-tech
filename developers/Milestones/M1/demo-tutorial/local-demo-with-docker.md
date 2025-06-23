@@ -10,11 +10,17 @@ This guide explains how to run the full Interstellar stack **locally** using Doc
 This setup enables full offline testing without relying on a hosted VPS.
 
 :::info Tested Environment
-Ubuntu 24.04 LTS using either Docker (docker-compose) or Podman (with manually installed podman-compose)*.
-Compatibility with older distributions or alternative OSes is untested and not officially supported.
+This compatibility note applies to the **backend stack**, tested on Ubuntu 24.04 LTS (x86_64) using Docker (`docker-compose`) or Podman (with manually installed `podman-compose`*).  
+The stack is expected to work on other recent Linux distributions, but this has not been officially verified.
+
+Known issue: May fail on Apple Silicon (M1/M2/M3/M4) due to current SIMD usage and QEMU/Rosetta limitations.
+
+The **frontend** (e.g., Android emulator or physical device) can run on any OS supported by Android Studio.
 
 *Compose tools are required to manage service startup dependencies (e.g., health checks).
 :::
+
+
 
 ## 1. Prerequisites
 
@@ -53,7 +59,7 @@ Wait for logs to show messages like:
 ```
 
 
-You can verify the runtime is ready using [Polkadot.js](https://polkadot.js.org/apps/?rpc=ws://localhost:9990)
+You can verify the runtime is ready using [Polkadot.js](https://polkadot.js.org/apps/?rpc=ws://localhost:9944)
 
 
 ## 3. Install the Android Demo App
@@ -225,7 +231,7 @@ When interacting with the mobile app (e.g., authentication, transaction validati
 
 You can inspect chain state and transactions via:
 
-- [Polkadot.js Apps](https://polkadot.js.org/apps/?rpc=ws://localhost:9990)
+- [Polkadot.js Apps](https://polkadot.js.org/apps/?rpc=ws://localhost:9944)
 - Or your preferred Substrate front-end UI
 
 ## Notes
