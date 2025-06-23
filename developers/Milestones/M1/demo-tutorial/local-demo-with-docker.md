@@ -64,12 +64,14 @@ You can verify the runtime is ready using [Polkadot.js](https://polkadot.js.org/
 
 ## 3. Install the Android Demo App
 
-### Downlaad the APK
+### Download the APK
 
-From the official [Interstellar GitHub Release](https://github.com/Interstellar-Network/containers/releases/tag/dev1) (specific APK preconfigured to connect to `localhost`)
-- `androidApp-arm64-release.apk` for Android devices or emulators on Mac M1/M2/M3
-- `androidApp-x86_64-release.apk` for emulators on Windows or Mac intel
+From the official [Interstellar GitHub Release](https://github.com/Interstellar-Network/containers/releases/tag/dev1) (specific APKs preconfigured to connect to `localhost`):
 
+- `androidApp-arm64-release.apk` — for Android devices or emulators running on ARM-based systems (e.g., Mac M1/M2/M3, Linux ARM desktops, Windows on ARM).
+- `androidApp-x86_64-release.apk` — for Android emulators running on x86_64 platforms (e.g., Windows PCs, Intel-based Macs).
+
+  
 ### Option 1: Physical Device
 
 1. Transfer it to your phone
