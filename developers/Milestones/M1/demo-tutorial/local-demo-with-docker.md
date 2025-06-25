@@ -112,7 +112,8 @@ Ensure that your device is configured for english language
 4. Drag and drop the APK onto the emulator window to install
 
 :::info API 36 and API 35-16K Compatibility Notice
-Support for Android **API 36 is pending** due to memory alignment issues introduced with 16K page size adoption. Our low-level Rust-based garbled circuit evaluator and frame renderer currently rely on 4K alignment assumptions, leading to crashes under the new memory model. A fix is in progress
+Support for Android **API 36 is pending** due to issues introduced with 16K page size adoption. 
+Our low-level Rust-based garbled circuit evaluator and frame renderer currently working with 4K model, leading to crashes under the new memory model. A fix is in progress
 :::
 
 ---
