@@ -315,6 +315,106 @@ integritee_service-1  | [2025-06-23T15:04:01Z INFO  pallet_tx_registry::pallet] 
 - `store_tx_result: done!`: even in failure cases, the result is still stored for transparency, auditability, or rate-limiting purposes.
 
 
+### 🛠️ Detailed logs for NFC tag-based recovery setup
+
+The following logs represent the flow where a user device sets up a **recovery mechanism using an NFC tag**. This involves:
+
+- Adding the NFC tag to the registry.
+- Creating a new `unify_recovery` configuration.
+- Mapping the NFC tag to a `KeyFriend`.
+- Ensuring threshold conditions are satisfied.
+- Finalizing and storing the recovery configuration on-chain.
+
+You should observe logs similar to the following:
+
+[DEBUG pallet_nfc_recovery::pallet] add_nfc_tag : who =  
+[DEBUG pallet_unify_recovery::pallet] execute_create_recovery : START , None, None, NfcTag(...)  
+[DEBUG pallet_unify_recovery::pallet] ensure_has_root_account who:  
+[DEBUG pallet_unify_recovery::pallet] execute_create_recovery : CHECK Root Account OK  
+[DEBUG pallet_unify_recovery::pallet] has_active_recovery who:  
+[DEBUG pallet_unify_recovery::pallet] execute_create_recovery : CHECK AlreadyStarted OK  
+[DEBUG pallet_unify_recovery::pallet] get_default_recovery_settings  
+[DEBUG pallet_unify_recovery::pallet] execute_create_recovery : pending ActiveFriends { threshold: 1, key_friend_pairs: [...] }  
+[DEBUG pallet_unify_recovery::pallet] is_recoverable who:  
+[DEBUG pallet_unify_recovery::pallet] execute_create_recovery : threshold = 1  
+[DEBUG pallet_unify_recovery::pallet] map_friend_with_recovery_method : NfcTag(...), (...)  
+[DEBUG pallet_unify_recovery::pallet] get_proxy_account : [...]  
+[DEBUG pallet_unify_recovery::pallet] map_friend_with_recovery_method DONE  
+[DEBUG pallet_unify_recovery::pallet] execute_create_recovery : friend_account =  
+[DEBUG pallet_unify_recovery::pallet] execute_create_recovery : pending AFTER = ActiveFriends {...}  
+[DEBUG pallet_unify_recovery::pallet] execute_create_recovery : friends = [, ]  
+[DEBUG pallet_unify_recovery::pallet] execute_create_recovery : CHECK threshold OK = [, ]  
+[DEBUG pallet_unify_recovery::pallet] execute_create_recovery : clearing recovery state OK  
+[DEBUG pallet_unify_recovery::pallet] clear_recovery_state :  
+[DEBUG pallet_unify_recovery::pallet] clear_recovery_state : recoverable found =  
+[DEBUG pallet_unify_recovery::pallet] clear_recovery_state : remove_recovery DONE  
+[INFO  pallet_unify_recovery::pallet] execute_create_recovery : DONE for  
+[INFO  pallet_nfc_recovery::pallet] add_nfc_tag : DONE  
+
+---
+
+### ✅ What to Look For
+
+- `execute_create_recovery : START` through `DONE`: confirms the recovery flow using an NFC tag completed without errors.
+- `threshold = 1`: confirms that recovery quorum has been set (e.g., single tag for recovery).
+- `ActiveFriends` includes both a CID-based and an NFC-based `KeyFriend`.
+- `map_friend_with_recovery_method DONE`: shows that the NFC tag was correctly interpreted and linked.
+- `clear_recovery_state` ensures old states are removed before registering a new configuration.
+- `add_nfc_tag : DONE`: confirms the NFC identifier has been saved in the registry and linked to the user.
+
+This log sequence confirms a successful setup of an NFC-based recovery configuration within the unified recovery module.
+
+
+### 🛠️ Detailed logs for Cloud Backup-based recovery setup
+
+The following logs describe a successful recovery configuration setup using a **CID-based key**, which refers to a cloud-stored recovery asset (e.g., a backed-up VCA Token). This process involves:
+
+- Triggering `extended_create_recovery` via the cloud backup flow.
+- Generating and storing a VCA challenge for user authentication.
+- Creating a `KeyFriend` based on the cloud CID.
+- Registering the friend account and checking recovery eligibility.
+
+Expected logs:
+
+[DEBUG pallet_token_recovery::pallet] extended_create_recovery : who =  
+[INFO  pallet_tx_validation::pallet] store_metadata_aux: message_pgarbled_cid = "...", message_digits = [...], pinpad_digits = [...]  
+[INFO  pallet_tx_validation::pallet] store_metadata_aux: done!  
+[DEBUG pallet_unify_recovery::pallet] execute_create_recovery : START ..., Cid(...)  
+[DEBUG pallet_unify_recovery::pallet] ensure_has_root_account who:  
+[DEBUG pallet_unify_recovery::pallet] execute_create_recovery : CHECK Root Account OK  
+[DEBUG pallet_unify_recovery::pallet] has_active_recovery who:  
+[DEBUG pallet_unify_recovery::pallet] execute_create_recovery : CHECK AlreadyStarted OK  
+[DEBUG pallet_unify_recovery::pallet] get_default_recovery_settings  
+[DEBUG pallet_unify_recovery::pallet] execute_create_recovery : pending ActiveFriends { threshold: 1, key_friend_pairs: [], delay_period: 10 }  
+[DEBUG pallet_unify_recovery::pallet] execute_create_recovery : threshold for NOT recoverable  
+[DEBUG pallet_unify_recovery::pallet] map_friend_with_recovery_method : Cid(...), (...)  
+[DEBUG pallet_unify_recovery::pallet] get_proxy_account : [...]  
+[DEBUG pallet_unify_recovery::pallet] friend_account :  
+[DEBUG pallet_unify_recovery::pallet] map_friend_with_recovery_method DONE  
+[DEBUG pallet_unify_recovery::pallet] execute_create_recovery : pending AFTER = ActiveFriends {...}  
+[DEBUG pallet_unify_recovery::pallet] execute_create_recovery : CHECK threshold OK = []  
+[WARN  sp_io::storage] storage::start_transaction unimplemented  
+[WARN  sp_io::storage] storage::commit_transaction unimplemented  
+[INFO  pallet_unify_recovery::pallet] execute_create_recovery : DONE for  
+[INFO  pallet_token_recovery::pallet] extended_create_recovery : DONE  
+
+---
+
+### ✅ What to Look For
+
+- `extended_create_recovery` and `Cid(...)`: confirms that the recovery setup was triggered using a **CID-backed cloud recovery key**.
+- `store_metadata_aux: done!`: ensures that a corresponding visual challenge has been generated for secure user validation.
+- `map_friend_with_recovery_method` with a CID input: confirms correct linking between the cloud-stored token and the account’s recovery logic.
+- `ActiveFriends` with the CID-based `KeyFriend`: confirms the friend registration is complete.
+- `threshold OK` and `execute_create_recovery : DONE`: confirms all recovery criteria were met and configuration finalized.
+
+> ℹ️ In this flow, the CID typically points to a trusted, encrypted, cloud-backed VCA Token that can be retrieved and validated securely by the user.
+
+
+
+
+
+
 
 
 ## Optional: Front-End Access
