@@ -213,7 +213,7 @@ When interacting with the mobile app (e.g., authentication, transaction validati
 
 #### Challenge screen rendering (garbled circuit evaluation):
 
-```
+```bash
 [tx-validation] store_metadata_aux: message_digits = [9, 7], pinpad_digits = [8, 4, 6, 7, 3, 1, 5, 2, 9, 0]
 ```
 
@@ -227,6 +227,33 @@ When interacting with the mobile app (e.g., authentication, transaction validati
   ```
   [tx-validation] TxPass
   ```
+
+
+### 🛠️ Detailed logs for mobile registration
+
+This log trace shows what happens when a new device connects to the system and is not yet registered under a root account. The backend detects the missing account and proceeds with registration:
+
+```bash
+[2025-06-24T08:17:44Z INFO  pallet_mobile_registry::pallet] ensure_has_root_account failed for  while checking if registered: Module(ModuleError { index: 16, error: [0, 0, 0, 0], message: Some("RootAccountNotFound") })  
+[2025-06-24T08:17:44Z WARN  sp_io::storage] storage::start_transaction unimplemented  
+[2025-06-24T08:17:44Z DEBUG pallet_mobile_registry::pallet] register_mobile start for  
+[2025-06-24T08:17:44Z INFO  pallet_mobile_registry::pallet] ensure_has_root_account failed for  while checking if registered: Module(ModuleError { index: 16, error: [0, 0, 0, 0], message: Some("RootAccountNotFound") })  
+[2025-06-24T08:17:44Z DEBUG pallet_mobile_registry::pallet] register_mobile: new registration for  
+[2025-06-24T08:17:44Z WARN  sp_io::storage] storage::start_transaction unimplemented  
+[2025-06-24T08:17:44Z WARN  sp_io::storage] storage::start_transaction unimplemented  
+[2025-06-24T08:17:44Z WARN  sp_io::storage] storage::commit_transaction unimplemented  
+[2025-06-24T08:17:44Z WARN  sp_io::storage] storage::commit_transaction unimplemented  
+[2025-06-24T08:17:44Z DEBUG pallet_mobile_registry::pallet] register_mobile end  
+```
+---
+
+### ✅ What to Look For
+
+- `RootAccountNotFound`: expected on first connection from a new mobile identity.
+- `register_mobile start` → `register_mobile end`: confirms that registration was initiated and completed.
+- These logs confirm that the system automatically falls back to registering the mobile when not yet linked to a root account.
+
+
 
 ### 🛠️ Detailed logs for garbled circuit generation and metadata preparation
 
@@ -273,13 +300,19 @@ integritee_service-1  | [2025-06-23T15:04:01Z WARN  sp_io::storage] storage::sta
 integritee_service-1  | [2025-06-23T15:04:01Z INFO  pallet_tx_registry::pallet] [tx-registry] store_tx_result: who = , message_pgarbled_cid = "QmSJSSsyHV9aZCqCvv6QZwJ3K7vf4YoqF1DAWAAwsD7m6w", result = <wasm:stripped>
 integritee_service-1  | [2025-06-23T15:04:01Z INFO  pallet_tx_registry::pallet] [tx-registry] store_tx_result: done! [BoundedVec([<wasm:stripped>], 16)]
 ```
-```bash
-[tx-validation] check_input: input_digits = [2, 5]          # User's response input
-[tx-validation] computed_inputs_from_permutation = [5, 9]   # Decoded target digits
-[tx-validation] TxPass                                      # Validation succeeded
-[tx-registry]   store_tx_result: done!                      # Result stored
-```
+### ✅ What to Look For
 
+- `check_input: input_digits = [2, 5]`: these are the digits entered by the user in response to the challenge.
+- `computed_inputs_from_permutation = [5, 9]`: the backend decodes the expected message digits based on the randomized pinpad layout.
+- `TxPass`: confirms that the decoded digits match the expected message and the validation is successful.
+- `store_tx_result: done!`: indicates that the result of this validation (pass/fail) was committed to the registry for audit or future reference.
+
+### ❌ What to Look For
+
+- `check_input: input_digits = [...]`: shows the digits entered by the user.
+- `computed_inputs_from_permutation = [...]`: the expected message digits decoded from the pinpad permutation.
+- `TxFail`: indicates that the user’s input did **not** match the expected digits — the validation failed.
+- `store_tx_result: done!`: even in failure cases, the result is still stored for transparency, auditability, or rate-limiting purposes.
 
 
 
