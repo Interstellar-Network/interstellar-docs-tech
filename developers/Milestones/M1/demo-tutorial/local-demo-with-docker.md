@@ -67,8 +67,27 @@ You can verify the runtime is ready using [Polkadot.js](https://polkadot.js.org/
 
 From the official [Interstellar GitHub Release](https://github.com/Interstellar-Network/containers/releases/tag/dev1) (specific APKs preconfigured to connect to `localhost`):
 
-- `androidApp-arm64-release.apk` — for Android devices or emulators running on ARM-based systems (e.g., Mac M1/M2/M3, Linux ARM desktops, Windows on ARM).
+- `androidApp-arm64-release.apk` — for Android devices
 - `androidApp-x86_64-release.apk` — for Android emulators running on x86_64 platforms (e.g., Windows PCs, Intel-based Mac)
+
+:::warning Apple Silicon Emulator Limitation
+
+Avoid using the Android Emulator on Apple Silicon (M1–M4) to test this application.
+
+Due to limited ARM virtualization support and lack of full hardware acceleration on macOS, Android emulators on M1/M2/M3/M4 may:
+
+- Exhibit poor performance or rendering issues.
+
+- Fail to execute native low levl code correctly (e.g., Rust-based visual cryptography renderer or cryptographic pipelines).
+
+- Misrepresent the app’s actual behavior on real arm64 hardware.
+
+These limitations are emulator-specific and do not reflect production stability. We recommend using a physical Android device or an x86_64 emulator on an Intel-based system for accurate testing.
+
+:::
+
+
+
 
 ### Option 1: Physical Device
 
@@ -92,7 +111,7 @@ Ensure that your device is configured for english language
 3. Launch the emulator
 4. Drag and drop the APK onto the emulator window to install
 
-:::info API 36 Compatibility Notice
+:::info API 36 and API 35-16K Compatibility Notice
 Support for Android **API 36 is pending** due to memory alignment issues introduced with 16K page size adoption. Our low-level Rust-based garbled circuit evaluator and frame renderer currently rely on 4K alignment assumptions, leading to crashes under the new memory model. A fix is in progress
 :::
 
