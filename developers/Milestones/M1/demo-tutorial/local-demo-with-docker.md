@@ -326,7 +326,7 @@ The following logs represent the flow where a user device sets up a **recovery m
 - Finalizing and storing the recovery configuration on-chain.
 
 You should observe logs similar to the following:
-
+```bash
 [DEBUG pallet_nfc_recovery::pallet] add_nfc_tag : who =  
 [DEBUG pallet_unify_recovery::pallet] execute_create_recovery : START , None, None, NfcTag(...)  
 [DEBUG pallet_unify_recovery::pallet] ensure_has_root_account who:  
@@ -350,7 +350,7 @@ You should observe logs similar to the following:
 [DEBUG pallet_unify_recovery::pallet] clear_recovery_state : remove_recovery DONE  
 [INFO  pallet_unify_recovery::pallet] execute_create_recovery : DONE for  
 [INFO  pallet_nfc_recovery::pallet] add_nfc_tag : DONE  
-
+```
 ---
 
 ### ✅ What to Look For
@@ -375,7 +375,7 @@ The following logs describe a successful recovery configuration setup using a **
 - Registering the friend account and checking recovery eligibility.
 
 Expected logs:
-
+```bash
 [DEBUG pallet_token_recovery::pallet] extended_create_recovery : who =  
 [INFO  pallet_tx_validation::pallet] store_metadata_aux: message_pgarbled_cid = "...", message_digits = [...], pinpad_digits = [...]  
 [INFO  pallet_tx_validation::pallet] store_metadata_aux: done!  
@@ -397,7 +397,7 @@ Expected logs:
 [WARN  sp_io::storage] storage::commit_transaction unimplemented  
 [INFO  pallet_unify_recovery::pallet] execute_create_recovery : DONE for  
 [INFO  pallet_token_recovery::pallet] extended_create_recovery : DONE  
-
+```
 ---
 
 ### ✅ What to Look For
