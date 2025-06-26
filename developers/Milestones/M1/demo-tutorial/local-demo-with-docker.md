@@ -53,6 +53,21 @@ sudo docker compose down --timeout 1 && sudo docker compose up --force-recreate
 ```
 
 Wait for logs to show messages like:
+
+```bash
+[ocw-circuits] callback_new_skcd_signed sent number : 1
+[ocw-circuits] callback_new_display_circuits_package_signed: (..)
+```
+Wait for a few minutes and you will see two big blob appearaing in the logs, 
+it represents the master circuits circuits built by the verilog pipeline.
+```bash
+integritee_node-1     | 2025-06-26 11:56:34 Requested started id=1059 method=POST uri=http://ipfs:5001/api/v0/add
+integritee_node-1     | 2025-06-26 11:56:34 [fetch_from_remote_grpc_web] content_type: application/json
+integritee_node-1     | 2025-06-26 11:56:34 [ocw-circuits] callback_new_skcd_signed sent number : 1
+integritee_node-1     | 2025-06-26 11:56:36 [ocw-circuits] callback_new_display_circuits_package_signed: ("QmUx8mMo8GgGdUhcgFQVg2sexkVfyq1sViruZiBadUfs4d",2),("QmcwXyZNmLXnjeoA25YSzj41G1sr6ZsHgZZBQVWvcfe1qn",10) for d43593c715fdd31c61141abd04a99fd6822c8558854ccde39a5684e7a56da27d (5GrwvaEF...)
+```
+
+
 ```
 [ocw-circuits] Hello from pallet-ocw-circuits.
 🛌 Idle (0 peers), best: #6 (...), finalized #3 (...), ⬇ 0 ⬆ 0
@@ -217,9 +232,23 @@ Send a test transaction to a contact
 - Transaction done!
 ### Step 3 Test Recovery 
 - Register a recovery item (e.g., NFC Item or Cloud Backup)
+
+
+
 - Relaunch your App (simulating creation of new App)
 - Recovery Screen to recover your account with your Cloud Backup and/or NFC Items
 
+
+:::tip Simplify Local Backup on Emulator
+To avoid setting up a cloud account in the emulator, we recommend using the **Material Files** app to store the recovery token file locally.
+
+Install it in the emulator with:
+```bash
+curl -O https://f-droid.org/repo/me.zhanghai.android.files_39.apk
+adb install me.zhanghai.android.files_39.apk
+```
+Then select "Material Files" from the share menu to save the .enc file.
+:::
 
 :::info Recovery Testing Note
 To simplify recovery flow testing......
