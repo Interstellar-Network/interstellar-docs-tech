@@ -243,8 +243,10 @@ Send a test transaction to a contact
 To avoid setting up a cloud account in the emulator, we recommend using the **Material Files** app to store the recovery token file locally.
 
 Install it in the emulator with:
+
 ```bash
-curl -O https://f-droid.org/repo/me.zhanghai.android.files_39.apk
+curl -O https://f-droid.org/repo/me.zhanghai.android.files_39.apk # linux
+Invoke-WebRequest -Uri "https://f-droid.org/repo/me.zhanghai.android.files_39.apk" -OutFile "me.zhanghai.android.files_39.apk" # Powershell
 adb install me.zhanghai.android.files_39.apk
 ```
 Then select "Material Files" from the share menu to save the .enc file.
