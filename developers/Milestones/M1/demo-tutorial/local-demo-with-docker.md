@@ -15,7 +15,8 @@ The stack is expected to work on other recent Linux distributions, but this has 
 
 Known issue: May fail on Apple Silicon (M1/M2/M3/M4) due to current SIMD usage and QEMU/Rosetta limitations -- crash on M1/M2 (not tested on M3/M4)
 
-The **frontend** (e.g., Android emulator or physical device) can run on any OS supported by Android Studio
+The **frontend** (e.g., Android emulator or physical device) 
+can run on any OS supported by Android Studio (expect significant emulator limitations on Apple Silicon)
 
 *Compose tools are required to manage service startup dependencies (e.g., health checks).
 :::
@@ -221,9 +222,9 @@ Send a test transaction to a contact
 
 
 :::info Recovery Testing Note
-To simplify recovery flow testing, the app generates and registers a new Secure Element (SE) key pair each time it is launched. This avoids the need to delete and reinstall the app between tests.
-
-**Important:** Once a user registers with a specific NFC tag (or manually entered serial), they cannot register again with the same one until the backend stack is restarted (e.g., by restarting the Docker Compose setup).
+To simplify recovery flow testing......
+**Important:** Once a user registers with a specific NFC tag (or manually entered serial),
+ they cannot register again with the same one until the backend stack is restarted (e.g., by restarting the Docker Compose setup with --force-recreate).
 :::
 
 ## Interpreting Logs
