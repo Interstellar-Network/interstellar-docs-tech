@@ -13,9 +13,9 @@ This setup enables full offline testing without relying on a hosted VPS.
 This compatibility note applies to the **backend stack**, tested on Ubuntu 24.04 LTS (x86_64) using Docker (`docker-compose`) or Podman (with manually installed `podman-compose`*).  
 The stack is expected to work on other recent Linux distributions, but this has not been officially verified.
 
-Known issue: May fail on Apple Silicon (M1/M2/M3/M4) due to current SIMD usage and QEMU/Rosetta limitations.
+Known issue: May fail on Apple Silicon (M1/M2/M3/M4) due to current SIMD usage and QEMU/Rosetta limitations -- crash on M1/M2 (not tested on M3/M4)
 
-The **frontend** (e.g., Android emulator or physical device) can run on any OS supported by Android Studio.
+The **frontend** (e.g., Android emulator or physical device) can run on any OS supported by Android Studio
 
 *Compose tools are required to manage service startup dependencies (e.g., health checks).
 :::
@@ -100,7 +100,7 @@ These limitations are emulator-specific and do not reflect production stability.
 [How to install an APK on Android](https://www.lifewire.com/install-apk-on-android-4177185)
 :::
 :::warning
-Ensure that your device is configured for english language
+Ensure that your device is configured for **english** language
 :::
 ### Option 2: Emulator
 
@@ -111,9 +111,12 @@ Ensure that your device is configured for english language
 3. Launch the emulator
 4. Drag and drop the APK onto the emulator window to install
 
-:::info API 36 and API 35-16K Compatibility Notice
-Support for Android **API 36 is pending** due to issues introduced with 16K page size adoption. 
-Our low-level Rust-based garbled circuit evaluator and frame renderer currently working with 4K model, leading to crashes under the new memory model. A fix is in progress
+:::info Compatibility Issue with API 36
+Our app currently crashes on Android API 36. The issue is **not caused by the new 16KB memory 
+page model**, as it runs correctly on API 35 with 16KB pages. 
+API 36 is a **very recent release** and may introduce subtle runtime or platform-level changes 
+that affect low-level Rust code (e.g., garbled circuit evaluator or frame renderer). 
+Until further investigation, **we recommend using API 35 or earlier for testing.**
 :::
 
 ---
@@ -227,7 +230,10 @@ To simplify recovery flow testing, the app generates and registers a new Secure 
 
 When interacting with the mobile app (e.g., authentication, transaction validation, recovery),
  key log messages are printed by both `integritee-node` and `integritee-service`. 
- These logs help verify that Trusted Action flows are working as expected.
+
+
+### Trusted Action Validation Highlight
+ These logs help verify that **Trusted Action Validation** flows used both in transaction validation and recovery are working as expected.
 
 ### Key messages to look for:
 
@@ -258,11 +264,7 @@ This log trace shows what happens when a new device connects to the system and i
 [2025-06-24T08:17:44Z WARN  sp_io::storage] storage::start_transaction unimplemented  
 [2025-06-24T08:17:44Z DEBUG pallet_mobile_registry::pallet] register_mobile start for  
 [2025-06-24T08:17:44Z INFO  pallet_mobile_registry::pallet] ensure_has_root_account failed for  while checking if registered: Module(ModuleError { index: 16, error: [0, 0, 0, 0], message: Some("RootAccountNotFound") })  
-[2025-06-24T08:17:44Z DEBUG pallet_mobile_registry::pallet] register_mobile: new registration for  
-[2025-06-24T08:17:44Z WARN  sp_io::storage] storage::start_transaction unimplemented  
-[2025-06-24T08:17:44Z WARN  sp_io::storage] storage::start_transaction unimplemented  
-[2025-06-24T08:17:44Z WARN  sp_io::storage] storage::commit_transaction unimplemented  
-[2025-06-24T08:17:44Z WARN  sp_io::storage] storage::commit_transaction unimplemented  
+[2025-06-24T08:17:44Z DEBUG pallet_mobile_registry::pallet] register_mobile: new registration for   
 [2025-06-24T08:17:44Z DEBUG pallet_mobile_registry::pallet] register_mobile end  
 ```
 ---
@@ -279,13 +281,12 @@ This log trace shows what happens when a new device connects to the system and i
 
 The following logs represent the backend activity triggered by a mobile app requesting a new secure visual validation. This includes:
 
-- Garbled circuit rendering for the transaction display.
+- Garbled circuit rendering for the transaction or sensitive action display.
 - Selection of digits and randomized pinpad.
-- Storage of metadata used later for input validation.
+- Storage of metadata used later for user input touchscreen validation.
 
 You should see logs similar to the following:
 ```bash
-[2025-06-23T15:03:45Z WARN  sp_io::storage] storage::start_transaction unimplemented  
 [2025-06-23T15:03:45Z INFO  pallet_ocw_garble::pallet] [ocw-garble] garble_and_strip_display_circuits_package_signed: ("T0.13 ETH to REPLACEME" for )  
 [2025-06-23T15:03:45Z WARN  pallet_ocw_garble::pallet] get_ocw_circuits_storage_value: storage COULD NOT be read! Fallback to RPC...  
 [2025-06-23T15:03:45Z INFO  pallet_ocw_garble::pallet] get_ocw_circuits_storage_value response : <wasm:stripped>  
@@ -307,7 +308,7 @@ You should see logs similar to the following:
 - `callback_new_garbled_and_strip_signed: done!`: confirms generation and signing succeeded.
 
 
-### Detailed logs for a succesfull validation
+### 🛠️ Detailed logs for a succesfull validation
 When the user correctly responds to the visual cryptographic challenge, the following logs will appear 
 in the integritee_service container. These confirm that the digits were correctly interpreted and that the result was successfully committed:
 ```bash
@@ -315,8 +316,6 @@ integritee_service-1  | [2025-06-23T15:04:01Z INFO  pallet_tx_validation::pallet
 integritee_service-1  | [2025-06-23T15:04:01Z INFO  pallet_tx_validation::pallet] [tx-validation] check_input: input_digits_str = "\u{2}\u{5}", input_digits_int = [2, 5], pinpad_permutation = BoundedVec([6, 2, 5, 4, 1, 9, 7, 3, 8, 0], 10)
 integritee_service-1  | [2025-06-23T15:04:01Z INFO  pallet_tx_validation::pallet] [tx-validation] check_input: computed_inputs_from_permutation = [5, 9], message_digits = BoundedVec([5, 9], 10)
 integritee_service-1  | [2025-06-23T15:04:01Z INFO  pallet_tx_validation::pallet] [tx-validation] TxPass
-integritee_service-1  | [2025-06-23T15:04:01Z WARN  sp_io::storage] storage::commit_transaction unimplemented
-integritee_service-1  | [2025-06-23T15:04:01Z WARN  sp_io::storage] storage::start_transaction unimplemented
 integritee_service-1  | [2025-06-23T15:04:01Z INFO  pallet_tx_registry::pallet] [tx-registry] store_tx_result: who = , message_pgarbled_cid = "QmSJSSsyHV9aZCqCvv6QZwJ3K7vf4YoqF1DAWAAwsD7m6w", result = <wasm:stripped>
 integritee_service-1  | [2025-06-23T15:04:01Z INFO  pallet_tx_registry::pallet] [tx-registry] store_tx_result: done! [BoundedVec([<wasm:stripped>], 16)]
 ```
@@ -412,9 +411,7 @@ Expected logs:
 [DEBUG pallet_unify_recovery::pallet] friend_account :  
 [DEBUG pallet_unify_recovery::pallet] map_friend_with_recovery_method DONE  
 [DEBUG pallet_unify_recovery::pallet] execute_create_recovery : pending AFTER = ActiveFriends {...}  
-[DEBUG pallet_unify_recovery::pallet] execute_create_recovery : CHECK threshold OK = []  
-[WARN  sp_io::storage] storage::start_transaction unimplemented  
-[WARN  sp_io::storage] storage::commit_transaction unimplemented  
+[DEBUG pallet_unify_recovery::pallet] execute_create_recovery : CHECK threshold OK = []   
 [INFO  pallet_unify_recovery::pallet] execute_create_recovery : DONE for  
 [INFO  pallet_token_recovery::pallet] extended_create_recovery : DONE  
 ```
@@ -433,10 +430,6 @@ Expected logs:
 
 
 
-
-
-
-
 ## Optional: Front-End Access
 
 You can inspect chain state and transactions via:
@@ -451,6 +444,20 @@ You can inspect chain state and transactions via:
 - Ideal for offline testing, developer evaluation, or deeper inspection of runtime logs
 
 ---
+:::warning
+If you are using an emulator, or a low-end or outdated Android device with a basic GPU, the user experience may be significantly degraded. Although the validation screen may be harder to read in such conditions, you should still be able to complete the test process.
+:::
+:::note
+Please note that the current Android application is still under active development, and the present user experience does not reflect the final experience that will be delivered with the production-ready mobile SDK.
+:::
+:::tip
+In the future, we plan to introduce a **trusted beneficiary** feature. This will enable users to register known recipient addresses on-chain through a secure validation process, preventing attackers from substituting contact names with malicious public keys. This enhancement will make the wallet both more secure and user-friendly.
+:::
+
+
+:::info
+If you’ve jumped directly into evaluation without first reading the documentation, we recommend reviewing the [**Milestone 1 documentation**](/Milestones/M1/Summary.md). It provides essential context on the architecture, backend logic, and trusted execution flows implemented in Milestone 1.
+:::
 
 Next Steps:
 - Try the [Advanced CLI Demo](./advanced-cli-demo.md) to interact directly with the TEE and garbled circuits logic.
