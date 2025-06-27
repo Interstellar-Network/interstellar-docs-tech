@@ -523,6 +523,40 @@ Expected logs:
 
 > ℹ️ In this flow, the CID typically points to a trusted, encrypted, cloud-backed VCA Token that can be retrieved and validated securely by the user.
 
+### 🛠️ Detailed logs for vouching a VCA Token during recovery process
+
+This flow illustrates a successful **vouch operation** for a VCA Token during a recovery procedure. It does **not yet trigger the actual recovery**, but rather **registers support** from a trusted identity (e.g. cloud-based, NFC, or another VCA-backed device).
+
+The system:
+
+- Validates the VCA Token via a cryptographic challenge.
+- Checks that the CID is known and linked to an eligible lost account.
+- Records a vouch that may contribute toward the threshold needed to initiate full recovery.
+
+Expected logs:
+```bash
+[DEBUG pallet_token_recovery::pallet] extended_recovery_with_vouch : recovery_account = [...]  
+[DEBUG pallet_token_recovery::pallet] validate_cid : cid = BoundedVec([...], 64)  
+[DEBUG pallet_token_recovery::pallet] is_cid_registered : cid = ..., lost_account = [...], recovery_account = [...]  
+[INFO  pallet_tx_validation::pallet] check_input: ipfs_cid = "...", input_digits = [...]  
+[INFO  pallet_tx_validation::pallet] computed_inputs_from_permutation = [...], message_digits = [...]  
+[INFO  pallet_tx_validation::pallet] TxPass  
+[DEBUG pallet_unify_recovery::pallet] execute_vouch_recovery : START ..., Cid(...)  
+[DEBUG pallet_unify_recovery::pallet] execute_initiate_recovery : START ...  
+[INFO  pallet_unify_recovery::pallet] execute_initiate_recovery : DONE  
+[INFO  pallet_unify_recovery::pallet] execute_vouch_recovery : DONE  
+[INFO  pallet_token_recovery::pallet] extended_recovery_with_vouch : DONE  
+```
+---
+
+### ✅ What to Look For
+
+- `validate_cid` and `is_cid_registered`: confirms the VCA Token being vouched for is valid and recognized.
+- `TxPass`: indicates that the digits entered in response to the visual challenge were successfully validated.
+- `execute_vouch_recovery`: logs the vouch as part of the ongoing recovery process.
+- `extended_recovery_with_vouch : DONE`: confirms that this particular vouch has been successfully recorded.
+
+> ℹ️ This step contributes to a **multi-party recovery threshold**. (e.g 1/1, 1/2 2/4, etc..) Once enough valid vouches have been submitted (e.g. from other devices, friends, or backups), the recovery can be finalized with a separate **claim** operation.
 
 
 
@@ -540,10 +574,15 @@ You can inspect chain state and transactions via:
 - Ideal for offline testing, developer evaluation, or deeper inspection of runtime logs
 
 ---
+:::note Technical Preview – Foundation for Secure Mobile SDKs  
+This Android app showcases Interstellar’s secure Web3 account infrastructure and serves as the basis for the upcoming Android and iOS SDKs, currently in active development.
 
-:::note
-Please note that the current Android application is still under active development, and the present user experience does not reflect the final experience that will be delivered with the production-ready mobile SDK.
+UI and UX will be significantly refined to reflect our core vision: making the human user the root of trust—not the weakest link—by combining simplicity with the strongest security.
+
+Powered by the TAVP protocol, this platform lays the groundwork for future improvement including novel cognitive and dynamic behavioral features—essential to counter emerging threats from malware and adversarial AI.
 :::
+
+
 
 :::info
 If you’ve jumped directly into evaluation without first reading the documentation, we recommend reviewing the [**Milestone 1 documentation**](/Milestones/M1/Summary.md). It provides essential context on the architecture, backend logic, and trusted execution flows implemented in Milestone 1.
