@@ -11,7 +11,7 @@ This documentation site is specifically designed to **assist curators in reviewi
 
 You can start directly with the [**Shortcut Path for Reviewers**](./Milestones/M1/quick-start-evaluator.md) to evaluate Milestone 1 without needing to read the full documentation upfront.
 
-That said, we recommend reading the [**Manifesto**](./Manifesto/manifesto.md) first to understand the broader vision and security model behind Interstellar’s architecture.
+That said, we recommend reading the [**Manifesto**](./Manifesto/manifesto.md) and the following **HW wallets comparison** first to understand the broader vision and security model behind Interstellar’s architecture.
 
 :::
 

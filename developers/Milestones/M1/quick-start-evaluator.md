@@ -6,13 +6,15 @@ sidebar_position: 0
 
 # Shortcut Path for Reviewers
 
-If you're reviewing Milestone 1 and prefer to start **immediately** — without first exploring the full documentation — this shortcut provides a **fast and frictionless way to experience the delivered features** without needing to run the stack locally.
+If you're reviewing Milestone 1 and prefer to start **immediately** — without first exploring the full documentation — this shortcut provides direct access to the core milestone logic through our mobile app, and local nodes.
+<!--
+a **fast and frictionless way to experience the delivered features** without needing to run the stack locally.
 
-It allows direct access to the core milestone logic through our mobile app, so you can validate account registration, transaction approval, the Trusted Action Validation Protocol (TAVP) and Secure recovey implementation right away.
+It allows direct access to the core milestone logic through our mobile app, so you can validate account registration, transaction approval, the Trusted Action Validation Protocol (TAVP) and Secure recovey implementation right away.--> 
 
 ### 👉 [Android App + Local Nodes](./demo-tutorial/local-demo-with-docker.md)
 
-This is the most direct and reliable way to test the M1 features:
+This is the most complete and reliable way to test the M1 features:
 
 - ✅ Instant Account onboarding with mobile SE signature (Passkey Compliant)
 - ✅ Trusted transaction validation (leveraging TAVP)

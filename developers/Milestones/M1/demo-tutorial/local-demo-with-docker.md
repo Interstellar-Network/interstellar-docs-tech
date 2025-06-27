@@ -52,21 +52,37 @@ sudo service docker start  # (for most Linux distros)
 sudo docker compose down --timeout 1 && sudo docker compose up --force-recreate
 ```
 
-Wait for logs to show messages like:
+### ⏳ Waiting for Master Circuit Generation
+
+Once the node and service are running, the system will automatically trigger the **generation of master circuits** from the hardware description files.
+
+These circuits are compiled using the Verilog logic generated from the original VHDL specification, processed through the `abc` logic synthesis pipeline. This step may take several minutes depending on the environment.
+
+During this time, monitor the logs and wait for the following sequence of messages:
 
 ```bash
+[ocw-circuits] callback_new_skcd_signed sent number : <number> 1-Success  - 0-Fail
+[ocw-circuits] callback_new_display_circuits_package_signed: (<CID_1>, <message_digits_number>), (<CID_2>, <pinpad_digits_number>) for <account_id>
+```
+Shortly before these messages, you will also see large blob uploads to IPFS such as:
+```bash
+Requested started id=<...> method=POST uri=http://ipfs:5001/api/v0/add
+```
+These blobs correspond to the master visual circuits (SKCD display circuits), which are the result 
+of the hardware synthesis pipeline. Their appearance in the logs is a strong indicator 
+that the build process has completed.
+
+> ℹ️ You can identify this moment easily by spotting two large IPFS file hashes being 
+> logged together — one for the secure keypad circuit and one for the display message circuit 
+> i.e one time code These hashes will later be used for visual challenge rendering and validation.
+
+Detailed example from `integritee_node-1` 
+```bash
+Requested started id=1059 method=POST uri=http://ipfs:5001/api/v0/add
+[fetch_from_remote_grpc_web] content_type: application/json
 [ocw-circuits] callback_new_skcd_signed sent number : 1
-[ocw-circuits] callback_new_display_circuits_package_signed: (..)
+[ocw-circuits] callback_new_display_circuits_package_signed: ("QmUx8mMo8GgGdUhcgFQVg2sexkVfyq1sViruZiBadUfs4d",2),("QmcwXyZNmLXnjeoA25YSzj41G1sr6ZsHgZZBQVWvcfe1qn",10) for d43593c715fdd31c61141abd04a99fd6822c8558854ccde39a5684e7a56da27d (5GrwvaEF...)
 ```
-Wait for a few minutes and you will see two big blob appearaing in the logs, 
-it represents the master circuits circuits built by the verilog pipeline.
-```bash
-integritee_node-1     | 2025-06-26 11:56:34 Requested started id=1059 method=POST uri=http://ipfs:5001/api/v0/add
-integritee_node-1     | 2025-06-26 11:56:34 [fetch_from_remote_grpc_web] content_type: application/json
-integritee_node-1     | 2025-06-26 11:56:34 [ocw-circuits] callback_new_skcd_signed sent number : 1
-integritee_node-1     | 2025-06-26 11:56:36 [ocw-circuits] callback_new_display_circuits_package_signed: ("QmUx8mMo8GgGdUhcgFQVg2sexkVfyq1sViruZiBadUfs4d",2),("QmcwXyZNmLXnjeoA25YSzj41G1sr6ZsHgZZBQVWvcfe1qn",10) for d43593c715fdd31c61141abd04a99fd6822c8558854ccde39a5684e7a56da27d (5GrwvaEF...)
-```
-
 
 ```
 [ocw-circuits] Hello from pallet-ocw-circuits.
@@ -74,7 +90,24 @@ integritee_node-1     | 2025-06-26 11:56:36 [ocw-circuits] callback_new_display_
 ```
 
 
-You can verify the runtime is ready using [Polkadot.js](https://polkadot.js.org/apps/?rpc=ws://localhost:9944)
+:::info VCA System Layer
+
+While waiting for the stack to fully initialize, you can explore the architecture and rationale behind 
+the [VCA System Layer](/developers/category/vca-system-layer). This layer is responsible for producing the `VCA Token`, 
+the core cryptographic artifact used by the Trusted Action Validation Protocol (`TAVP`).
+
+The token is generated through a hardware-secure pipeline starting from VHDL logic descriptions, synthesized into 
+Verilog and compiled using the `ABC` logic synthesis toolchain. The resulting master circuits define both the secure display and interaction logic — including the Secure Circuit Descriptor (`SCD`) and its runtime variant, `SKCD`, used for verifiable evaluation.
+
+Once built, these circuits are uploaded to IPFS and used to enable real-time, **privacy-preserving visual cryptographic** 
+**challenges**, ensuring each **user interaction** is verifiable and **resistant to malware, phishing, and adversarial AI**.
+
+:::
+
+
+
+
+You can also verify the runtime is ready using [Polkadot.js](https://polkadot.js.org/apps/?rpc=ws://localhost:9944)
 
 
 ## 3. Install the Android Demo App
@@ -177,7 +210,7 @@ Make sure `adb` is properly configured and the emulator or device is detected
 
 If the emulator is running (or the device is connected) on a different network interface than the backend 
 (e.g., the backend runs in WSL2 and the Android emulator or device is connected 
-via USB or Wi-Fi to Windows), 
+via USB to Windows), 
 you may need to configure port forwarding between the desktop and the blockchain.
 
 **WSL2 ---> Windows example:**
@@ -220,7 +253,7 @@ Send a test transaction to a contact
 <img src="/img/Send_Currency_Demo.gif" alt="wallet menu"  width="300"/>
 
 - Enter the one-time code (2-digit), or experiment with trial/feedback
-### Check Toast message order whith Action Validation Screen
+### Check Toast messages whith Action Validation Screen
 
 - **Processing...**
 - Registered
@@ -230,12 +263,44 @@ Send a test transaction to a contact
 
 - Validating transaction...
 - Transaction done!
+
+:::warning Low-end devices and emulator limitations
+If you are using an emulator with low-end GPU, or a low-end or outdated Android device with limited GPU, 
+the user experience may be significantly degraded. 
+Although the validation screen may be harder to read in such conditions, 
+you should still be able to complete the test process.
+:::
+
+:::tip FUTURE ENHANCEMENT
+In the future, we plan to introduce a **trusted beneficiary** feature. This will enable users 
+to register known recipient addresses on-chain through a secure validation process, preventing attackers from substituting contact names with malicious public keys. This enhancement will make the wallet both more secure and user-friendly.
+:::
+
+
 ### Step 3 Test Recovery 
 - Register a recovery item (e.g., NFC Item or Cloud Backup)
 
 
 
 - Relaunch your App (simulating creation of new App)
+
+:::info Recovery Testing Tip
+
+To simplify recovery testing, the app includes a **Settings** tab with the following options:
+
+- 🆔 **Root Account Address**  
+  Displays the root account currently linked to the device.  
+  👉 *Take a screenshot to verify correct linkage after recovery.*
+
+- ♻️ **Reset Mobile Keys**  
+  Simulates a fresh app install by clearing the local key material.  
+  👉 *Triggers a new mobile registration flow to test recovery logic.*
+
+This allows reviewers to validate that recovery properly restores the mobile identity to the original root account.
+:::
+
+
+
 - Recovery Screen to recover your account with your Cloud Backup and/or NFC Items
 
 
@@ -253,8 +318,7 @@ Then select "Material Files" from the share menu to save the .enc file.
 :::
 
 :::info Recovery Testing Note
-To simplify recovery flow testing......
-**Important:** Once a user registers with a specific NFC tag (or manually entered serial),
+**Important:** Once a user registers with a specific NFC tag (or manually entered serial on emulator or device whithout NFC capabilities),
  they cannot register again with the same one until the backend stack is restarted (e.g., by restarting the Docker Compose setup with --force-recreate).
 :::
 
@@ -292,12 +356,10 @@ When interacting with the mobile app (e.g., authentication, transaction validati
 This log trace shows what happens when a new device connects to the system and is not yet registered under a root account. The backend detects the missing account and proceeds with registration:
 
 ```bash
-[2025-06-24T08:17:44Z INFO  pallet_mobile_registry::pallet] ensure_has_root_account failed for  while checking if registered: Module(ModuleError { index: 16, error: [0, 0, 0, 0], message: Some("RootAccountNotFound") })  
-[2025-06-24T08:17:44Z WARN  sp_io::storage] storage::start_transaction unimplemented  
-[2025-06-24T08:17:44Z DEBUG pallet_mobile_registry::pallet] register_mobile start for  
-[2025-06-24T08:17:44Z INFO  pallet_mobile_registry::pallet] ensure_has_root_account failed for  while checking if registered: Module(ModuleError { index: 16, error: [0, 0, 0, 0], message: Some("RootAccountNotFound") })  
-[2025-06-24T08:17:44Z DEBUG pallet_mobile_registry::pallet] register_mobile: new registration for   
-[2025-06-24T08:17:44Z DEBUG pallet_mobile_registry::pallet] register_mobile end  
+[INFO  pallet_mobile_registry::pallet] ensure_has_root_account failed for  while checking if registered: Module(ModuleError { index: 16, error: [0, 0, 0, 0], message: Some("RootAccountNotFound") })  
+[DEBUG pallet_mobile_registry::pallet] register_mobile start for    
+[DEBUG pallet_mobile_registry::pallet] register_mobile: new registration for   
+[DEBUG pallet_mobile_registry::pallet] register_mobile end  
 ```
 ---
 
@@ -311,7 +373,8 @@ This log trace shows what happens when a new device connects to the system and i
 
 ### 🛠️ Detailed logs for garbled circuit generation and metadata preparation
 
-The following logs represent the backend activity triggered by a mobile app requesting a new secure visual validation. This includes:
+The following logs represent the backend activity triggered by a mobile app requesting a new secure visual validation 
+i.e `VCA token` generation. This includes:
 
 - Garbled circuit rendering for the transaction or sensitive action display.
 - Selection of digits and randomized pinpad.
@@ -319,16 +382,15 @@ The following logs represent the backend activity triggered by a mobile app requ
 
 You should see logs similar to the following:
 ```bash
-[2025-06-23T15:03:45Z INFO  pallet_ocw_garble::pallet] [ocw-garble] garble_and_strip_display_circuits_package_signed: ("T0.13 ETH to REPLACEME" for )  
-[2025-06-23T15:03:45Z WARN  pallet_ocw_garble::pallet] get_ocw_circuits_storage_value: storage COULD NOT be read! Fallback to RPC...  
-[2025-06-23T15:03:45Z INFO  pallet_ocw_garble::pallet] get_ocw_circuits_storage_value response : <wasm:stripped>  
-[2025-06-23T15:03:45Z INFO  pallet_ocw_garble::pallet] display_circuits_package: ("Qmaq13hbrSK7th8kA6CyP5cfviMshv46ZzxZ63aRopvpgF",2) ("QmR9DRACkkgwmyoSNGVX9m54AGZ6mkGkAGxwCLXMzi4aUP",10)  
-[2025-06-23T15:03:45Z INFO  pallet_ocw_garble::pallet] pinpad_digits: [6, 2, 5, 4, 1, 9, 7, 3, 8, 0], message_digits: [5, 9]  
-[2025-06-23T15:03:46Z INFO  pallet_ocw_garble::pallet] callback_new_garbled_and_strip_signed: "QmSJSSsyHV9aZCqCvv6QZwJ3K7vf4YoqF1DAWAAwsD7m6w" ; "QmSDGvEFH2sDnNg5zCA4Nr4Zd3mByYs9Mmg994DWL8yiK6" for  
-[2025-06-23T15:03:46Z INFO  pallet_tx_validation::pallet] store_metadata_aux: message_pgarbled_cid = "QmSJSSsyHV9aZCqCvv6QZwJ3K7vf4YoqF1DAWAAwsD7m6w", message_digits = [5, 9], pinpad_digits = [6, 2, 5, 4, 1, 9, 7, 3, 8, 0]  
-[2025-06-23T15:03:46Z INFO  pallet_tx_validation::pallet] store_metadata_aux: done!  
-[2025-06-23T15:03:46Z INFO  pallet_ocw_garble::pallet] callback_new_garbled_and_strip_signed: done!  
-[2025-06-23T15:03:46Z WARN  sp_io::storage] storage::commit_transaction unimplemented  
+[INFO  pallet_ocw_garble::pallet] [ocw-garble] garble_and_strip_display_circuits_package_signed: ("TRANSACTION AMMOUNT to DESTINATION" for )  
+[WARN  pallet_ocw_garble::pallet] get_ocw_circuits_storage_value: storage COULD NOT be read! Fallback to RPC...  
+[INFO  pallet_ocw_garble::pallet] get_ocw_circuits_storage_value response : <wasm:stripped>  
+[INFO  pallet_ocw_garble::pallet] display_circuits_package: ("Qmaq13hbrSK7th8kA6CyP5cfviMshv46ZzxZ63aRopvpgF",2) ("QmR9DRACkkgwmyoSNGVX9m54AGZ6mkGkAGxwCLXMzi4aUP",10)  
+[INFO  pallet_ocw_garble::pallet] pinpad_digits: [6, 2, 5, 4, 1, 9, 7, 3, 8, 0], message_digits: [5, 9]  
+[INFO  pallet_ocw_garble::pallet] callback_new_garbled_and_strip_signed: "QmSJSSsyHV9aZCqCvv6QZwJ3K7vf4YoqF1DAWAAwsD7m6w" ; "QmSDGvEFH2sDnNg5zCA4Nr4Zd3mByYs9Mmg994DWL8yiK6" for  
+[INFO  pallet_tx_validation::pallet] store_metadata_aux: message_pgarbled_cid = "QmSJSSsyHV9aZCqCvv6QZwJ3K7vf4YoqF1DAWAAwsD7m6w", message_digits = [5, 9], pinpad_digits = [6, 2, 5, 4, 1, 9, 7, 3, 8, 0]  
+[INFO  pallet_tx_validation::pallet] store_metadata_aux: done!  
+[INFO  pallet_ocw_garble::pallet] callback_new_garbled_and_strip_signed: done!   
 ```
 ---
 
@@ -341,15 +403,17 @@ You should see logs similar to the following:
 
 
 ### 🛠️ Detailed logs for a succesfull validation
-When the user correctly responds to the visual cryptographic challenge, the following logs will appear 
-in the integritee_service container. These confirm that the digits were correctly interpreted and that the result was successfully committed:
+When the user correctly responds to the visual cryptographic challenge through 
+`VCA token` evaluation on the mobile, the following logs will appear 
+in the integritee_service container. 
+These confirm that the digits were correctly interpreted and that the result was successfully committed:
 ```bash
-integritee_service-1  | [2025-06-23T15:04:01Z INFO  pallet_tx_validation::pallet] [tx-validation] check_input: who = , ipfs_cid = "QmSJSSsyHV9aZCqCvv6QZwJ3K7vf4YoqF1DAWAAwsD7m6w", input_digits = [2, 5]
-integritee_service-1  | [2025-06-23T15:04:01Z INFO  pallet_tx_validation::pallet] [tx-validation] check_input: input_digits_str = "\u{2}\u{5}", input_digits_int = [2, 5], pinpad_permutation = BoundedVec([6, 2, 5, 4, 1, 9, 7, 3, 8, 0], 10)
-integritee_service-1  | [2025-06-23T15:04:01Z INFO  pallet_tx_validation::pallet] [tx-validation] check_input: computed_inputs_from_permutation = [5, 9], message_digits = BoundedVec([5, 9], 10)
-integritee_service-1  | [2025-06-23T15:04:01Z INFO  pallet_tx_validation::pallet] [tx-validation] TxPass
-integritee_service-1  | [2025-06-23T15:04:01Z INFO  pallet_tx_registry::pallet] [tx-registry] store_tx_result: who = , message_pgarbled_cid = "QmSJSSsyHV9aZCqCvv6QZwJ3K7vf4YoqF1DAWAAwsD7m6w", result = <wasm:stripped>
-integritee_service-1  | [2025-06-23T15:04:01Z INFO  pallet_tx_registry::pallet] [tx-registry] store_tx_result: done! [BoundedVec([<wasm:stripped>], 16)]
+[INFO  pallet_tx_validation::pallet] [tx-validation] check_input: who = , ipfs_cid = "QmSJSSsyHV9aZCqCvv6QZwJ3K7vf4YoqF1DAWAAwsD7m6w", input_digits = [2, 5]
+[INFO  pallet_tx_validation::pallet] [tx-validation] check_input: input_digits_str = "\u{2}\u{5}", input_digits_int = [2, 5], pinpad_permutation = BoundedVec([6, 2, 5, 4, 1, 9, 7, 3, 8, 0], 10)
+[INFO  pallet_tx_validation::pallet] [tx-validation] check_input: computed_inputs_from_permutation = [5, 9], message_digits = BoundedVec([5, 9], 10)
+[INFO  pallet_tx_validation::pallet] [tx-validation] TxPass
+[INFO  pallet_tx_registry::pallet] [tx-registry] store_tx_result: who = , message_pgarbled_cid = "QmSJSSsyHV9aZCqCvv6QZwJ3K7vf4YoqF1DAWAAwsD7m6w", result = <wasm:stripped>
+[INFO  pallet_tx_registry::pallet] [tx-registry] store_tx_result: done! [BoundedVec([<wasm:stripped>], 16)]
 ```
 ### ✅ What to Look For
 
@@ -476,16 +540,10 @@ You can inspect chain state and transactions via:
 - Ideal for offline testing, developer evaluation, or deeper inspection of runtime logs
 
 ---
-:::warning
-If you are using an emulator, or a low-end or outdated Android device with a basic GPU, the user experience may be significantly degraded. Although the validation screen may be harder to read in such conditions, you should still be able to complete the test process.
-:::
+
 :::note
 Please note that the current Android application is still under active development, and the present user experience does not reflect the final experience that will be delivered with the production-ready mobile SDK.
 :::
-:::tip
-In the future, we plan to introduce a **trusted beneficiary** feature. This will enable users to register known recipient addresses on-chain through a secure validation process, preventing attackers from substituting contact names with malicious public keys. This enhancement will make the wallet both more secure and user-friendly.
-:::
-
 
 :::info
 If you’ve jumped directly into evaluation without first reading the documentation, we recommend reviewing the [**Milestone 1 documentation**](/Milestones/M1/Summary.md). It provides essential context on the architecture, backend logic, and trusted execution flows implemented in Milestone 1.
