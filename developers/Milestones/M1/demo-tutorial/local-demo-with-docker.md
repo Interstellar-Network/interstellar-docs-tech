@@ -13,10 +13,10 @@ This setup enables full offline testing without relying on a hosted VPS.
 This compatibility note applies to the **backend stack**, tested on Ubuntu 24.04 LTS (x86_64) using Docker (`docker-compose`) or Podman (with manually installed `podman-compose`*).  
 The stack is expected to work on other recent Linux distributions, but this has not been officially verified.
 
-Known issue: May fail on Apple Silicon (M1/M2/M3/M4) due to current SIMD usage and QEMU/Rosetta limitations -- crash on M1/M2 (not tested on M3/M4)
+Known issue: May fail on Apple Silicon (M1/M2/M3/M4) - due to current SIMD usage and QEMU/Rosetta limitations - crash on M1/M2 (not tested on M3/M4)
 
 The **frontend** (e.g., Android emulator or physical device) 
-can run on any OS supported by Android Studio (expect significant emulator limitations on Apple Silicon)
+can run on any OS supported by Android Studio (expect some emulator limitations on Apple Silicon)
 
 *Compose tools are required to manage service startup dependencies (e.g., health checks).
 :::
