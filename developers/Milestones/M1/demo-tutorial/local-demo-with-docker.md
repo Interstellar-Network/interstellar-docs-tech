@@ -116,26 +116,21 @@ You can also verify the runtime is ready using [Polkadot.js](https://polkadot.js
 
 From the official [Interstellar GitHub Release](https://github.com/Interstellar-Network/containers/releases/tag/dev1) (specific APKs preconfigured to connect to `localhost`):
 
-- `androidApp-arm64-release.apk` — for Android devices
+- `androidApp-arm64-release.apk` — for Android devices and Apple Silicon(M!/M2/M3/M4)
 - `androidApp-x86_64-release.apk` — for Android emulators running on x86_64 platforms (e.g., Windows PCs, Intel-based Mac)
 
-:::warning Apple Silicon Emulator Limitation
+:::tip Recommended Test Setup – Hardware & Emulator Guidance
 
-Avoid using the Android Emulator on Apple Silicon (M1–M4) to test this application.
+While the app runs on Apple Silicon (M1–M4), emulator performance may vary due to ARM virtualization and GPU constraints. For accurate testing—especially for Rust-based rendering and cryptographic logic—choose the best available setup:
 
-Due to limited ARM virtualization support and lack of full hardware acceleration on macOS, Android emulators on M1/M2/M3/M4 may:
-
-- Exhibit poor performance or rendering issues.
-
-- Fail to execute native low levl code correctly (e.g., Rust-based visual cryptography renderer or cryptographic pipelines).
-
-- Misrepresent the app’s actual behavior on real arm64 hardware.
-
-These limitations are emulator-specific and do not reflect production stability. We recommend using a physical Android device or an x86_64 emulator on an Intel-based system for accurate testing.
+| Recommended Option             | Notes                                                                 |
+|-------------------------------|-----------------------------------------------------------------------|
+| Mid-to-high-end ARM device     | **Preferred**. e.g., Pixel 5–Pixel 8. Avoid Android 16 (API 36) for now. |
+| Apple Silicon (M3/M4) emulator | Acceptable if GPU is sufficient. Better than M1/M2 for rendering.     |
+| x86_64 emulator (Intel)        | Reliable with mid-range or better GPU.                                |
+| Apple Silicon (M1/M2) emulator | Works, but may show degraded performance or rendering issues.         |
 
 :::
-
-
 
 
 ### Option 1: Physical Device
@@ -369,7 +364,9 @@ This log trace shows what happens when a new device connects to the system and i
 - `register_mobile start` → `register_mobile end`: confirms that registration was initiated and completed.
 - These logs confirm that the system automatically falls back to registering the mobile when not yet linked to a root account.
 
-
+:::info more details
+Learn more on **[Account Abstraction Layer](/developers/category/aa-layer)**
+:::
 
 ### 🛠️ Detailed logs for garbled circuit generation and metadata preparation
 
@@ -429,6 +426,9 @@ These confirm that the digits were correctly interpreted and that the result was
 - `TxFail`: indicates that the user’s input did **not** match the expected digits — the validation failed.
 - `store_tx_result: done!`: even in failure cases, the result is still stored for transparency, auditability, or rate-limiting purposes.
 
+:::info MORE DETAILS
+Learn more on **[Authentication Layer](/developers/category/authentication-layer)**
+:::
 
 ### 🛠️ Detailed logs for NFC tag-based recovery setup
 
@@ -560,6 +560,10 @@ Expected logs:
 
 
 
+:::info more details
+Learn more on **[Recovery Layer](/developers/category/authentication-layer)**
+:::
+
 ## Optional: Front-End Access
 
 You can inspect chain state and transactions via:
@@ -582,11 +586,13 @@ UI and UX will be significantly refined to reflect our core vision: making the h
 Powered by the TAVP protocol, this platform lays the groundwork for future improvement including novel cognitive and dynamic behavioral features—essential to counter emerging threats from malware and adversarial AI.
 :::
 
+:::info Follow-Up – Selective Docs Exploration  
+If you’ve jumped straight into the evaluation, we recommend consulting the [**Milestone 1 documentation**](/Milestones/M1/Summary.md) for key context. It outlines the core architecture, backend logic, and trusted execution flows implemented in this milestone.
 
-
-:::info
-If you’ve jumped directly into evaluation without first reading the documentation, we recommend reviewing the [**Milestone 1 documentation**](/Milestones/M1/Summary.md). It provides essential context on the architecture, backend logic, and trusted execution flows implemented in Milestone 1.
+The documentation is modular—feel free to focus only on the sections most relevant to your review or interest, Contextual links are also provided throughout the demo tutorial for convenience.
 :::
+
+
 
 Next Steps:
 - Try the [Advanced CLI Demo](./advanced-cli-demo.md) to interact directly with the TEE and garbled circuits logic.
