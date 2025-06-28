@@ -592,7 +592,7 @@ Expected logs:
 > ℹ️ This step is typically followed by additional vouches (e.g. from other devices or trusted backups), until the threshold is met and a `claim_recovery` call is triggered to finalize the recovery process.
 
 
-### 🛠️ Detailed logs for final recovery claim using an NFC Tag
+### 🛠️ Detailed logs for final recovery claim with `pallet_nfc_recovery`
 
 This log trace corresponds to the **finalization of an account recovery**, triggered by an NFC tag that has already been vouched for and contributed toward the recovery threshold.
 
@@ -632,6 +632,31 @@ Expected logs:
 
 > ℹ️ This is the final step in the Trusted Recovery process. After this point, the recovered device is fully operational under the recovered root account.
 
+### 🧩 Recovery Claim: Execution Flow Clarification
+
+The recovery claim can be initiated via either `pallet_nfc_recovery` or `pallet_token_recovery`, using:
+
+- `claim_recovery_with_nfc`
+- `claim_recovery_with_token`
+
+These functions **do not perform additional validation** of the method used to initiate them. Instead, they act as entry points to trigger the unified recovery flow orchestrated by `pallet_unify_recovery`.
+
+#### ✅ What Happens Internally
+
+Regardless of how the claim is triggered, `pallet_unify_recovery`:
+
+- **Checks whether the recovery threshold has been reached**, based on previously registered vouching events (e.g., via VCA token, NFC tag, or trusted contacts),
+- **Executes the recovery** if the conditions are met,
+- **Clears all recovery-related state**, including:
+  - VCA token metadata (CID),
+  - Associated NFC tags,
+  - Lost account references.
+
+> ⚠️ **Important**:  
+> The pallet used to initiate the claim (NFC or VCA token) **does not imply that method was used for vouching**.  
+> The claim operation is simply a trigger — the actual authorization logic is enforced by `pallet_unify_recovery`.
+
+This design ensures that recovery claims remain modular, flexible, and consistent across multiple authentication methods.
 
 
 :::info more details
