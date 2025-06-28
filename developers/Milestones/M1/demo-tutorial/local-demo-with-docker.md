@@ -594,14 +594,13 @@ Expected logs:
 
 ### 🛠️ Detailed logs for final recovery claim with `pallet_nfc_recovery`
 
-This log trace corresponds to the **finalization of an account recovery**, triggered by an NFC tag that has already been vouched for and contributed toward the recovery threshold.
+This log trace corresponds to the **finalization of an account recovery**, 
 
 Once the recovery threshold is satisfied (e.g., via previous `vouch` operations), this `claim_recovery_with_nfc` call finalizes the process. It:
 
-- Validates the NFC identity one last time.
 - Confirms the root account is still authorized.
 - Transfers recovery control back to the lost account.
-- Cleans up all recovery-related metadata (NFC tag, CID, mappings, etc.).
+- Cleans up all recovery-related metadata (NFC tag, CID for VCA token, mappings, etc.).
 
 Expected logs:
 ```bash
@@ -625,7 +624,7 @@ Expected logs:
 
 ### ✅ What to Look For
 
-- `claim_recovery_with_nfc`: confirms that the NFC-based identity has been used to finalize the recovery.
+- `claim_recovery_with_nfc`: access to pallet_unify from `pallet_nfc_recovery` **note**: could also be accessed through `pallet_token_recovery`
 - `execute_claim_recovery : START` → `DONE`: indicates the successful transfer of recovery authority back to the lost account.
 - `clear_account_recovery_mappings`: confirms cleanup of all temporary recovery state, including CID and NFC entries.
 - No errors or threshold violations indicate the recovery was successfully authorized and committed.
