@@ -644,7 +644,7 @@ These functions **do not perform additional validation** of the method used to i
 
 Regardless of how the claim is triggered, `pallet_unify_recovery`:
 
-- **Checks whether the recovery threshold has been reached**, based on previously registered vouching events (e.g., via VCA token, NFC tag, or trusted contacts),
+- **Checks whether the recovery threshold has been reached**, based on previously registered vouching events (e.g., via VCA token, NFC tag, or later with additional method or trusted contacts),
 - **Executes the recovery** if the conditions are met,
 - **Clears all recovery-related state**, including:
   - VCA token metadata (CID),
