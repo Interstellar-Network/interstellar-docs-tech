@@ -559,6 +559,43 @@ Expected logs:
 > ℹ️ This step contributes to a **multi-party recovery threshold**. (e.g 1/1, 1/2 2/4, etc..) Once enough valid vouches have been submitted (e.g. from other devices, friends, or backups), the recovery can be finalized with a separate **claim** operation.
 
 
+### 🛠️ Detailed logs for vouching with an NFC Tag during recovery process
+
+This log trace corresponds to a **vouch operation using an NFC tag**, where the system verifies the tag and records a vouch toward the recovery of a lost account.
+
+This does **not trigger recovery** directly, but contributes toward reaching the threshold of trusted identities needed for a successful claim.
+
+In this case, the NFC tag is interpreted as a `KeyFriend` identity used to confirm the recovery intent.
+
+Expected logs:
+```bash
+[DEBUG pallet_nfc_recovery::pallet] validate_nfc_tag : recovery_account = [...]  
+[DEBUG pallet_unify_recovery::pallet] get_accounts : NfcTag(BoundedVec([...], 64))  
+[DEBUG pallet_unify_recovery::pallet] execute_vouch_recovery : START ..., NfcTag(...)  
+[DEBUG pallet_unify_recovery::pallet] ensure_has_root_account who:  
+[DEBUG pallet_unify_recovery::pallet] execute_initiate_recovery : START ...  
+[INFO  pallet_unify_recovery::pallet] execute_initiate_recovery : DONE  
+[WARN  sp_io::storage] storage::start_transaction unimplemented  
+[WARN  sp_io::storage] storage::commit_transaction unimplemented  
+[INFO  pallet_unify_recovery::pallet] execute_vouch_recovery : DONE  
+[INFO  pallet_nfc_recovery::pallet] validate_nfc_tag : DONE  
+```
+---
+
+### ✅ What to Look For
+
+- `validate_nfc_tag`: confirms that the NFC tag has been read and mapped to a known recovery identity.
+- `execute_vouch_recovery : START` → `DONE`: indicates that the system has successfully registered the vouch.
+- `execute_initiate_recovery : DONE`: shows that the protocol has verified the recovery context and recorded it internally.
+- These logs confirm that the NFC-based vouch has been **accepted and stored**, contributing toward the recovery threshold.
+
+> ℹ️ This step is typically followed by additional vouches (e.g. from other devices or trusted backups), until the threshold is met and a `claim_recovery` call is triggered to finalize the recovery process.
+
+
+
+
+
+
 
 :::info more details
 Learn more on **[Recovery Layer](/developers/category/authentication-layer)**
