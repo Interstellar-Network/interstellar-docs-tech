@@ -655,7 +655,7 @@ Regardless of how the claim is triggered, `pallet_unify_recovery`:
 > The pallet used to initiate the claim (NFC or VCA token) **does not imply that method was used for vouching**.  
 > The claim operation is simply a trigger — the actual authorization logic is enforced by `pallet_unify_recovery`.
 
-This design ensures that recovery claims remain modular, flexible, and consistent across multiple authentication methods.
+This design ensures that recovery claims remain modular, flexible, and consistent across current recovery layer architecture.
 
 
 :::info more details
