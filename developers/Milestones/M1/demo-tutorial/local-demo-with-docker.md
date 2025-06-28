@@ -592,8 +592,45 @@ Expected logs:
 > ℹ️ This step is typically followed by additional vouches (e.g. from other devices or trusted backups), until the threshold is met and a `claim_recovery` call is triggered to finalize the recovery process.
 
 
+### 🛠️ Detailed logs for final recovery claim using an NFC Tag
 
+This log trace corresponds to the **finalization of an account recovery**, triggered by an NFC tag that has already been vouched for and contributed toward the recovery threshold.
 
+Once the recovery threshold is satisfied (e.g., via previous `vouch` operations), this `claim_recovery_with_nfc` call finalizes the process. It:
+
+- Validates the NFC identity one last time.
+- Confirms the root account is still authorized.
+- Transfers recovery control back to the lost account.
+- Cleans up all recovery-related metadata (NFC tag, CID, mappings, etc.).
+
+Expected logs:
+```bash
+[DEBUG pallet_nfc_recovery::pallet] claim_recovery_with_nfc : recovery_account = [...]  
+[DEBUG pallet_unify_recovery::pallet] execute_claim_recovery : START [...]  
+[DEBUG pallet_unify_recovery::pallet] ensure_has_root_account who:  
+[DEBUG pallet_unify_recovery::pallet] execute_claim_recovery : BEFORE RecoveryToLostAccount  
+[DEBUG pallet_unify_recovery::pallet] execute_claim_recovery : BEFORE claim_recovery: lost_account = [...], nb_consumers = 0, nb_providers = 1  
+[DEBUG pallet_unify_recovery::pallet] execute_claim_recovery : BEFORE remove_lost_account  
+[DEBUG pallet_unify_recovery::pallet] execute_claim_recovery : BEFORE add_recovery_as_device_account  
+[DEBUG pallet_unify_recovery::pallet] clear_account_recovery_mappings : [lost_account], [recovery_account]  
+[DEBUG pallet_unify_recovery::pallet] clear_account_recovery_mappings : found friends: ActiveFriends {...}  
+[DEBUG pallet_unify_recovery::pallet] clear_account_recovery_mappings : removing NfcTag: ...  
+[DEBUG pallet_unify_recovery::pallet] clear_account_recovery_mappings : removing CID: ...  
+[DEBUG pallet_unify_recovery::pallet] clear_account_recovery_mappings : removing LOST: ...  
+[DEBUG pallet_unify_recovery::pallet] clear_account_recovery_mappings : DONE  
+[INFO  pallet_unify_recovery::pallet] execute_claim_recovery : DONE for  
+[INFO  pallet_nfc_recovery::pallet] claim_recovery_with_nfc : DONE  
+```
+---
+
+### ✅ What to Look For
+
+- `claim_recovery_with_nfc`: confirms that the NFC-based identity has been used to finalize the recovery.
+- `execute_claim_recovery : START` → `DONE`: indicates the successful transfer of recovery authority back to the lost account.
+- `clear_account_recovery_mappings`: confirms cleanup of all temporary recovery state, including CID and NFC entries.
+- No errors or threshold violations indicate the recovery was successfully authorized and committed.
+
+> ℹ️ This is the final step in the Trusted Recovery process. After this point, the recovered device is fully operational under the recovered root account.
 
 
 
