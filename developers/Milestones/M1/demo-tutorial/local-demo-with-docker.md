@@ -163,6 +163,18 @@ that affect low-level Rust code (e.g., garbled circuit evaluator or frame render
 Until further investigation, **we recommend using API 35 or earlier for testing.**
 :::
 
+:::note Forcing Software Emulation on Apple Silicon
+
+If you're running an emulator on Apple Silicon (M1–M4) and encounter rendering or execution issues, you can force the emulator to use **software rendering** by enabling the setting:
+
+> **Android Emulator → Settings → Advanced → OpenGL ES renderer → SwiftShader**
+
+This forces software emulation (SwiftShader) instead of relying on potentially unsupported hardware acceleration. It may improve compatibility at the cost of performance.
+
+:::
+
+
+
 ---
 
 ## 2. Link App to your local Interstellar stack:
@@ -438,6 +450,8 @@ These confirm that the digits were correctly interpreted and that the result was
 
 :::info MORE DETAILS
 Learn more on **[Authentication Layer](/developers/category/authentication-layer)**
+
+**[`computed_inputs_from_permuation`](/developers/Milestones/M1/demo-tutorial/cli-demo-with-docker#how-to-find-the-correct-code-for-the-node)** detailed
 :::
 
 ### 🛠️ NFC tag-based Recovery Setup
