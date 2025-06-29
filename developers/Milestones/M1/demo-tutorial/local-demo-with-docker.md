@@ -88,12 +88,12 @@ Requested started id=1059 method=POST uri=http://ipfs:5001/api/v0/add
 [ocw-circuits] Hello from pallet-ocw-circuits.
 🛌 Idle (0 peers), best: #6 (...), finalized #3 (...), ⬇ 0 ⬆ 0
 ```
-
+You can also verify the runtime is ready using [Polkadot.js](https://polkadot.js.org/apps/?rpc=ws://localhost:9944)
 
 :::info VCA System Layer
 
 While waiting for the stack to fully initialize, you can explore the architecture and rationale behind 
-the [VCA System Layer](/developers/category/vca-system-layer). This layer is responsible for producing the `VCA Token`, 
+the **[VCA System Layer](/developers/category/vca-system-layer)**. This layer is responsible for producing the `VCA Token`, 
 the core cryptographic artifact used by the Trusted Action Validation Protocol (`TAVP`).
 
 The token is generated through a hardware-secure pipeline starting from VHDL logic descriptions, synthesized into 
@@ -107,7 +107,7 @@ Once built, these circuits are uploaded to IPFS and used to enable real-time, **
 
 
 
-You can also verify the runtime is ready using [Polkadot.js](https://polkadot.js.org/apps/?rpc=ws://localhost:9944)
+
 
 
 ## 3. Install the Android Demo App
@@ -177,13 +177,21 @@ To allow the Android app to connect to your local blockchain and IPFS stack:
 If Android Studio is already installed, you can enable adb in your terminal 
 by adding it to your PATH with the following command (adjust the path if needed):
 
-**Add `adb` path (windows powershell example):**
+**Add `adb` PATH:** 
+
+Linux:
+```bash
+export PATH=$PATH:$HOME/Android/Sdk/platform-tools
+```
+Mac OS:
+```bash
+export PATH="$HOME/Library/Android/sdk/platform-tools:$PATH"
+```
+Windows powershell:
 ```powershell
 $env:Path += ";$env:LOCALAPPDATA\Android\Sdk\platform-tools"
 ```
->This will work for the current PowerShell session. To make it permanent, you can update your system environment variables.
 
-**Set-up `adb reverse`**
 ```bash
 adb reverse tcp:9944 tcp:9944   # Substrate WS
 adb reverse tcp:2090 tcp:2090   # Integritee node port
@@ -208,7 +216,7 @@ If the emulator is running (or the device is connected) on a different network i
 via USB to Windows), 
 you may need to configure port forwarding between the desktop and the blockchain.
 
-**WSL2 ---> Windows example:**
+**WSL2 -> Windows example:**
 ```bash
 export WSL_HOST_IP=$(ip route | awk '/default/ {print $3}')
 ```
@@ -233,31 +241,27 @@ Set-NetFirewallProfile -Profile Domain,Private,Public -Enabled True
 ## 4. Run the Android App Demo
 
 ### Step 1: Connect & Onboard
-- Launch the app
-  - Register a new mobile proxy account
+- **Launch the app**
+  - Register a new mobile account
   - Validate biometric & SE-based registration
-- Check toasted message
+- Check toasted messages
   - **Registering**
   - **Registered**
 
 ### Step 2: Test Transaction Validation
 
-- Trigger the Trusted Action Validation Protocol (TAVP) screen
+- Trigger the **Trusted Action Validation Protocol (TAVP)** screen
 
-Send a test transaction to a contact
+  - Send a test transaction to a contact
 <img src="/img/Send_Currency_Demo.gif" alt="wallet menu"  width="300"/>
 
-- Enter the one-time code (2-digit), or experiment with trial/feedback
-### Check Toast messages whith Action Validation Screen
-
-- **Processing...**
-- Registered
-- [error] No circuits available after 10s; exiting!
-
-[after taping one-time code digits]
-
-- Validating transaction...
-- Transaction done!
+  - Enter the one-time code (2-digit), or experiment with trial/feedback
+  - Check toasted messages whith Action Validation Screen
+    - **Transaction validation demo**
+    - [error] No circuits available after 10s; exiting!
+    - [after taping one-time code digits]
+    - **Validating transaction...**
+    - **Transaction done!**
 
 :::warning Low-end devices and emulator limitations
 If you are using an emulator with low-end GPU, or a low-end or outdated Android device with limited GPU, 
@@ -266,18 +270,34 @@ Although the validation screen may be harder to read in such conditions,
 you should still be able to complete the test process.
 :::
 
-:::tip FUTURE ENHANCEMENT
+:::info FUTURE ENHANCEMENT
 In the future, we plan to introduce a **trusted beneficiary** feature. This will enable users 
 to register known recipient addresses on-chain through a secure validation process, preventing attackers from substituting contact names with malicious public keys. This enhancement will make the wallet both more secure and user-friendly.
 :::
 
 
 ### Step 3 Test Recovery 
-- Register a recovery item (e.g., NFC Item or Cloud Backup)
+
+:::tip Simplify Local Backup on Emulator
+To avoid setting up a cloud account in the emulator, we recommend downloading the 
+**[Material Files](https://f-droid.org/repo/me.zhanghai.android.files_39.apk)** app to store the recovery token file locally.
+
+Drag and drop the downloaded apk in the emulator or install it in the emulator with:
+
+```bash
+curl -O https://f-droid.org/repo/me.zhanghai.android.files_39.apk # linux
+Invoke-WebRequest -Uri "https://f-droid.org/repo/me.zhanghai.android.files_39.apk" -OutFile "me.zhanghai.android.files_39.apk" # Powershell
+adb install me.zhanghai.android.files_39.apk
+```
+Then select "Material Files" from the share menu to save the .enc file.
+:::
 
 
+- **Register a recovery item (e.g NFC ITEM, CLOUD BACKUP)**
 
-- Relaunch your App (simulating creation of new App)
+  - **+ button** then Tap NFC Item (e.g payment card on the back of your device)
+  - **+ button** then save the .enc secure file on your preferred cloud provider or storage area
+
 
 :::info Recovery Testing Tip
 
@@ -288,29 +308,19 @@ To simplify recovery testing, the app includes a **Settings** tab with the follo
   👉 *Take a screenshot to verify correct linkage after recovery.*
 
 - ♻️ **Reset Mobile Keys**  
-  Simulates a fresh app install by clearing the local key material.  
+  Simulates a **fresh app install** by clearing the local key material.  
   👉 *Triggers a new mobile registration flow to test recovery logic.*
 
-This allows reviewers to validate that recovery properly restores the mobile identity to the original root account.
+This allows reviewers to validate that recovery properly restores the new mobile identity to the original root account.
 :::
 
 
+- **Recovery Screen to recover your account with your Cloud Backup secure file and/or NFC Items**
 
-- Recovery Screen to recover your account with your Cloud Backup and/or NFC Items
+  - **+ button** then Tap NFC Item (e.g payment card on the back of your device)
+  - **+ button** then select the .enc secure file on your preferred cloud provider or storage area
 
 
-:::tip Simplify Local Backup on Emulator
-To avoid setting up a cloud account in the emulator, we recommend using the **Material Files** app to store the recovery token file locally.
-
-Install it in the emulator with:
-
-```bash
-curl -O https://f-droid.org/repo/me.zhanghai.android.files_39.apk # linux
-Invoke-WebRequest -Uri "https://f-droid.org/repo/me.zhanghai.android.files_39.apk" -OutFile "me.zhanghai.android.files_39.apk" # Powershell
-adb install me.zhanghai.android.files_39.apk
-```
-Then select "Material Files" from the share menu to save the .enc file.
-:::
 
 :::info Recovery Testing Note
 **Important:** Once a user registers with a specific NFC tag (or manually entered serial on emulator or device whithout NFC capabilities),
@@ -346,7 +356,7 @@ When interacting with the mobile app (e.g., authentication, transaction validati
   ```
 
 
-### 🛠️ Detailed logs for mobile registration
+### 🛠️ Mobile Registration
 
 This log trace shows what happens when a new device connects to the system and is not yet registered under a root account. The backend detects the missing account and proceeds with registration:
 
@@ -358,7 +368,7 @@ This log trace shows what happens when a new device connects to the system and i
 ```
 ---
 
-### ✅ What to Look For
+#### ✅ What to Look For
 
 - `RootAccountNotFound`: expected on first connection from a new mobile identity.
 - `register_mobile start` → `register_mobile end`: confirms that registration was initiated and completed.
@@ -368,7 +378,7 @@ This log trace shows what happens when a new device connects to the system and i
 Learn more on **[Account Abstraction Layer](/developers/category/aa-layer)**
 :::
 
-### 🛠️ Detailed logs for garbled circuit generation and metadata preparation
+### 🛠️ VCA Token Generation and Metadata Preparation
 
 The following logs represent the backend activity triggered by a mobile app requesting a new secure visual validation 
 i.e `VCA token` generation. This includes:
@@ -391,7 +401,7 @@ You should see logs similar to the following:
 ```
 ---
 
-### ✅ What to Look For
+#### ✅ What to Look For
 
 - `display_circuits_package:` confirms the transaction display garbled circuit has been rendered.
 - `message_digits` and `pinpad_digits`: the random digits selected for the user’s challenge.
@@ -399,7 +409,7 @@ You should see logs similar to the following:
 - `callback_new_garbled_and_strip_signed: done!`: confirms generation and signing succeeded.
 
 
-### 🛠️ Detailed logs for a succesfull validation
+### 🛠️ Visual Cryptographic Challenge Validation
 When the user correctly responds to the visual cryptographic challenge through 
 `VCA token` evaluation on the mobile, the following logs will appear 
 in the integritee_service container. 
@@ -412,14 +422,14 @@ These confirm that the digits were correctly interpreted and that the result was
 [INFO  pallet_tx_registry::pallet] [tx-registry] store_tx_result: who = , message_pgarbled_cid = "QmSJSSsyHV9aZCqCvv6QZwJ3K7vf4YoqF1DAWAAwsD7m6w", result = <wasm:stripped>
 [INFO  pallet_tx_registry::pallet] [tx-registry] store_tx_result: done! [BoundedVec([<wasm:stripped>], 16)]
 ```
-### ✅ What to Look For
+#### ✅ What to Look For
 
 - `check_input: input_digits = [2, 5]`: these are the digits entered by the user in response to the challenge.
 - `computed_inputs_from_permutation = [5, 9]`: the backend decodes the expected message digits based on the randomized pinpad layout.
 - `TxPass`: confirms that the decoded digits match the expected message and the validation is successful.
 - `store_tx_result: done!`: indicates that the result of this validation (pass/fail) was committed to the registry for audit or future reference.
 
-### ❌ What to Look For
+#### ❌ What to Look For
 
 - `check_input: input_digits = [...]`: shows the digits entered by the user.
 - `computed_inputs_from_permutation = [...]`: the expected message digits decoded from the pinpad permutation.
@@ -430,7 +440,7 @@ These confirm that the digits were correctly interpreted and that the result was
 Learn more on **[Authentication Layer](/developers/category/authentication-layer)**
 :::
 
-### 🛠️ Detailed logs for NFC tag-based recovery setup
+### 🛠️ NFC tag-based Recovery Setup
 
 The following logs represent the flow where a user device sets up a **recovery mechanism using an NFC tag**. This involves:
 
@@ -468,7 +478,7 @@ You should observe logs similar to the following:
 ```
 ---
 
-### ✅ What to Look For
+#### ✅ What to Look For
 
 - `execute_create_recovery : START` through `DONE`: confirms the recovery flow using an NFC tag completed without errors.
 - `threshold = 1`: confirms that recovery quorum has been set (e.g., single tag for recovery).
@@ -480,7 +490,7 @@ You should observe logs similar to the following:
 This log sequence confirms a successful setup of an NFC-based recovery configuration within the unified recovery module.
 
 
-### 🛠️ Detailed logs for Cloud Backup-based recovery setup
+### 🛠️ Cloud Backup VCA Token-based Recovery Setup
 
 The following logs describe a successful recovery configuration setup using a **CID-based key**, which refers to a cloud-stored recovery asset (e.g., a backed-up VCA Token). This process involves:
 
@@ -513,7 +523,7 @@ Expected logs:
 ```
 ---
 
-### ✅ What to Look For
+#### ✅ What to Look For
 
 - `extended_create_recovery` and `Cid(...)`: confirms that the recovery setup was triggered using a **CID-backed cloud recovery key**.
 - `store_metadata_aux: done!`: ensures that a corresponding visual challenge has been generated for secure user validation.
@@ -523,7 +533,7 @@ Expected logs:
 
 > ℹ️ In this flow, the CID typically points to a trusted, encrypted, cloud-backed VCA Token that can be retrieved and validated securely by the user.
 
-### 🛠️ Detailed logs for vouching a VCA Token during recovery process
+### 🛠️ Vouching a VCA Token during Recovery Process
 
 This flow illustrates a successful **vouch operation** for a VCA Token during a recovery procedure. It does **not yet trigger the actual recovery**, but rather **registers support** from a trusted identity (e.g. cloud-based, NFC, or another VCA-backed device).
 
@@ -549,17 +559,17 @@ Expected logs:
 ```
 ---
 
-### ✅ What to Look For
+#### ✅ What to Look For
 
 - `validate_cid` and `is_cid_registered`: confirms the VCA Token being vouched for is valid and recognized.
 - `TxPass`: indicates that the digits entered in response to the visual challenge were successfully validated.
 - `execute_vouch_recovery`: logs the vouch as part of the ongoing recovery process.
 - `extended_recovery_with_vouch : DONE`: confirms that this particular vouch has been successfully recorded.
 
-> ℹ️ This step contributes to a **multi-party recovery threshold**. (e.g 1/1, 1/2 2/4, etc..) Once enough valid vouches have been submitted (e.g. from other devices, friends, or backups), the recovery can be finalized with a separate **claim** operation.
+> ℹ️ This step contributes to a **multi-party recovery threshold**. (e.g 1/1, 1/2, 2/4, etc..) Once enough valid vouches have been submitted (e.g. from other devices, friends, or backups), the recovery can be finalized with a separate **claim** operation.
 
 
-### 🛠️ Detailed logs for vouching with an NFC Tag during recovery process
+### 🛠️ Vouching with an NFC Tag during Recovery Process
 
 This log trace corresponds to a **vouch operation using an NFC tag**, where the system verifies the tag and records a vouch toward the recovery of a lost account.
 
@@ -582,7 +592,7 @@ Expected logs:
 ```
 ---
 
-### ✅ What to Look For
+#### ✅ What to Look For
 
 - `validate_nfc_tag`: confirms that the NFC tag has been read and mapped to a known recovery identity.
 - `execute_vouch_recovery : START` → `DONE`: indicates that the system has successfully registered the vouch.
@@ -592,7 +602,7 @@ Expected logs:
 > ℹ️ This step is typically followed by additional vouches (e.g. from other devices or trusted backups), until the threshold is met and a `claim_recovery` call is triggered to finalize the recovery process.
 
 
-### 🛠️ Detailed logs for final recovery claim with `pallet_nfc_recovery`
+### 🛠️ Final Recovery Claim
 
 This log trace corresponds to the **finalization of an account recovery**, 
 
@@ -622,7 +632,7 @@ Expected logs:
 ```
 ---
 
-### ✅ What to Look For
+#### ✅ What to Look For
 
 - `claim_recovery_with_nfc`: access to pallet_unify from `pallet_nfc_recovery` **note**: could also be accessed through `pallet_token_recovery`
 - `execute_claim_recovery : START` → `DONE`: indicates the successful transfer of recovery authority back to the lost account.
@@ -631,7 +641,7 @@ Expected logs:
 
 > ℹ️ This is the final step in the Trusted Recovery process. After this point, the recovered device is fully operational under the recovered root account.
 
-### 🧩 Recovery Claim: Execution Flow Clarification
+#### 🧩 Recovery Claim: Execution Flow Clarification
 
 The recovery claim can be initiated via either `pallet_nfc_recovery` or `pallet_token_recovery`, using:
 
@@ -655,7 +665,8 @@ Regardless of how the claim is triggered, `pallet_unify_recovery`:
 > The pallet used to initiate the claim (NFC or VCA token) **does not imply that method was used for vouching**.  
 > The claim operation is simply a trigger — the actual authorization logic is enforced by `pallet_unify_recovery`.
 
-This design ensures that recovery claims remain modular, flexible, and consistent across current recovery layer architecture.
+This design ensures that recovery claims remain modular, flexible, and consistent across the  
+current **Recovery Layer** architecture.
 
 
 :::info more details
