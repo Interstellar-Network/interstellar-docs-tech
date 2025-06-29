@@ -695,10 +695,17 @@ UI and UX will be significantly refined to reflect our core vision: making the h
 Powered by the TAVP protocol, this platform lays the groundwork for future improvement including novel cognitive and dynamic behavioral features—essential to counter emerging threats from malware and adversarial AI.
 :::
 
-:::info Follow-Up – Selective Docs Exploration  
-If you’ve jumped straight into the evaluation, we recommend consulting the [**Milestone 1 documentation**](/Milestones/M1/Summary.md) for key context. It outlines the core architecture, backend logic, and trusted execution flows implemented in this milestone.
+:::info Follow-Up – Selective Docs Exploration
 
-The documentation is modular—feel free to focus only on the sections most relevant to your review or interest, Contextual links are also provided throughout the demo tutorial for convenience.
+If you’ve jumped straight into the evaluation, we recommend consulting the **[Milestone 1 documentation](/Milestones/M1/Summary.md)** for key context. It outlines the core architecture, backend logic, and trusted execution flows implemented in this milestone.
+
+The documentation is modular—feel free to explore only the sections most relevant to your review or interest.  
+You can also use the **search bar** (top right corner) to locate specific topics quickly. Helpful keywords include:
+
+- `VHDL`, `circuits`, `garbled`, `TEE`, `integritee`,`SE attestation`  
+- `NFC`, `VCA`,`recovery`, `threshold`, `trusted UX`  
+- `comparison`, `passkey`, `ledger`, `authentication`, `compliance`, `security`, `ATT&CK`
+
 :::
 
 
