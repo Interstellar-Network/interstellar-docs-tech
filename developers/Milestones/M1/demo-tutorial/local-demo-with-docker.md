@@ -116,7 +116,7 @@ Once built, these circuits are uploaded to IPFS and used to enable real-time, **
 
 From the official [Interstellar GitHub Release](https://github.com/Interstellar-Network/containers/releases/tag/dev1) (specific APKs preconfigured to connect to `localhost`):
 
-- `androidApp-arm64-release.apk` — for Android devices and Apple Silicon(M!/M2/M3/M4)
+- `androidApp-arm64-release.apk` — for Android devices and Apple Silicon(M1/M2/M3/M4)
 - `androidApp-x86_64-release.apk` — for Android emulators running on x86_64 platforms (e.g., Windows PCs, Intel-based Mac)
 
 :::tip Recommended Test Setup – Hardware & Emulator Guidance
@@ -126,8 +126,8 @@ While the app runs on Apple Silicon (M1–M4), emulator performance may vary due
 | Recommended Option             | Notes                                                                 |
 |-------------------------------|-----------------------------------------------------------------------|
 | Mid-to-high-end ARM device     | **Preferred**. e.g., Pixel 5–Pixel 8. Avoid Android 16 (API 36) for now. |
-| Apple Silicon (M3/M4) emulator | Acceptable if GPU is sufficient. Better than M1/M2 for rendering.     |
 | x86_64 emulator (Intel)        | Reliable with mid-range or better GPU.                                |
+| Apple Silicon (M3/M4) emulator | Acceptable if GPU is sufficient. Better than M1/M2 for rendering.     |
 | Apple Silicon (M1/M2) emulator | Works, but may show degraded performance or rendering issues.         |
 
 :::
@@ -163,15 +163,23 @@ that affect low-level Rust code (e.g., garbled circuit evaluator or frame render
 Until further investigation, **we recommend using API 35 or earlier for testing.**
 :::
 
-:::note Forcing Software Emulation on Apple Silicon
+:::note Software Rendering Required on Apple Silicon (M1/M2)
 
-If you're running an emulator on Apple Silicon (M1–M4) and encounter rendering or execution issues, you can force the emulator to use **software rendering** by enabling the setting:
+On Apple Silicon (M1–M4), emulators may fail to render or execute low-level native code correctly unless software rendering is enabled.
 
-> **Android Emulator → Settings → Advanced → OpenGL ES renderer → SwiftShader**
+To enable it:
 
-This forces software emulation (SwiftShader) instead of relying on potentially unsupported hardware acceleration. It may improve compatibility at the cost of performance.
+> **Device Manager → Edit → Advanced Settings → Emulated Performance → Graphics → Software**
+
+<img src="/img/emul_software.png" alt="Software rendering setting in Device Manager" width="400"/>
+
+- **Mandatory for M1/M2**: hardware acceleration is not supported and cause crashes.
+- **Not tested on M3/M4**: may support hardware acceleration, but software mode is safer for compatibility.
+
+Enabling this setting ensures more reliable emulator behavior, especially for native Rust or cryptographic rendering, at the cost of some performance.
 
 :::
+
 
 
 
@@ -302,6 +310,7 @@ Invoke-WebRequest -Uri "https://f-droid.org/repo/me.zhanghai.android.files_39.ap
 adb install me.zhanghai.android.files_39.apk
 ```
 Then select "Material Files" from the share menu to save the .enc file.
+> **Warning:** crash on API 35 16K or API 36
 :::
 
 
