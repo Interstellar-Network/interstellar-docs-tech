@@ -9,6 +9,22 @@ This guide explains how to run the full Interstellar stack **locally** using Doc
 
 This setup enables full offline testing without relying on a hosted VPS.
 
+:::note Milestone 1 Scope
+This milestone delivers the core pillars of the Interstellar platform: 
+**instant onboarding** and a unified **Trusted Action Validation Protocol (TAVP)** for 
+secure **transaction approval** and simple but powerfull **account recovery** mechanisms.
+
+All features have been **extensively tested with a focus on user experience**, demonstrating how simple, reliable, and intuitive these flows can be. The current interface has been **adjusted to support efficient testing**, while leaving room for further UX and UI refinements in the production-grade SDK.
+
+Although the system is **not yet production-ready**, it provides a robust foundation. 
+Broader edge case coverage, interoperability, and resilience guarantees will be the focus 
+of the upcoming SDK and future milestones. 
+Reviewers are encouraged to **focus on the functional flow and experience** of the key features in this milestone.
+:::
+
+
+
+
 :::info Tested Environment
 This compatibility note applies to the **backend stack**, tested on Ubuntu 24.04 LTS (x86_64) using Docker (`docker-compose`) or Podman (with manually installed `podman-compose`*).  
 The stack is expected to work on other recent Linux distributions, but this has not been officially verified.
