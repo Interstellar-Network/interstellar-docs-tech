@@ -57,8 +57,8 @@ can run on any OS supported by Android Studio (expect some emulator limitations 
 mkdir interstellar_m1_demo && cd interstellar_m1_demo
 
 # Step 2: Download the stack config
-curl -L -o docker-compose.yml https://raw.githubusercontent.com/Interstellar-Network/containers/refs/heads/add-compose/docker-compose.yml
-curl -L -o docker-ipfs-init.sh https://raw.githubusercontent.com/Interstellar-Network/containers/refs/heads/add-compose/docker-ipfs-init.sh
+curl -L -o docker-compose.yml https://raw.githubusercontent.com/Interstellar-Network/containers/refs/heads/main/docker-compose.yml
+curl -L -o docker-ipfs-init.sh https://raw.githubusercontent.com/Interstellar-Network/containers/refs/heads/main/docker-ipfs-init.sh
 chmod +x docker-ipfs-init.sh
 
 # Step 3: Start Docker (if needed)
@@ -121,16 +121,11 @@ Once built, these circuits are uploaded to IPFS and used to enable real-time, **
 :::
 
 
-
-
-
-
-
 ## 3. Install the Android Demo App
 
 ### Download the APK
 
-From the official [Interstellar GitHub Release](https://github.com/Interstellar-Network/containers/releases/tag/dev1) (specific APKs preconfigured to connect to `localhost`):
+From the official [Interstellar GitHub Release](https://github.com/Interstellar-Network/containers/releases/tag/testnet-m1) (specific APKs preconfigured to connect to `localhost`):
 
 - `androidApp-arm64-release.apk` — for Android devices and Apple Silicon(M1/M2/M3/M4)
 - `androidApp-x86_64-release.apk` — for Android emulators running on x86_64 platforms (e.g., Windows PCs, Intel-based Mac)
@@ -356,18 +351,32 @@ After adding an item:
     <figcaption>Threshold Changed</figcaption>
   </figure>
 </div>
-
-
 ---
+
+
+:::info Recovery Testing Tip
+
+To simplify recovery testing, the app includes a **Settings** tab with the following options:
+
+- 🆔 **ROOT ACCOUNT**  
+  Displays the root account address currently linked to the device.  
+  👉 *Take a screenshot to verify correct linkage after recovery.*
+
+- ♻️ **RESET APP**  
+  Simulates a **fresh app install** by clearing the local key material.  
+  👉 *Triggers a new mobile registration flow to test recovery logic.*
+
+This allows reviewers to validate that recovery properly restores the new mobile identity to the original root account.
+:::
 
 #### 🔁 Reset & Recovery Flow
 
 - **Reset App**  
-  In **Settings**, you'll find a `RESET APP` button. This is specifically provided for reviewers to simulate a full app uninstall, triggering the recovery process without requiring a real reinstall.
+  In **Settings** tab , you'll find a `RESET APP` button. This is specifically provided for reviewers to simulate a full app uninstall, triggering the recovery process without requiring a real reinstall.
 
 - **Recovery Entry Points**  
-  - The **Claim** button and the icon at the bottom left of the screen (📄) are used to **initiate recovery**.  
-  - This action will register a new mobile identity on-chain and allow you to use previously added backup items (NFC or cloud) to **claim your original account**.
+  - The **Claim** button and the yellow icon at the bottom left of the screen (Lock surronded by arrow) are used to **initiate recovery**.  
+  - This action will register a new mobile identity on-chain and allow you to use previously added backup items (NFC or cloud) to **claim your original (root) account**.
 
 ---
 
@@ -391,26 +400,7 @@ Then select "Material Files" from the share menu to save the .enc file.
 
 
 
-:::info Recovery Testing Tip
 
-To simplify recovery testing, the app includes a **Settings** tab with the following options:
-
-- 🆔 **Root Account Address**  
-  Displays the root account currently linked to the device.  
-  👉 *Take a screenshot to verify correct linkage after recovery.*
-
-- ♻️ **Reset Mobile Keys**  
-  Simulates a **fresh app install** by clearing the local key material.  
-  👉 *Triggers a new mobile registration flow to test recovery logic.*
-
-This allows reviewers to validate that recovery properly restores the new mobile identity to the original root account.
-:::
-
-
-- **Recovery Screen to recover your account with your Cloud Backup secure file and/or NFC Items**
-
-  - **+ button** then Tap NFC Item (e.g payment card on the back of your device)
-  - **+ button** then select the .enc secure file on your preferred cloud provider or storage area
 
 
 
