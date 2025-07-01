@@ -72,7 +72,7 @@ sudo docker compose down --timeout 1 && sudo docker compose up --force-recreate
 
 Once the node and service are running, the system will automatically trigger the **generation of master circuits** from the hardware description files.
 
-These circuits are compiled using the Verilog logic generated from the original VHDL specification, processed through the `abc` logic synthesis pipeline. This step may take several minutes depending on the environment.
+These circuits are compiled using the Verilog logic generated from the original master circuits specifications, processed through the logic synthesis pipeline. This step may take several minutes depending on the environment.
 
 During this time, monitor the logs and wait for the following sequence of messages:
 
@@ -113,10 +113,10 @@ the **[VCA System Layer](/developers/category/vca-system-layer)**. This layer is
 the core cryptographic artifact used by the Trusted Action Validation Protocol (`TAVP`).
 
 The token is generated through a hardware-secure pipeline starting from VHDL logic descriptions, synthesized into 
-Verilog and compiled using the `ABC` logic synthesis toolchain. The resulting master circuits define both the secure display and interaction logic — including the Secure Circuit Descriptor (`SCD`) and its runtime variant, `SKCD`, used for verifiable evaluation.
+Verilog and compiled using the`Yosis` and `abc` logic synthesis toolchain. The resulting master circuits define both the secure display and interaction logic — including the Secure Circuit Descriptor (`scd`) and its runtime variant, `skcd`, used for verifiable evaluation.
 
 Once built, these circuits are uploaded to IPFS and used to enable real-time, **privacy-preserving visual cryptographic** 
-**challenges**, ensuring each **user interaction** is verifiable and **resistant to malware, phishing, and adversarial AI**.
+**challenges**, ensuring each critical **user interaction** is verifiable and **resistant to malware, phishing, and adversarial AI**.
 
 :::
 
@@ -704,12 +704,11 @@ Regardless of how the claim is triggered, `pallet_unify_recovery`:
 > The pallet used to initiate the claim (NFC or VCA token) **does not imply that method was used for vouching**.  
 > The claim operation is simply a trigger — the actual authorization logic is enforced by `pallet_unify_recovery`.
 
-This design ensures that recovery claims remain modular, flexible, and consistent across the  
-current **Recovery Layer** architecture.
+This design ensures that recovery claims remain modular, flexible, and consistent across the current **Recovery Layer** architecture.
 
 
 :::info more details
-Learn more on **[Recovery Layer](/developers/category/authentication-layer)**
+Learn more on **[Recovery Layer](/developers/category/recovery-layer)**
 :::
 
 ## Optional: Front-End Access
