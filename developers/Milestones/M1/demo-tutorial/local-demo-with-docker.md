@@ -400,7 +400,7 @@ This process will register a new mobile identity on-chain and allow you to use p
     - **NFC Item**: Tap the NFC item (on the back of the phone) or manually input the serial number in emulator.
   - Then use **Claim** button
 
-
+> You can check the logs from your local stack to see whtat happen begind the hood with the blockchain, extrinsics used, etc...error message when threshold is not meet, vouching process not succesful, etc..
 
 ---
 
