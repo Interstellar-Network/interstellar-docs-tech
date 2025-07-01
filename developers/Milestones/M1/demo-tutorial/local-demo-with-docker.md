@@ -400,13 +400,11 @@ This process will register a new mobile identity on-chain and allow you to use p
     - **NFC Item**: Tap the NFC item (on the back of the phone) or manually input the serial number in emulator.
   - Then use **Claim** button
 
-> You can check the logs from your local stack to see whtat happen begind the hood with the blockchain, extrinsics used, etc...error message when threshold is not meet, vouching process not succesful, etc..
+> 🛠️ You can check the logs from your local stack to see whtat happen begind the hood when you interact with the blockchain: `extrinsics` sent, `error` messages when `threshold` is not meet, `vouching` items not succesful, etc..
 
 ---
 
-This temporary interface has been designed for **clarity and testability**, not end-user polish. Feel free to simulate multiple recovery scenarios (e.g. `1/2`, `2/2` setups) and test using different devices or emulator configurations.
-
-
+This temporary interface has been designed for **clarity and testability**, not end-user polish. Feel free to simulate multiple recovery scenarios (e.g. `1/2`, `2/2` setups)
 
 
 :::info Recovery Testing Note
