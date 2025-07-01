@@ -322,7 +322,7 @@ This screen allows you to test Interstellar's backup and recovery mechanisms in 
   </figure>
   <figure style={{ textAlign: "center" }}>
     <img src="/img/vca.png" alt="+ vca" width="200"/>
-    <figcaption>VCA</figcaption>
+    <figcaption>+ CLOUD BACKUP (vca-based) added</figcaption>
   </figure>
 </div>
 
@@ -332,9 +332,28 @@ This screen allows you to test Interstellar's backup and recovery mechanisms in 
 
 - **`+` Button**  
   Add backup methods to secure your account:
-  - **Cloud Backup**: Encrypts and stores a backup file in the cloud.
+  - **Cloud Backup**: Encrypts and stores a backup file in the cloud. (see the following tip if you use an emulator)
   - **NFC Item**: Register an NFC tag (tap it on the back of the phone) or manually input a serial number or any characters (in an emulator) for testing convenience.
   
+:::tip Simplify Local Backup on Emulator
+To avoid setting up a cloud account in the emulator, we recommend downloading the 
+**[Material Files](https://f-droid.org/repo/me.zhanghai.android.files_39.apk)** app to store the recovery token file locally.
+
+Drag and drop the downloaded apk in the emulator or install it in the emulator with:
+
+```bash
+curl -O https://f-droid.org/repo/me.zhanghai.android.files_39.apk # linux
+Invoke-WebRequest -Uri "https://f-droid.org/repo/me.zhanghai.android.files_39.apk" -OutFile "me.zhanghai.android.files_39.apk" # Powershell
+adb install me.zhanghai.android.files_39.apk
+```
+Then select "Material Files" from the share menu to save the .enc file.
+> **Warning:** crash on API 35 16K or API 36
+:::
+
+
+
+
+
 
 After adding an item:
 - A **"SECURED"** badge will appear below the item.
@@ -344,7 +363,7 @@ After adding an item:
 <div style={{ display: "flex", gap: "20px", justifyContent: "center" }}>
   <figure style={{ textAlign: "center" }}>
     <img src="/img/vca_nfc.png" alt="vca+nfc items" width="200"/>
-    <figcaption>NFC + VCA Item</figcaption>
+    <figcaption>CLOUD BACKUP + NFC Item</figcaption>
   </figure>
   <figure style={{ textAlign: "center" }}>
     <img src="/img/threshold_changed.png" alt="threshold changed" width="200"/>
@@ -352,7 +371,6 @@ After adding an item:
   </figure>
 </div>
 ---
-
 
 :::info Recovery Testing Tip
 
@@ -372,34 +390,21 @@ This allows reviewers to validate that recovery properly restores the new mobile
 #### 🔁 Reset & Recovery Flow
 
 - **Reset App**  
-  In **Settings** tab , you'll find a `RESET APP` button. This is specifically provided for reviewers to simulate a full app uninstall, triggering the recovery process without requiring a real reinstall.
+  In the **Settings** tab , take a screenshot (`camera icon` in the emulator), then touch the `RESET APP` button to simulate an app reinstall on a new device. you will see the **Registering** and **Registered** toasted messages and a new **root account address**. You are now ready to iniate a recovery process
 
-- **Recovery Entry Points**  
-  - The **Claim** button and the yellow icon at the bottom left of the screen (Lock surronded by arrow) are used to **initiate recovery**.  
-  - This action will register a new mobile identity on-chain and allow you to use previously added backup items (NFC or cloud) to **claim your original (root) account**.
+This process will register a new mobile identity on-chain and allow you to use previously added backup items (NFC or cloud) to **claim your original (root) account**.
+
+- **Start the Recovery Process**  
+  - The **`yellow lock button`** icon at the bottom left of the items are used to **initiate recovery** with the backup items.
+    - **Cloud Backup**: Select the `.enc` file in the cloud or through Material File in emualator. Once downloaded a validation screen will appear, type the 2 digits code.
+    - **NFC Item**: Tap the NFC item (on the back of the phone) or manually input the serial number in emulator.
+  - Then use **Claim** button
+
+
 
 ---
 
 This temporary interface has been designed for **clarity and testability**, not end-user polish. Feel free to simulate multiple recovery scenarios (e.g. `1/2`, `2/2` setups) and test using different devices or emulator configurations.
-
-
-:::tip Simplify Local Backup on Emulator
-To avoid setting up a cloud account in the emulator, we recommend downloading the 
-**[Material Files](https://f-droid.org/repo/me.zhanghai.android.files_39.apk)** app to store the recovery token file locally.
-
-Drag and drop the downloaded apk in the emulator or install it in the emulator with:
-
-```bash
-curl -O https://f-droid.org/repo/me.zhanghai.android.files_39.apk # linux
-Invoke-WebRequest -Uri "https://f-droid.org/repo/me.zhanghai.android.files_39.apk" -OutFile "me.zhanghai.android.files_39.apk" # Powershell
-adb install me.zhanghai.android.files_39.apk
-```
-Then select "Material Files" from the share menu to save the .enc file.
-> **Warning:** crash on API 35 16K or API 36
-:::
-
-
-
 
 
 
