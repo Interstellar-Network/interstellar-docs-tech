@@ -289,11 +289,13 @@ Set-NetFirewallProfile -Profile Domain,Private,Public -Enabled True
 - Trigger the **Trusted Action Validation Protocol (TAVP)** screen
 
   - Send a test transaction to a contact
-<img src="/img/Send_Currency_Demo.gif" alt="wallet menu"  width="300"/>
+<div style={{ textAlign: "center" }}>
+  <img src="/img/Send_Currency_Demo.gif" alt="wallet menu" width="200"/>
+</div>
 
   - Enter the one-time code (2-digit), or experiment with trial/feedback
   - Check toasted messages whith Action Validation Screen
-    - **Transaction validation demo**
+    - **Creation of a transaction demo...**
     - [error] No circuits available after 10s; exiting!
     - [after taping one-time code digits]
     - **Validating transaction...**
@@ -311,8 +313,66 @@ In the future, we plan to introduce a **trusted beneficiary** feature. This will
 to register known recipient addresses on-chain through a secure validation process, preventing attackers from substituting contact names with malicious public keys. This enhancement will make the wallet both more secure and user-friendly.
 :::
 
+### 🧪 Step 3: Backup & Recovery — Test Interface for Reviewers
 
-### Step 3 Test Recovery 
+> ⚠️ **Note:** This interface is a **temporary, test-friendly version** designed to make validation easy for reviewers. It does **not** reflect the final version intended for end-users.  
+> All components shown here are **modular** and meant to be integrated and restyled by wallet providers and dApps for production use.
+
+This screen allows you to test Interstellar's backup and recovery mechanisms in a clear, step-by-step way:
+
+<div style={{ display: "flex", gap: "20px", justifyContent: "center" }}>
+  <figure style={{ textAlign: "center" }}>
+    <img src="/img/initial_backup.png" alt="initial backup" width="200"/>
+    <figcaption>Initial Backup</figcaption>
+  </figure>
+  <figure style={{ textAlign: "center" }}>
+    <img src="/img/vca.png" alt="+ vca" width="200"/>
+    <figcaption>VCA</figcaption>
+  </figure>
+</div>
+
+---
+
+#### 🟰 Adding Backup Items
+
+- **`+` Button**  
+  Add backup methods to secure your account:
+  - **Cloud Backup**: Encrypts and stores a backup file in the cloud.
+  - **NFC Item**: Register an NFC tag (tap it on the back of the phone) or manually input a serial number or any characters (in an emulator) for testing convenience.
+  
+
+After adding an item:
+- A **"SECURED"** badge will appear below the item.
+- The recovery threshold (e.g. `1/1 FOR BACKUP`, `1/2`, `2/2`, etc.) will update accordingly.
+- You can **tap the threshold badge** to change the required number of items for a valid recovery.
+
+<div style={{ display: "flex", gap: "20px", justifyContent: "center" }}>
+  <figure style={{ textAlign: "center" }}>
+    <img src="/img/vca_nfc.png" alt="vca+nfc items" width="200"/>
+    <figcaption>NFC + VCA Item</figcaption>
+  </figure>
+  <figure style={{ textAlign: "center" }}>
+    <img src="/img/threshold_changed.png" alt="threshold changed" width="200"/>
+    <figcaption>Threshold Changed</figcaption>
+  </figure>
+</div>
+
+
+---
+
+#### 🔁 Reset & Recovery Flow
+
+- **Reset App**  
+  In **Settings**, you'll find a `RESET APP` button. This is specifically provided for reviewers to simulate a full app uninstall, triggering the recovery process without requiring a real reinstall.
+
+- **Recovery Entry Points**  
+  - The **Claim** button and the icon at the bottom left of the screen (📄) are used to **initiate recovery**.  
+  - This action will register a new mobile identity on-chain and allow you to use previously added backup items (NFC or cloud) to **claim your original account**.
+
+---
+
+This temporary interface has been designed for **clarity and testability**, not end-user polish. Feel free to simulate multiple recovery scenarios (e.g. `1/2`, `2/2` setups) and test using different devices or emulator configurations.
+
 
 :::tip Simplify Local Backup on Emulator
 To avoid setting up a cloud account in the emulator, we recommend downloading the 
@@ -329,11 +389,6 @@ Then select "Material Files" from the share menu to save the .enc file.
 > **Warning:** crash on API 35 16K or API 36
 :::
 
-
-- **Register a recovery item (e.g NFC ITEM, CLOUD BACKUP)**
-
-  - **+ button** then Tap NFC Item (e.g payment card on the back of your device)
-  - **+ button** then save the .enc secure file on your preferred cloud provider or storage area
 
 
 :::info Recovery Testing Tip
@@ -441,7 +496,7 @@ You should see logs similar to the following:
 #### ✅ What to Look For
 
 - `display_circuits_package:` confirms the transaction display garbled circuit has been rendered.
-- `message_digits` and `pinpad_digits`: the random digits selected for the user’s challenge.
+- `message_digits` and `pinpad_digits`: the random digits selected for the user's challenge.
 - `store_metadata_aux: done!`: metadata was correctly stored for later validation.
 - `callback_new_garbled_and_strip_signed: done!`: confirms generation and signing succeeded.
 
@@ -470,7 +525,7 @@ These confirm that the digits were correctly interpreted and that the result was
 
 - `check_input: input_digits = [...]`: shows the digits entered by the user.
 - `computed_inputs_from_permutation = [...]`: the expected message digits decoded from the pinpad permutation.
-- `TxFail`: indicates that the user’s input did **not** match the expected digits — the validation failed.
+- `TxFail`: indicates that the user's input did **not** match the expected digits — the validation failed.
 - `store_tx_result: done!`: even in failure cases, the result is still stored for transparency, auditability, or rate-limiting purposes.
 
 :::info MORE DETAILS
@@ -566,7 +621,7 @@ Expected logs:
 
 - `extended_create_recovery` and `Cid(...)`: confirms that the recovery setup was triggered using a **CID-backed cloud recovery key**.
 - `store_metadata_aux: done!`: ensures that a corresponding visual challenge has been generated for secure user validation.
-- `map_friend_with_recovery_method` with a CID input: confirms correct linking between the cloud-stored token and the account’s recovery logic.
+- `map_friend_with_recovery_method` with a CID input: confirms correct linking between the cloud-stored token and the account's recovery logic.
 - `ActiveFriends` with the CID-based `KeyFriend`: confirms the friend registration is complete.
 - `threshold OK` and `execute_create_recovery : DONE`: confirms all recovery criteria were met and configuration finalized.
 
@@ -726,7 +781,7 @@ You can inspect chain state and transactions via:
 
 ---
 :::note Technical Preview – Foundation for Secure Mobile SDKs  
-This Android app showcases Interstellar’s secure Web3 account infrastructure and serves as the basis for the upcoming Android and iOS SDKs, currently in active development.
+This Android app showcases Interstellar's secure Web3 account infrastructure and serves as the basis for the upcoming Android and iOS SDKs, currently in active development.
 
 UI and UX will be significantly refined to reflect our core vision: making the human user the root of trust—not the weakest link—by combining simplicity with the strongest security.
 
@@ -735,7 +790,7 @@ Powered by the TAVP protocol, this platform lays the groundwork for future impro
 
 :::info Follow-Up – Selective Docs Exploration
 
-If you’ve jumped straight into the evaluation, we recommend consulting the **[Milestone 1 documentation](/Milestones/M1/Summary.md)** for key context. It outlines the core architecture, backend logic, and trusted execution flows implemented in this milestone.
+If you've jumped straight into the evaluation, we recommend consulting the **[Milestone 1 documentation](/Milestones/M1/Summary.md)** for key context. It outlines the core architecture, backend logic, and trusted execution flows implemented in this milestone.
 
 The documentation is modular—feel free to explore only the sections most relevant to your review or interest.  
 You can also use the **search bar** (top right corner) to locate specific topics quickly. Helpful keywords include:
@@ -750,3 +805,5 @@ You can also use the **search bar** (top right corner) to locate specific topics
 
 Next Steps:
 - Try the [Advanced CLI Demo](./advanced-cli-demo.md) to interact directly with the TEE and garbled circuits logic.
+
+  
