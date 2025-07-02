@@ -15,7 +15,7 @@ The documentation is intentionally **extensive** and **modular**, offering multi
 We recommend starting with the [**Manifesto and the comparison with Hardware Wallet**](./Manifesto/manifesto.md) to grasp **the core vision and security model** behind Interstellar. 
 From there, you’ll find a **shortcut link** at the end of the comparison to jump directly into the [**Shortcut Path for Reviewers**](./Milestones/M1/quick-start-evaluator.md).
 
-The tutorial itself includes **contextual links** to core components in the docs if needed, and you can always use **Search** (top-right corner) with relevant keywords to explore specific details.
+The tutorial itself includes **contextual links** to core components in the docs if needed, and you can always use **search bar** (top-right corner) with relevant keywords to explore specific details.
 :::
 
 
