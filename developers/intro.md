@@ -21,22 +21,24 @@ The tutorial itself includes **contextual links** to core components in the docs
 
 :::info Why Our Source Code Is Not Yet Public
 
-**User security is at the heart of Interstellar’s mission.**
+**User security is central to Interstellar’s mission**
 
-Our architecture introduces a new category of authentication and action validation mechanisms that go far beyond the state of the art — including dynamic visual cryptography, secure enclave-based key attestation, and garbled circuit-based behavioral validation.
+Our architecture introduces a new class of authentication and action validation technologies — including dynamic visual cryptography, secure enclave-based key attestation, and garbled circuit–based behavioral validation — designed to go beyond current best practices.
 
-These mechanisms are specifically designed to comply with and potentially exceed the highest security standards in the industry, including those relevant for PSD2, SOC2, and decentralized identity frameworks.
+These systems are built to meet and exceed the highest security standards (e.g. PSD2, SOC2, decentralized identity frameworks). To uphold that bar, we’ve made the deliberate decision to withhold source code publication until our final testnet release.
 
-Because of this, we have taken the responsible position to **withhold source code publication until our final testnet release**. This decision is based on the following principles:
+This approach ensures:
 
-- **Protecting users and integrators from unverified or unsafe reuse** of cryptographic components or SDKs that are not yet audited or hardened for general use  
-- **Preventing adversarial learning or adaptation** based on unfinished components, especially in a domain where attackers increasingly use AI to reverse-engineer or mimic behaviors  
-- **Preserving security model integrity**, including controlled validation of how and when sensitive components (like Trusted Action Validation Protocol circuits) are deployed  
-- **Ensuring reproducible, verifiable builds** and integration with formal verification and remote attestation mechanisms — so the eventual public release meets the highest standards of transparency *and* trust  
-- **Avoiding fragmentation or misuse** by external parties who may misunderstand or repurpose core systems before the correct documentation, test harnesses, and dependency controls are in place
+- **User and integrator safety**, by avoiding premature reuse of cryptographic components or SDKs that have not been fully audited or hardened
 
-Interstellar is committed to progressive disclosure. The codebase will be open-sourced in full, beginning with the final testnet phase — alongside developer tooling and documentation that reflect its intended usage and security posture.
+- **Protection against adversarial learning**, especially in a landscape where AI is increasingly used to reverse-engineer systems
 
-This is not a delay in openness. It’s a commitment to **responsible decentralization and user-first security**.
+- **Integrity of our security model**, through controlled rollout of sensitive components like Trusted Action Validation Protocol circuits
+
+- **Reproducibility and transparency**, with verified builds and remote attestation to ensure trust in the open-source release
+
+- **Responsible adoption**, by preventing fragmentation or misapplication before documentation, test harnesses, and dependency controls are in place
+
+We’re committed to full open sourcing at the time of the final testnet release, along with tooling and documentation to support responsible integration and usage.
 
 :::

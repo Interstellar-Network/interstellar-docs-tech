@@ -84,7 +84,7 @@ This manifesto is a **living document** — a snapshot of a vision that’s evol
 We invite:
 
 * Strategic partners in finance, identity, and mobile
-* Deeptech funders and institutional supporters (BPI, EU Horizon)
+* Deeptech funders and institutional supporters
 * Researchers and developers working on secure human-AI interaction
 
 

@@ -19,7 +19,7 @@ This document compares Interstellar’s Guardian Layer architecture to these tra
 
 ## Comparative Overview
 
-| Feature / Risk Vector          | Ledger (HWW)                                   | Polkadot Vault (Airgap)                  | **Interstellar (Guardian Layer)**                                             |
+| Feature / Risk Vector          | Ledger (HWW)                                   | Polkadot Vault (Airgap)                  | **Interstellar**                                             |
 | ------------------------------ | ---------------------------------------------- | ---------------------------------------- | ----------------------------------------------------------------------------- |
 | **Supply Chain Risk**          | Requires trusted shipping + firmware integrity | Requires secure offline setup            | Uses existing mobile; avoids external hardware; TEE + SE integrity            |
 | **UI/UX Clarity**              | Tiny screen, limited messages; easy to mislead | QR shows raw data; moderately clear      | Full-screen visual cryptographic display; cognitive validation                |
@@ -62,7 +62,7 @@ In an Interstellar-based multisig flow, **all participants receive the same tran
 
 This design addresses a critical weakness in traditional multisig setups, where signers often operate in isolation, with inconsistent or ambiguous transaction displays (e.g., as exploited in the Bybit + Safe + Ledger attack).
 
-Interstellar also allows legacy signers such as **Ledger** or **Polkadot Vault** to be used via the mobile interface, benefiting from the visual cryptographic approval layer — even if the signing is completed externally.
+Interstellar could potentially also allows legacy signers such as **Ledger** or **Polkadot Vault** to be used via the mobile interface, benefiting from the visual cryptographic approval layer — even if the signing is completed externally.
 > 📦 **Example Multisig Configuration (5 Signers)**  
 > All participants receive the same transaction message rendered via **device-specific garbled circuits**, ensuring consistent perception and validated intent.
 >
@@ -127,7 +127,7 @@ As attacks shift from stealing keys to stealing *intent*, Interstellar offers th
 
 :::tip Skip the Docs?
 
-Ready to see Interstellar in action? Jump to the [Shortcut Path for Reviewers](../Milestones/M1/quick-start-evaluator.md) to evaluate Milestone 1 directly — no need to read the full documentation upfront.
+Ready to see Interstellar in action? Jump to the **[Shortcut Path for Reviewers](../Milestones/M1/quick-start-evaluator.md)** to evaluate Milestone 1 directly — no need to read the full documentation upfront.
 
 :::
 
