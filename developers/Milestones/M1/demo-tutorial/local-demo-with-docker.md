@@ -290,7 +290,7 @@ Set-NetFirewallProfile -Profile Domain,Private,Public -Enabled True
 
   - Enter the one-time code (2-digit), or experiment with trial/feedback
   - Check toasted messages whith Action Validation Screen
-    - **Creation of a transaction demo...**
+    - **Creating a demo transaction...**
     - [error] No circuits available after 10s; exiting!
     - [after taping one-time code digits]
     - **Validating transaction...**
@@ -338,7 +338,7 @@ Then select "Material Files" from the share menu to save the .enc file.
 
 - **`+` Button**  
   Add backup methods to secure your account:
-  - **Cloud Backup**: Encrypts and stores a backup file in the cloud. (see the following tip if you use an emulator)
+  - **Cloud Backup**: Stores a secure backup file in the cloud. (see the following tip if you use an emulator)
   - **NFC Item**: Register an NFC tag (tap it on the back of the phone) or manually input a serial number or any characters (in an emulator) for testing convenience.
   
 <div style={{ display: "flex", gap: "20px", justifyContent: "center" }}>
@@ -352,10 +352,6 @@ Then select "Material Files" from the share menu to save the .enc file.
   </figure>
 </div>
   
-
-
-
-
 
 
 After adding an item:
