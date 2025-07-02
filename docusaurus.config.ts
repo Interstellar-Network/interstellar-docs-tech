@@ -116,6 +116,14 @@ const config: Config = {
   themeConfig: {
     // Replace with your project's social card
     /*image: 'img/docusaurus-social-card.jpg',*/
+    colorMode: {
+      defaultMode: 'dark',
+      disableSwitch: false, // Optional: disables the toggle
+      respectPrefersColorScheme: false, // Ignores user's OS preference
+    },
+
+
+
     navbar: {
       title: 'Interstellar',
       logo: {
