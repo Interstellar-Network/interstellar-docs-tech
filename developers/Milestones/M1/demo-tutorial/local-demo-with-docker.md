@@ -775,8 +775,11 @@ You can inspect chain state and transactions via:
 
 ---
 :::note Technical Preview – Foundation for Secure Mobile SDKs  
-This Android app showcases Interstellar's secure Web3 account infrastructure and serves as the basis for the upcoming Android and iOS SDKs, currently in active development.
+This Android application is provided as a technical demonstration of Interstellar’s secure Web3 account infrastructure. It serves as a foundation for the forthcoming Android and iOS SDKs, which are still under active development.  
+
+Please note that the current user interface and experience are not representative of the final product. Both UI and UX will be significantly refined to align with Interstellar’s core mission: delivering the highest levels of simplicity and security in mobile self-custody.  
 :::
+
 
 :::info Follow-Up – Selective Docs Exploration
 
