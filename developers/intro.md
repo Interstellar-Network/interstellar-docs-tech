@@ -19,7 +19,7 @@ The tutorial itself includes **contextual links** to core components in the docs
 :::
 
 
-:::info Why Our Source Code Is Not Yet Public
+:::info WHY OUR SOURCE CODE IS NOT YET PUBLIC
 
 **User security is central to Interstellar’s mission**
 

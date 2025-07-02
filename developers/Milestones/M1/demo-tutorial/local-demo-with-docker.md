@@ -357,8 +357,9 @@ Then select "Material Files" from the share menu to save the .enc file.
 
 After adding an item:
 - A **"SECURED"** badge will appear below the item.
-- The recovery threshold (e.g. `1/1 FOR BACKUP`, `1/2`, `2/2`, etc.) will update accordingly.
 - You can **tap the threshold badge** to change the required number of items for a valid recovery.
+- The recovery threshold (e.g. `1/1 FOR BACKUP`, `1/2`, etc.) will update accordingly.
+
 
 <div style={{ display: "flex", gap: "20px", justifyContent: "center" }}>
   <figure style={{ textAlign: "center" }}>
@@ -395,7 +396,7 @@ This allows reviewers to validate that recovery properly restores the new mobile
 This process will register a new mobile identity on-chain and allow you to use previously added backup items (NFC or cloud) to **claim your original (root) account**.
 
 - **Start the Recovery Process**  
-  - The **`yellow lock button`** icon at the bottom left of the items are used to **initiate recovery** with the backup items.
+  - The **`yellow lock button`** icon at the left of the items are used to **initiate recovery** with the backup items.
     - **Cloud Backup**: Select the `.enc` file in the cloud or through Material File in emualator. Once downloaded a validation screen will appear, type the 2 digits code.
     - **NFC Item**: Tap the NFC item (on the back of the phone) or manually input the serial number in emulator.
   - Then use **Claim** button
@@ -775,10 +776,6 @@ You can inspect chain state and transactions via:
 ---
 :::note Technical Preview – Foundation for Secure Mobile SDKs  
 This Android app showcases Interstellar's secure Web3 account infrastructure and serves as the basis for the upcoming Android and iOS SDKs, currently in active development.
-
-UI and UX will be significantly refined to reflect our core vision: making the human user the root of trust—not the weakest link—by combining simplicity with the strongest security.
-
-Powered by the TAVP protocol, this platform lays the groundwork for future improvement including novel cognitive and dynamic behavioral features—essential to counter emerging threats from malware and adversarial AI.
 :::
 
 :::info Follow-Up – Selective Docs Exploration
