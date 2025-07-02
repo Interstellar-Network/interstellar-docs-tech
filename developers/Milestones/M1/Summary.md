@@ -35,7 +35,7 @@ The underlying technical components are implemented as **TEE-executed Substrate 
 To validate Milestone 1, reviewers may use:
 
 - The provided **Android application** (physical device or emulator)
-- A **remote VPS testnet**, or a local instance via Docker
+- **Local nodes** via Docker
 - Step-by-step instructions provided in the `Demo Tutorial` section
 
 This tutorial includes setup guidance, environment configuration, and example flows for registration, validation, and recovery testing.
