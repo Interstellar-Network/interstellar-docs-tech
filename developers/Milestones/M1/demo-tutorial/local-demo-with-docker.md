@@ -297,8 +297,7 @@ Set-NetFirewallProfile -Profile Domain,Private,Public -Enabled True
     - **Transaction done!**
 
 :::warning Low-end devices and emulator limitations
-If you are using an emulator with low-end GPU, or a low-end or outdated Android device with limited GPU, 
-the user experience may be significantly degraded. 
+If you are using an emulator with low-end GPU, or a low-end or outdated Android device with limited GPU, the user experience may be significantly degraded. 
 Although the validation screen may be harder to read in such conditions, 
 you should still be able to complete the test process.
 :::
