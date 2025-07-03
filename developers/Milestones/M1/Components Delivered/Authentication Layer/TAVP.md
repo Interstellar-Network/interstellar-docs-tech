@@ -50,7 +50,7 @@ The VCA Token is evaluated on the mobile device. It renders a **randomized keypa
 
 The touch positions of the user-entered code are:
 
-- Signed by the **Secure Element**, using the mobile proxy key
+- Signed by the **Secure Element**, using the mobile key
 - Optionally encrypted and returned via the `AUTH-RSP` extrinsic
 
 The signature proves both user presence and SE-bound authorization.
