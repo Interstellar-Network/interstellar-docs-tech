@@ -29,7 +29,7 @@ TAVP is based on two dedicated extrinsics, `AUTH-REQ` and `AUTH-RSP`, executed w
 
 ### 1. Action Validation Request
 
-A transaction or sensitive action message is sent to the Interstellar runtime through the `AUTH-REQ` extrinsic. If submitted by the user’s mobile app using a mobile SDK it is signed with the mobile SE. Alternatively, an unsigned extrinsic that may optionally include a signed extension if submitted by a third party (e,g dApp).
+A transaction or sensitive action message is sent to the Interstellar runtime through the `AUTH-REQ` extrinsic. If submitted by the user’s mobile app using a mobile SDK it is signed with the mobile SE. Alternatively, an unsigned extrinsic that may optionally include a signed extension if submitted by a third party (e.g. dApp).
 
 ### 2. VCA Token Creation
 
