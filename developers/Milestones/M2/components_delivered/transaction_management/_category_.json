@@ -1,8 +1,9 @@
 {
-    "label": "Transaction Management Layer",
+  
+    "label": "Transaction Management Layer (delivered in M3)",
     "position": 1,
     "link": {
       "type": "generated-index",
-      "description": "Components delivered in Milestone 2"
+      "description": "Components delivered in Milestone 3"
     }
   }

@@ -15,38 +15,62 @@ Interstellar’s infrastructure is built on composable, secure layers that abstr
 
 Each layer has a defined interface, allowing for secure upgrades and back-end substitution (e.g., switching signing schemes or enclave types) without disrupting the overall system logic.
 
-### Basic Architecture Diagram
+### Architecture Diagram
 
 ```mermaid
 graph TD
-  A[Client Layer<br>↳ Secure environment]
-  B[Transaction Management<br>↳ TX orchestration]
-  C[Key Management<br>↳ KMS lifecycle]
-  E[VCA Layer - TAVP<br>↳ Garbled circuit validation]
-  D[Authentication Layer<br>↳ SE-based device binding]
-  F[Account Abstraction<br>↳ Unified chain interface]
+  u((Wallet User))
+  m(((Mobile SDK)))
 
-  A <--> B <--> C <--> E <--> D <--> F
+   
+  A[ **Authentication Layer** <br>↳ SE-based device binding]
+  VC[ **Trusted Action Validation Protocol -TAVP** <br>↳ garbled circuit-based Action Validation Protocol]
+  AA[ **Account Abstraction** <br>↳ Unified Chain Interface ]
+  TX[ **Transaction Management Layer in M3** <br>↳ TX Orchestration: <br> -Unified TX Abstraction Req/Resp<br>-Conditional TAVP<br>-TX Policies<br>-Trusted Beneficiary whitelist placeholder, etc...]
+  S[ **Signer Layer** <br> KMS only in M2/M3/Testnet <br>↳ Signing Engines Management Abstraction in M3<br>]
+  C[ **Client Layer** <br>↳ Blockchain Client Logic:<br> DOT,SOL,ETH,BTC,...]
+  SO[ **Signer Orchestrator in M3** <br>↳ Signing Orchestration: <br> Signing Routing Management Abstraction,..]
+ 
+  m<-->A
+  A -->|M2|C 
+  VC -.Conditional TAVP in M3.-> A 
+  A-->AA
+  A-.M3.->TX
+  TX -.M3.-> C ---->|M2| S
+  TX -.Conditional TAVP in M3.-> VC
+  S-->|KMS trigger TAVP in M2 |VC
+  TX-.->SO-.->S
+
+
+  %% définition de la classe "dashed"
+    classDef dashed stroke-dasharray: 5 5,stroke:#333, fill:#6030f2;
+
+  %% application de la classe au nœud B
+    class TX dashed;
+    class SO dashed;
+  
 ```
+
 ---
 
 ## 🧩 Component Overview
 
 ### 1. **Client Layer**
 
-- Provides an interface for user actions (e.g., transaction requests).
 - Runs in a secure runtime environment (e.g., enclave workers).
 - Handles interaction with chain-specific logic and validation flows.
 - Encapsulates coin-specific TX input and feedback via unified UX components.
 
 ### 2. **Transaction Management Layer**
 
+
+- Provides an interface for user actions (e.g., transaction requests).
 - Manages transaction creation, fee calculation, broadcasting, and confirmation.
 - Supports both **UTXO-based** and **account-based** blockchain models.
 - Interfaces with the KMS for signing requests.
 - Delegates pre-signing validation (e.g., amount threshold, TAVP invocation).
 
-### 3. **Key Management Service (KMS)**
+### 3. **Key Management Service (KMS) in Signer Layer**
 
 - Manages private key generation, import, export restrictions, and signing.
 - Intended to run within a secure execution environment (e.g., SGX, TDX).
@@ -60,7 +84,7 @@ graph TD
   - Device entropy and environmental context.
 - Used during account onboarding, recovery, and validation.
 
-### 5. **VCA Layer (Trusted Action Validation Protocol)**
+### 5. **Trusted Action Validation Protocol - TAVP**
 
 - Uses garbled circuits to generate ephemeral cognitive validation challenges.
 - Prevents replay, remote hijacking, or automated signing in sensitive flows.
@@ -80,9 +104,10 @@ graph TD
 
 1. **User** initiates a transaction request via a secure client interface.
 2. **Transaction Management Layer** validates format, fee, and network parameters.
-3. A pre-signing hook may **trigger the VCA layer** based on policy (e.g., high amount).
-4. If allowed, the request is routed to the **KMS**.
-5. **KMS** (and optionally a Signer Layer) returns the raw or policy-bound signature.
+
+3. A pre-signing hook may **trigger TAVP** based on policy (e.g., high amount).
+4. If allowed, the request is routed to the **KMS** within the signer layer.
+5. **KMS** returns the raw or policy-bound signature.
 6. The transaction is broadcast to the target chain using chain-specific logic.
 
 ---
