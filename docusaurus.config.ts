@@ -32,6 +32,24 @@ const config: Config = {
     locales: ['en'],
   },
 
+themes: ['@docusaurus/theme-mermaid'], // ✅ Add this line
+
+  markdown: {
+    mermaid: true, // ✅ Enables mermaid syntax in Markdown
+  },
+
+  themeConfig: {
+    // ... existing theme config
+    mermaid: {
+      theme: 'default', // or 'dark'
+    },
+  },
+
+
+
+
+
+
 
   presets: [
     [
