@@ -28,7 +28,7 @@ Depending on the security context and backend in use, it may:
 
 ## 🧩 Subcomponents
 
-### 1. [**Key Management Service (KMS)**](/developers/components/signer-layer/kms)
+### 1. [**Key Management Service (KMS)**](/developers/components/signer-layer)
 
 - **Status**: ✅ Delivered in M2
 - Basic in-memory KMS used for testnet operations
@@ -36,7 +36,7 @@ Depending on the security context and backend in use, it may:
 - Provides coin-specific signing (e.g., ECDSA for BTC/ETH, EdDSA for DOT/SOL)
 - Integrated with TAVP for enforced validation before signing
 
-### 2. [**Signer Orchestrator**](/developers/components/signer-layer/signer-orchestrator)
+### 2. [**Signer Orchestrator**](/developers/components/signer-layer)
 
 - **Status**: ⏳ Planned (M3+)
 - Routes signing requests to appropriate backend:
@@ -50,7 +50,6 @@ Depending on the security context and backend in use, it may:
 
 ## 🔁 Signing Flow
 
-_(See diagram below)_
 ```text
 Mobile SDK
    ↓

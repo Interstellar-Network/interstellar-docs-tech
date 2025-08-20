@@ -70,7 +70,7 @@ graph TD
 
 Each layer has a dedicated canonical documentation entry under `/developers/components`.
 
-### 1. [**Client Layer**](/developers/components/client-layer)
+### 1. [**Client Layer**](/developers/category/layered-architecture)
 
 - Runs inside enclave workers (e.g., Integritee)
 - Supports BTC, ETH, DOT, SOL testnets
@@ -94,29 +94,29 @@ Each layer has a dedicated canonical documentation entry under `/developers/comp
 - Future support for MPC, SEV, TDX, and NMC backends
 
 Subcomponents:
-- [Basic KMS](/developers/components/signer-layer/kms)
-- [Signer Orchestrator (Planned)](/developers/components/signer-layer/signer-orchestrator)
+- [Basic KMS](/developers/components/signer-layer)
+- [Signer Orchestrator (Planned)](/developers/components/signer-layer)
 
-### 4. [**Authentication Layer**](/developers/components/authentication-layer)
+### 4. [**Authentication Layer**](/developers/category/layered-architecture)
 
 - Enforces SE-based identity binding
 - Validates user-device integrity during onboarding and sensitive actions
 - Delivered as part of M1
 
-### 5. [**TAVP Layer (VCA)**](/developers/components/vca-layer)
+### 5. [**TAVP Layer (VCA)**](/developers/category/layered-architecture)
 
 - Delivered in M1
 - Garbled circuit-based validation to enforce real-time behavioral challenges
 - Triggered in all sensitive operations in M2
 - Supports cognitive resistance against automated attacks and malware
 
-### 6. [**Account Abstraction Layer**](/developers/components/aa-layer)
+### 6. [**Account Abstraction Layer**](/developers/category/layered-architecture)
 
 - Abstracts over UTXO (e.g., Bitcoin) and account-based models (e.g., Ethereum, Polkadot, Solana)
 - Provides unified structure to transaction generation and fee estimation
 - Delivered in M1 and extended in M2
 
-### 7. [**Recovery Layer**](/developers/components/recovery-layer)
+### 7. [**Recovery Layer**](/developers/category/layered-architecture)
 
 - Delivered in M1
 - Combines SE-based key wrapping with:
@@ -143,7 +143,7 @@ Subcomponents:
 
 ## 🔁 Integration Flow Summary
 
-> See [each component's documentation](/developers/components/) for deeper integration-level details.
+> See [each component's documentation](/developers/category/layered-architecture) for deeper integration-level details.
 
 1. User triggers a transaction via the mobile SDK.
 2. Authentication Layer validates device signature and identity binding.
