@@ -39,7 +39,7 @@ graph TD
 
 :::info 🔭 Architecture (including components planned in Milestone 3)
 
-The full modular architecture, including future components such as the **Transaction Management Layer** and **Signer Bridge** (Signer Orchestrator), is described in the canonical architecture documentation:
+The full modular architecture, including future components such as the **Transaction Management Layer** and **Signer Orchestrator**, is described in the canonical architecture documentation:
 
 👉 [Canonical Architecture Overview](/developers/components/architecture.md)
 
