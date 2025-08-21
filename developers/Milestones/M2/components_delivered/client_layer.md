@@ -3,7 +3,7 @@ sidebar_label: 'Client Layer'
 sidebar_position: 4
 ---
 
-# 🧑‍💻 Client Layer
+# Client Layer
 
 The **Client Layer** is responsible for orchestrating user-facing interactions and preparing transaction requests for processing within Interstellar’s secure execution environment. It acts as the initiating interface for all user actions that lead to transaction validation and signing.
 
@@ -35,7 +35,7 @@ The Client Layer aims to:
 
 ---
 
-## 📌 Responsibilities
+## Responsibilities
 
 - **Transaction Preparation**
   - Construct transaction payloads using coin-specific rules.
@@ -66,7 +66,7 @@ Each chain is handled via dedicated logic modules within its worker instance.
 
 ---
 
-## 🧱 Extensibility
+## Extensibility
 
 This architecture supports multiple future extensions:
 
@@ -77,6 +77,6 @@ This architecture supports multiple future extensions:
 
 ---
 
-## ✅ Summary
+##  Summary
 
 The Client Layer provides the entry point for initiating and managing transaction flows inside Interstellar’s architecture. By colocating client logic with execution workers, the system ensures end-to-end control over the transaction lifecycle while preserving modularity and forward compatibility with decentralized user interfaces.

@@ -9,7 +9,7 @@ This document presents the modular architecture supporting Interstellar’s secu
 
 ---
 
-## 🧱 Layered Architecture
+##  Layered Architecture
 
 Interstellar’s infrastructure is built on composable, secure layers that abstract over cryptographic operations, account models, and validation mechanisms.
 
@@ -53,16 +53,16 @@ These components are defined structurally but will be fully implemented and deli
 
 ### 1. **Client Layer**
 
-- Runs in a secure runtime environment (e.g., enclave workers).
-- Handles interaction with chain-specific logic and validation flows.
-- Encapsulates coin-specific TX input and feedback via unified UX components.
+- Executes chain-specific client logic and validation flows within the trusted worker runtime.  
+- Encapsulates coin-specific transaction input and feedback via unified UX components.  
+- Some elements already run inside enclave logic; full modularization is planned in M3.
 
-### 2. **Key Management Service (KMS) in Signer Layer**
+### 2. **Key Management Service (KMS) in Signer Layer**### 1. **Client Layer**
 
-- Manages private key generation, import, export restrictions, and signing.
-- Intended to run within a secure execution environment (e.g., SGX, TDX).
-- Produces raw signatures or delegates to a signer layer depending on the backend.
-- Acts as a security boundary isolating key material from the app logic.
+- Provides in-enclave keypair generation and signing for supported chains.  
+- Keys reside only in enclave runtime memory (no SGX sealing in M2).  
+- Import/export restrictions and persistent sealing will be introduced in M3.  
+- Acts as a security boundary isolating private key material from application logic.
 
 ### 3. **Authentication Layer**
 
@@ -87,14 +87,13 @@ These components are defined structurally but will be fully implemented and deli
 
 ---
 
-## 🧪 Integration Flow
+## Integration Flow
 
 1. **User** initiates a transaction request via a secure client interface.
 2. The request flows through the Account Abstraction layer.
-3. A pre-signing hook always **triggers TAVP** in KMS.
-4. The signer layer processes the request.
-5. **KMS** returns the raw or policy-bound signature.
-6. The transaction is broadcast to the target chain using chain-specific logic.
+3. A pre-signing hook **triggers TAVP** in KMS.
+4. Upon succesfull validation the signer layer processes the request.
+5. KMS returns the raw signature, which is then broadcast using chain-specific logic.
 
 ---
 
@@ -102,16 +101,16 @@ These components are defined structurally but will be fully implemented and deli
 
 | Component                    | Current Status     | Upcoming Improvements       |
 |-----------------------------|--------------------|-----------------------------|
-| SGX/TEE protection of KMS   | Partial            | Full isolation planned      |
+| SGX/TEE protection of KMS   | Partial            | Key sealing in M3     |
 | Modular Signer integration  | Not yet included   | Planned                     |
 | Threshold-based validation  | Not yet included   | Planned                     |
-| VCA for TX validation       | Available          | Ongoing optimizations       |
+| TAVP (garbled circuit validation)       | Available          | Ongoing optimizations       |
 | SE-based device auth        | Available          | Extended attestation planned |
 | UTXO + Account abstraction  | Available          | Maintained                  |
 
 ---
 
-## 📌 Summary
+## Summary
 
 This architecture enables secure, modular, and policy-aware transaction flows across multiple blockchain networks. Each layer is independently upgradable and designed to support future cryptographic schemes, enclave types, and decentralized signing protocols.
 
@@ -123,8 +122,8 @@ It ensures a clear separation between transaction intent, user validation, and s
 For in-depth details on each architectural layer, refer to the canonical documentation:
 
 - Account Abstraction Layer
-- [Transaction Management Layer](/developers/components/transaction-management-layer/index.md)
-- [Signer Layer (KMS) and Signer Orchestrator](/developers/components/signer-layer/index.md)
+- [Transaction Management Layer](/developers/components/transaction-management-layer/index.mdx)
+- [Signer Layer (KMS) and Signer Orchestrator](/developers/components/signer-layer/index.mdx)
 - Authentication Layer
 - Trusted Action Validation Protocol (TAVP)
 - Client Layer

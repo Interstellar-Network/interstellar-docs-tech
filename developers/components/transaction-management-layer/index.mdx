@@ -1,0 +1,176 @@
+---
+sidebar_label: 'Transaction Management Layer'
+sidebar_position: 2
+---
+
+import { Table, TableHeader, TableRow, TableCell, TableBody } from "@site/src/components/ui/table";
+
+# Transaction Management Layer
+
+The **Transaction Management Layer (TML)** orchestrates user-initiated blockchain transactions. It provides a secure, modular interface between the **Client Layer**, the **Signer Layer**, and **TAVP** (Trusted Action Validation Protocol) to enforce validation workflows and route signing requests according to policy.
+
+This page describes both the current **M2 testnet implementation** and the planned evolution toward a **policy-aware orchestration layer** in M3 and beyond.
+
+---
+
+## Role in the Architecture
+
+TML acts as the **transactional control plane**. It translates abstract intents into chain-specific transactions, applies policy (including conditional TAVP), and forwards validated signing requests to the Signer Layer.
+
+It mediates between:
+
+- **Client Layer** — chain formatting, nonces/UTXO handling, fee estimation  
+- **Signer Layer** — key-usage enforcement and signature generation  
+- **Authentication Layer** — device-bound identity and provenance  
+- **TAVP Layer** — cognitive and behavioral validation for sensitive operations  
+
+📄 See also: [Architecture Overview](/developers/components/architecture)
+
+---
+
+## Key Responsibilities
+
+- Normalize requests across BTC, ETH, DOT, SOL  
+- Perform structural checks, pre-sign validations, and fee estimation  
+- Apply conditional TAVP (for example, thresholds or allowlist policy)  
+- Forward signing requests to the **KMS** (M2) or **Signer Orchestrator** (M3)  
+- Return signed payloads to the Client Layer for broadcast  
+- Provide deterministic errors and idempotent request handling  
+
+---
+
+## Transaction Flow (high level)
+
+1. User initiates a transaction in the secure mobile SDK  
+2. TML validates format, estimates fees, and evaluates policies  
+3. If required by policy, TAVP validation is invoked  
+4. TML forwards the request to the Signer Layer (KMS in M2; Orchestrator in M3)  
+5. Signature is returned to TML  
+6. TML hands the signed transaction to the Client Layer for chain-specific broadcast  
+
+---
+
+## M2 → M3 Evolution
+
+<Table>
+  <TableHeader>
+    <TableRow>
+      <TableCell><strong>Phase</strong></TableCell>
+      <TableCell><strong>Backends</strong></TableCell>
+      <TableCell><strong>Persistence</strong></TableCell>
+      <TableCell><strong>Routing</strong></TableCell>
+      <TableCell><strong>TAVP Integration</strong></TableCell>
+    </TableRow>
+  </TableHeader>
+  <TableBody>
+    <TableRow>
+      <TableCell>M2 (Testnet)</TableCell>
+      <TableCell>Local KMS (Integritee workers)</TableCell>
+      <TableCell>No SGX sealing (ephemeral)</TableCell>
+      <TableCell>Static, single backend</TableCell>
+      <TableCell>Triggered by transaction flow; threshold checks can be enforced upstream or inline</TableCell>
+    </TableRow>
+    <TableRow>
+      <TableCell>M3 (Planned)</TableCell>
+      <TableCell>Local KMS + Signer Orchestrator</TableCell>
+      <TableCell>SGX sealing and recovery</TableCell>
+      <TableCell>Policy-driven routing via Orchestrator</TableCell>
+      <TableCell>Conditional, policy-driven (e.g., amount thresholds, destination classification)</TableCell>
+    </TableRow>
+    <TableRow>
+      <TableCell>Post-Mainnet</TableCell>
+      <TableCell>Multi-TEE and distributed backends (TDX, SEV, Arm CCA; TSS, MPC, NMC)</TableCell>
+      <TableCell>Vendor-neutral persistence</TableCell>
+      <TableCell>Multi-TEE routing; optional heterogeneous quorum</TableCell>
+      <TableCell>Fully policy-driven and auditable</TableCell>
+    </TableRow>
+  </TableBody>
+</Table>
+
+>Note: For pragmatic reasons, testnet and pre-mainnet operate with Integritee workers only. Multi-TEE and TSS/MPC/NMC are post-mainnet goals. The former “Sidechains Registry” and “Transaction Request” pallets are not delivered; their roles are subsumed by the TML + Signer Orchestrator approach.
+---
+
+## Policy Model (planned)
+
+The TML evolves into a programmable validation controller, where policies determine whether, how, and by whom a transaction is signed.
+
+Typical conditions:
+
+- Require TAVP if amount > threshold.
+
+- Block if destination not in allowlist.
+
+- Defer or require additional approval for flagged assets.
+
+- Auto-approve small transfers to known beneficiaries.
+
+A minimal declarative shape:
+
+```json
+{
+  "policies": [
+    {
+      "id": "default-low-value",
+      "match": {
+        "chain": "eth",
+        "amount_gte": 0,
+        "amount_lt": 100
+      },
+      "enforce": {
+        "action": "auto_sign"
+      }
+    },
+    {
+      "id": "require-tavp-high-value",
+      "match": {
+        "chain": "eth",
+        "amount_gte": 1000
+      },
+      "enforce": {
+        "action": "require_tavp"
+      }
+    },
+    {
+      "id": "allowlist-only",
+      "match": {
+        "chain": "dot",
+        "destination_in_allowlist": true
+      },
+      "enforce": {
+        "action": "sign"
+      }
+    },
+    {
+      "id": "block-flagged-assets",
+      "match": {
+        "asset_tag": "sanctioned"
+      },
+      "enforce": {
+        "action": "block"
+      }
+    },
+    {
+      "id": "delay-large-sol",
+      "match": {
+        "chain": "sol",
+        "amount_gte": 10000
+      },
+      "enforce": {
+        "action": "delay",
+        "delay_seconds": 3600
+      }
+    }
+  ]
+}
+```
+
+>Alternatively, the threshold amount could be defined in USD or another fiat currency, with real-time conversion performed through a price feed (e.g., CoinMarketCap or equivalent oracle service).
+
+
+## Summary
+
+The Transaction Management Layer is the backbone of Interstellar’s secure and flexible transaction flow. It provides secure orchestration with unified logic for BTC, ETH, DOT, and SOL.
+- It could enable fine-grained policy enforcement, dynamic rule evaluation, and seamless interaction with modular signing backends.  
+- Post-mainnet, it is expected to support multi-TEE and MPC routing for resilience and decentralization.
+
+

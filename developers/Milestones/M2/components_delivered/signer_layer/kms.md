@@ -5,69 +5,71 @@ sidebar_position: 2
 
 # Key Management Service (KMS)
 
-The Key Management Service (KMS) is a foundational component of Interstellar’s secure transaction infrastructure. It provides minimal cryptographic key handling capabilities required to perform transaction signing operations across multiple blockchain protocols.
+The **Key Management Service (KMS)** is a foundational component of Interstellar’s secure transaction infrastructure.  
+It provides the minimal cryptographic key handling capabilities required to perform transaction signing operations across multiple blockchain protocols.  
 
-This document describes the **basic version** of the KMS used in the current implementation. It is designed primarily for testnet usage and will be extended with secure enclave support and modular signer backends in future iterations.
+This document describes the **M2 version** of the KMS currently delivered. It is functional for testnet usage but does not yet enforce hardware-backed persistence (SGX sealing). These guarantees will be extended in **M3**, together with modular signer backends and stronger enclave isolation.
 
 ---
 
 ## 🧩 Purpose
 
-The KMS serves the following core functions:
+The KMS provides the following core functions:
 
-- Generate and store blockchain-specific key pairs (e.g., secp256k1, ed25519).
-- Export public keys for client-side address derivation.
-- Sign transaction payloads upon request from the Client Layer and later from **Transaction Management Layer/Signer Orchestrator (M3)** //TO VERIFY/ADJUST
-- Enforce basic isolation between signing logic and transaction orchestration.
+- Generate blockchain-specific key pairs (e.g., `secp256k1`, `ed25519`).  
+- Export corresponding **public keys** for address derivation.  
+- Sign transaction payloads upon request from the Client Layer and, in **M3**, from the **Transaction Management Layer / Signer Orchestrator**.  
+- Enforce a separation between transaction orchestration and the low-level signing logic.
 
 ---
 
-## 🛠️ Implementation Details
+## 🛠️ Implementation Details (M2)
 
-- The current KMS runs **within a Substrate pallet** embedded in an **Integritee worker node**.
-- It operates in **trusted user space**, but is **not yet protected** by SGX enclave boundaries.
-- All cryptographic operations are performed using chain-specific Rust libraries.
-- Signature requests are initiated by the transaction logic after optional validation steps.
+- The KMS is implemented as a **Substrate pallet** running inside an **Integritee worker**.  
+- Keys and signatures are handled **inside the enclave runtime**, ensuring they are never exposed to untrusted host memory.  
+- At this stage, **keys are not yet sealed** with Intel® SGX sealing primitives; they are kept only in protected enclave memory for the lifetime of the worker.  
+- All cryptographic operations rely on standard, chain-specific Rust libraries (`sp_core`, `k256`, `ed25519_dalek`, etc.).  
+- Signing requests are triggered internally by transaction execution logic after validation steps.
 
-> ⚠️ While the KMS is hosted on a worker node, **SGX isolation is not enforced** in the current implementation. This limits the system's resilience against certain runtime-level attacks and should be considered insecure for production use.
+> ⚠️ **Limitations (M2):**  
+> - Keys are not persisted across enclave restarts (ephemeral in-memory only).  
+> - SGX sealing and recovery mechanisms will be introduced in **M3**.  
+> - The system should be considered **insecure for production use** until sealing and persistence are enforced.
 
 ---
 
 ## 🔐 Key Features
 
-| Feature                         | Status         |
+| Feature                         | Status (M2)    |
 |---------------------------------|----------------|
 | Keypair generation              | ✅ Supported    |
 | Public key export               | ✅ Supported    |
 | Transaction signing             | ✅ Supported    |
-| SGX enclave isolation           | ❌ Not enforced |
-| Hardware-based key attestation  | ❌ Not available |
+| SGX key sealing (persistence)   | ❌ Not enforced |
 | Key rotation / revocation       | ❌ Not available |
 
 ---
 
-## 🧪 Use Case in Current Architecture
+## 🧪 Usage in Current Architecture
 
-- Each supported blockchain (BTC, ETH, DOT, SOL) uses a dedicated keypair.
-- Keypairs are generated and stored locally in the worker runtime memory.
-- Signature requests are routed through the Transaction Management Layer.
-- No persistent key storage is used — keys exist for the duration of the worker runtime.//TO VERIFY
-- The KMS is accessed only through internal interfaces; no external API is exposed.
+- Each supported blockchain (BTC, ETH, DOT, SOL) is associated with a dedicated keypair.  
+- Keypairs are generated and stored **in enclave memory only**.  
+- No persistent key storage is applied — keys are lost on enclave restart.  
+- Signature requests are routed through the **transaction flow** but never expose raw private keys.  
+- The KMS is an **internal component**; it does not expose external APIs.
 
 ---
 
-## 🔄 Planned Enhancements
+## 🔄 Planned Enhancements (M3+)
 
-The current KMS is designed to be replaced or upgraded with a hardened, production-ready version that will include:
-
-- **TEE-based execution**: Isolation using SGX, TDX, SEV, or TrustZone backends.
-- **Key attestation**: Verifiable proof of origin and execution context.
-- **Signer Layer integration**: Decoupling KMS logic from signature generation.
-- **Threshold signing**: Integration with MPC/NMC frameworks.
-- **Audit and telemetry hooks** for key usage tracking (non-sensitive metadata).
+- **SGX Sealing**: Persistence and secure recovery of keys across enclave restarts.  
+- **Signer Layer integration**: Decoupling KMS logic from signature execution for modular backends.  
+- **Threshold / MPC-based signing**: Integration with MPC or NMC frameworks to enable multi-party and distributed signing schemes.  
+- **Audit and telemetry hooks**: Non-sensitive logging of signing operations for monitoring and governance.  
 
 ---
 
 ## 📌 Summary
 
-The current KMS implementation provides the minimal cryptographic functionality required to test and validate transaction flows in a controlled testnet environment. It is intentionally simple and not designed for production use. Future versions will integrate enclave-based protection, attestation, and flexible signer backends to meet the security and compliance needs of real-world deployments.
+The M2 KMS implementation provides **minimal cryptographic functionality** for testnet flows: keypair generation, public key export, and signing, all confined to Integritee workers.  
+It ensures **in-enclave runtime isolation** but does not yet provide **persistent key sealing**. These capabilities will be hardened in **M3**, preparing the system for production-grade use.

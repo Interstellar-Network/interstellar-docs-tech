@@ -39,7 +39,7 @@ const badgeIconsLucide: Record<BadgeType, React.ReactNode> = {
   "very-high": <Rocket size={16} className="stroke-current" />,
   medium: <AlertCircle size={16} className="stroke-current" />,
   low: <MinusCircle size={16} className="stroke-current" />,
-  partial: <Minus size={16} className="stroke-current" />,
+  partial: <Minus size={16} className="stroke-current" />, // new icon
   unknown: <HelpCircle size={16} className="stroke-current" />,
 };
 
@@ -55,44 +55,27 @@ const badgeEmojis: Record<BadgeType, string> = {
 };
 
 interface BadgeProps {
-  value?: BadgeType;           // made optional to survive bad calls
+  value: BadgeType;
   label?: string;
   useEmoji?: boolean;
   customIcon?: React.ReactNode;
 }
 
-export function Badge({
-  value = "unknown",
-  label,
-  useEmoji = false,
-  customIcon,
-}: BadgeProps) {
-  // Normalize the value in case an invalid string slips through.
-  const normalized =
-    (["yes","no","high","medium","low","very-high","partial","unknown"] as const)
-      .includes(value as BadgeType)
-      ? (value as BadgeType)
-      : "unknown";
-
+export function Badge({ value, label, useEmoji = false, customIcon }: BadgeProps) {
   const icon = customIcon
     ? customIcon
     : useEmoji
-    ? badgeEmojis[normalized]
-    : badgeIconsLucide[normalized];
-
-  const text =
-    typeof label === "string" && label.trim().length > 0
-      ? label
-      : normalized.replace(/-/g, " "); // safe now
+    ? badgeEmojis[value]
+    : badgeIconsLucide[value];
 
   return (
     <span
       className={clsx(
         "inline-flex items-center gap-1 px-2 py-1 rounded text-xs font-medium",
-        badgeStyles[normalized] || badgeStyles.unknown
+        badgeStyles[value]
       )}
     >
-      {icon} {text}
+      {icon} {label ?? value.replace("-", " ")}
     </span>
   );
 }
