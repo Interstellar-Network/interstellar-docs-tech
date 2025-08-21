@@ -18,7 +18,7 @@ To simplify the testnet and focus resources:
 
 - The planned **Transaction Request pallet** and **Sidechains Registry pallet** are **not delivered**.  
 - We limit the network to **L1 Integritee node + L2 Integritee workers** for testnet.  
-- The previous role of a “sidechains registry” is replaced by a **Signer Orchestrator** (inside workers) that will evolve to route across backends and, post-mainnet, across TEE families or MPC backends.
+- The previous role of a “sidechains registry” is replaced by a **Signer Orchestrator** (inside workers) that will evolve to route across backends and, post-mainnet, across TEE families and/or MPC backends.
 
 This positions the Signer Layer as the single point where **policy** and **signing backend selection** converge.
 
@@ -63,7 +63,7 @@ This positions the Signer Layer as the single point where **policy** and **signi
     </TableRow>
     <TableRow>
       <TableCell>Post-Mainnet</TableCell>
-      <TableCell>+ TDX/SEV/Arm CCA; optional TSS/MPC/NMC</TableCell>
+      <TableCell>+ optional TDX/SEV/Arm CCA; +optional TSS/MPC/NMC</TableCell>
       <TableCell>Vendor-neutral, audited</TableCell>
       <TableCell>Multi-TEE routing, heterogeneous quorum (optional)</TableCell>
       <TableCell>Policy-driven, auditable</TableCell>
@@ -76,11 +76,13 @@ This positions the Signer Layer as the single point where **policy** and **signi
 ## Components
 
 ### 1) Basic KMS (M2)
+
 - Generates keypairs (`secp256k1`, `ed25519`, `sr25519`) inside Integritee workers.  
 - Signs canonical digests; private keys never leave enclave runtime.  
 - Ephemeral keys (no sealing/persistence in M2).  
 
 ### 2) Signer Orchestrator (M3)
+
 - **Purpose:** select a signing backend based on declarative **SignRoutes**.  
 - **Backends in M3:** Local KMS (Integritee) only.  
 - **Future backends (post-mainnet):** KMS over TDX/SEV/Arm CCA; optional TSS/MPC/NMC.
@@ -92,6 +94,7 @@ This positions the Signer Layer as the single point where **policy** and **signi
 A **SignRoute** is a minimal policy that determines if, when, and how a signing request may proceed, and which backend should serve it. In M2, this is effectively a single default route to the KMS. In M3, routes are evaluated by the Orchestrator; **Transaction Management Layer** supplies the contextual inputs (amount, asset, destination, tags).
 
 ### Matching fields (examples)
+
 - `chain`: eth/polkadot/solana/bitcoin  
 - `asset`: e.g., USDC, DOT, ETH, BTC  
 - `amount_gte`: numeric threshold (chain units)  
@@ -100,6 +103,7 @@ A **SignRoute** is a minimal policy that determines if, when, and how a signing 
 - `require_tavp`: boolean (pre-sign validation gate)
 
 ### Action fields
+
 - `backend`: logical backend id (e.g., `kms-integritee`)  
 - `attestation_min_freshness_sec`: if applicable (M3)  
 - `fail_mode`: `fail_closed` or `defer`  
@@ -139,6 +143,7 @@ sign(chain_id, key_id, payload, opts) -> signature
 - `opts` may include: `policy_id`, `require_tavp`, `min_attestation_freshness_sec`.
 
 ### KMS API (internal)
+
 ```rust
 generate_key(key_type) -> key_id
 public_key(key_id) -> bytes
