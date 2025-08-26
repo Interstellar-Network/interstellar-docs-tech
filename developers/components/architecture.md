@@ -31,7 +31,7 @@ graph TD
   TX[ **Transaction Management -Planned M3-** <br>↳ TX orchestration, policies]
   S[ **Signer Layer** <br>↳ KMS in M2 → Modular signing]
   C[ **Client Layer** <br>↳ Chain logic: BTC, ETH, DOT, SOL]
-  SO[ **Signer Orchestrator -Planned M3+- ** <br>↳ Policy routing, multi-backend]
+  SO[ **Signer Orchestrator -Planned- ** <br>↳ Policy routing, multi-backend]
 
   m <--> M1B
   M1B -->TX-->C
@@ -83,6 +83,7 @@ Each layer has a dedicated canonical documentation entry under `/developers/comp
 - Will interface with the Signer Orchestrator and VCA  
 
 Planned features:  
+
 - Beneficiary whitelists  
 - Threshold-based policy logic  
 - Multi-policy routing  
@@ -91,9 +92,10 @@ Planned features:
 
 - Provides the cryptographic interface for transaction signing  
 - In M2, only a **basic KMS** is implemented inside Integritee workers  
-- Future support for multiple TEEs (TDX, SEV, Arm CCA) and optional MPC/NMC/TSS backends (**all post-mainnet**)  
+- Future support for optianal multiple TEEs (TDX, SEV, Arm CCA) and MPC/NMC/TSS backends (**all post-mainnet**)  
 
 Subcomponents:  
+
 - [Basic KMS](/developers/components/signer-layer)  
 - [Signer Orchestrator (Planned)](/developers/components/signer-layer)  
 
@@ -137,7 +139,7 @@ Subcomponents:
 | Client Layer                 | M2                  | Delivered    |
 | Signer Layer (Basic KMS)     | M2                  | Delivered    |
 | Transaction Management Layer | Planned (M3)        | Planned      |
-| Signer Orchestrator          | Planned (M3+)       | Planned      |
+| Signer Orchestrator          | Planned (Post Testnet)       | Planned      |
 
 ---
 
@@ -153,9 +155,10 @@ Subcomponents:
 6. Signature is returned and transaction broadcast to the network.  
 
 When Transaction Management and the Signer Orchestrator are introduced:  
+
 - Policies, routing logic, and backend orchestration will be centralized there.  
 - Future evolution may extend to multiple TEE technologies (TDX, SEV, Arm CCA) to reduce reliance on a single vendor.  
-- Threshold / MPC / NMC signing backends are **strategic post-mainnet goals**, not part of M3 delivery.  
+- Threshold / MPC / NMC signing backends are **strategic mainnet goals**, not part of M3 delivery.  
 
 ---
 

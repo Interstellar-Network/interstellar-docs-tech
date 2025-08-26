@@ -43,11 +43,11 @@ The Client Layer aims to:
   - Estimate and attach fees or gas limits.
 
 - **Validation Routing**
-  - Determine whether additional validation (e.g., TAVP) is required based on the current policy.
+  - By default in M2 a transaction validation is required to sign transaction( a conditional validation in M3 will managed by Transaction Manager).
   - Trigger the corresponding challenge-response protocol.
 
 - **Signature Request**
-  - Forward transaction payload to the Transaction Management Layer.
+  - To Key Manager if User Validation through TAVP is successfull.
   - Receive and relay signing outcome from the KMS or future signer layers.
 
 - **Feedback Loop**

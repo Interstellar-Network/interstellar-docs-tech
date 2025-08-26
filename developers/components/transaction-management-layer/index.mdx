@@ -1,5 +1,5 @@
 ---
-sidebar_label: 'Transaction Management Layer'
+sidebar_label: 'Overview'
 sidebar_position: 2
 ---
 
@@ -33,7 +33,7 @@ It mediates between:
 - Normalize requests across BTC, ETH, DOT, SOL  
 - Perform structural checks, pre-sign validations, and fee estimation  
 - Apply conditional TAVP (for example, thresholds or allowlist policy)  
-- Forward signing requests to the **KMS** (M2) or **Signer Orchestrator** (M3)  
+- Forward signing requests to the **KMS** (M2) or **Signer Orchestrator** (post-testnet)  
 - Return signed payloads to the Client Layer for broadcast  
 - Provide deterministic errors and idempotent request handling  
 
@@ -44,7 +44,7 @@ It mediates between:
 1. User initiates a transaction in the secure mobile SDK  
 2. TML validates format, estimates fees, and evaluates policies  
 3. If required by policy, TAVP validation is invoked  
-4. TML forwards the request to the Signer Layer (KMS in M2; Orchestrator in M3)  
+4. TML forwards the request to the Signer Layer (KMS in M2; Signer Orchestrator in post-testnet)  
 5. Signature is returned to TML  
 6. TML hands the signed transaction to the Client Layer for chain-specific broadcast  
 
@@ -74,11 +74,11 @@ It mediates between:
       <TableCell>M3 (Planned)</TableCell>
       <TableCell>Local KMS + Signer Orchestrator</TableCell>
       <TableCell>SGX sealing and recovery</TableCell>
-      <TableCell>Policy-driven routing via Orchestrator</TableCell>
+      <TableCell>Policy-driven routing to KMS - Orchestrator post-testnet</TableCell>
       <TableCell>Conditional, policy-driven (e.g., amount thresholds, destination classification)</TableCell>
     </TableRow>
     <TableRow>
-      <TableCell>Post-Mainnet</TableCell>
+      <TableCell>Post-Testnet</TableCell>
       <TableCell>Multi-TEE and distributed backends (TDX, SEV, Arm CCA; TSS, MPC, NMC)</TableCell>
       <TableCell>Vendor-neutral persistence</TableCell>
       <TableCell>Multi-TEE routing; optional heterogeneous quorum</TableCell>
@@ -171,6 +171,6 @@ A minimal declarative shape:
 
 The Transaction Management Layer is the backbone of Interstellar’s secure and flexible transaction flow. It provides secure orchestration with unified logic for BTC, ETH, DOT, and SOL.
 - It could enable fine-grained policy enforcement, dynamic rule evaluation, and seamless interaction with modular signing backends.  
-- Post-mainnet, it is expected to support multi-TEE and MPC routing for resilience and decentralization.
+- Post-testnet, it is expected to support multi-TEE and MPC routing for resilience and decentralization.
 
 
