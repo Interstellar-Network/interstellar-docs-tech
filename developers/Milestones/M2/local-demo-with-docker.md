@@ -275,7 +275,19 @@ Set-NetFirewallProfile -Profile Domain,Private,Public -Enabled True
   - **Registering**
   - **Registered**
 
-### Step 2: Test Transaction Validation
+### Step 2: Fund your wallet
+
+following is suggested faucets for DOT/PAS, SOL, ETH, BTC
+- [DOT/PAS](https://faucet.polkadot.io/?parachain=1000)
+- [Solana](https://faucet.solana.com/)
+- [ETH](https://cloud.google.com/application/web3/faucet/ethereum/sepolia)
+- BTC
+
+- Simply click on your DOT, SOL, ETH, BTC symbol to see your address.
+- Click on the address to copy it, then paste it in the corresponding faucet.
+
+
+### Step 2: Test Transactions
 
 - Trigger the **Trusted Action Validation Protocol (TAVP)** screen
 
@@ -389,69 +401,558 @@ This log trace shows what happens when a new device connects to the system and i
 Learn more on **[Account Abstraction Layer](/developers/category/aa-layer)**
 :::
 
-### 🛠️ VCA Token Generation and Metadata Preparation
-
-The following logs represent the backend activity triggered by a mobile app requesting a new secure visual validation 
-i.e `VCA token` generation. This includes:
-
-- Garbled circuit rendering for the transaction or sensitive action display.
-- Selection of digits and randomized pinpad.
-- Storage of metadata used later for user input touchscreen validation.
-
-You should see logs similar to the following:
-```bash
-[INFO  pallet_ocw_garble::pallet] [ocw-garble] garble_and_strip_display_circuits_package_signed: ("TRANSACTION AMMOUNT to DESTINATION" for )  
-[WARN  pallet_ocw_garble::pallet] get_ocw_circuits_storage_value: storage COULD NOT be read! Fallback to RPC...  
-[INFO  pallet_ocw_garble::pallet] get_ocw_circuits_storage_value response : <wasm:stripped>  
-[INFO  pallet_ocw_garble::pallet] display_circuits_package: ("Qmaq13hbrSK7th8kA6CyP5cfviMshv46ZzxZ63aRopvpgF",2) ("QmR9DRACkkgwmyoSNGVX9m54AGZ6mkGkAGxwCLXMzi4aUP",10)  
-[INFO  pallet_ocw_garble::pallet] pinpad_digits: [6, 2, 5, 4, 1, 9, 7, 3, 8, 0], message_digits: [5, 9]  
-[INFO  pallet_ocw_garble::pallet] callback_new_garbled_and_strip_signed: "QmSJSSsyHV9aZCqCvv6QZwJ3K7vf4YoqF1DAWAAwsD7m6w" ; "QmSDGvEFH2sDnNg5zCA4Nr4Zd3mByYs9Mmg994DWL8yiK6" for  
-[INFO  pallet_tx_validation::pallet] store_metadata_aux: message_pgarbled_cid = "QmSJSSsyHV9aZCqCvv6QZwJ3K7vf4YoqF1DAWAAwsD7m6w", message_digits = [5, 9], pinpad_digits = [6, 2, 5, 4, 1, 9, 7, 3, 8, 0]  
-[INFO  pallet_tx_validation::pallet] store_metadata_aux: done!  
-[INFO  pallet_ocw_garble::pallet] callback_new_garbled_and_strip_signed: done!   
-```
----
-
-#### ✅ What to Look For
-
-- `display_circuits_package:` confirms the transaction display garbled circuit has been rendered.
-- `message_digits` and `pinpad_digits`: the random digits selected for the user's challenge.
-- `store_metadata_aux: done!`: metadata was correctly stored for later validation.
-- `callback_new_garbled_and_strip_signed: done!`: confirms generation and signing succeeded.
-
-
-### 🛠️ Visual Cryptographic Challenge Validation
-When the user correctly responds to the visual cryptographic challenge through 
-`VCA token` evaluation on the mobile, the following logs will appear 
-in the integritee_service container. 
-These confirm that the digits were correctly interpreted and that the result was successfully committed:
-```bash
-[INFO  pallet_tx_validation::pallet] [tx-validation] check_input: who = , ipfs_cid = "QmSJSSsyHV9aZCqCvv6QZwJ3K7vf4YoqF1DAWAAwsD7m6w", input_digits = [2, 5]
-[INFO  pallet_tx_validation::pallet] [tx-validation] check_input: input_digits_str = "\u{2}\u{5}", input_digits_int = [2, 5], pinpad_permutation = BoundedVec([6, 2, 5, 4, 1, 9, 7, 3, 8, 0], 10)
-[INFO  pallet_tx_validation::pallet] [tx-validation] check_input: computed_inputs_from_permutation = [5, 9], message_digits = BoundedVec([5, 9], 10)
-[INFO  pallet_tx_validation::pallet] [tx-validation] TxPass
-[INFO  pallet_tx_registry::pallet] [tx-registry] store_tx_result: who = , message_pgarbled_cid = "QmSJSSsyHV9aZCqCvv6QZwJ3K7vf4YoqF1DAWAAwsD7m6w", result = <wasm:stripped>
-[INFO  pallet_tx_registry::pallet] [tx-registry] store_tx_result: done! [BoundedVec([<wasm:stripped>], 16)]
-```
-#### ✅ What to Look For
-
-- `check_input: input_digits = [2, 5]`: these are the digits entered by the user in response to the challenge.
-- `computed_inputs_from_permutation = [5, 9]`: the backend decodes the expected message digits based on the randomized pinpad layout.
-- `TxPass`: confirms that the decoded digits match the expected message and the validation is successful.
-- `store_tx_result: done!`: indicates that the result of this validation (pass/fail) was committed to the registry for audit or future reference.
-
-#### ❌ What to Look For
-
-- `check_input: input_digits = [...]`: shows the digits entered by the user.
-- `computed_inputs_from_permutation = [...]`: the expected message digits decoded from the pinpad permutation.
-- `TxFail`: indicates that the user's input did **not** match the expected digits — the validation failed.
-- `store_tx_result: done!`: even in failure cases, the result is still stored for transparency, auditability, or rate-limiting purposes.
 
 :::info MORE DETAILS
 Learn more on **[Authentication Layer](/developers/category/authentication-layer)**
 
 **[`computed_inputs_from_permuation`](/developers/Milestones/M1/demo-tutorial/cli-demo-with-docker#how-to-find-the-correct-code-for-the-node)** detailed
 :::
+
+
+
+
+
+
+
+
+
+
+
+### 🛠️ DOT / PASEO Transaction
+
+This section explains how to read a TAVP-gated DOT/PASEO transfer executed via the Interstellar DOT client on Asset Hub (Paseo).
+
+---
+
+#### Trusted Action Validation — Commitment
+
+> TAVP commitment logs
+
+```bash
+[2025-08-27T15:26:42Z INFO  pallet_tx_validation::pallet] [tx-validation] store_metadata_aux: who = , message_pgarbled_cid = "QmZHKMEKiWq5dbmxP7nWRJ2dPQvc1bY8YfbiZSQGVhfj8e", message_digits = [0, 4], pinpad_digits = [2, 9, 0, 4, 3, 7, 5, 1, 8, 6]
+[2025-08-27T15:26:42Z INFO  pallet_tx_validation::pallet] [tx-validation] store_metadata_aux: done!
+[2025-08-27T15:26:42Z INFO  pallet_key_manager::pallet] [DOT-client]-[key-manager]- Commitment prepared and stored: cid="QmZHKMEKiWq5dbmxP7nWRJ2dPQvc1bY8YfbiZSQGVhfj8e"
+[2025-08-27T15:26:42Z INFO  pallet_key_manager::pallet] [DOT-client]-[key-manager]- Commitment prepared and stored: digits=BoundedVec([0, 4], 4)
+[2025-08-27T15:26:42Z INFO  pallet_key_manager::pallet] [DOT] client-[key-manager]- Commitment prepared and stored: pinpad_digits=BoundedVec([2, 9, 0, 4, 3, 7, 5, 1, 8, 6], 10)
+```
+
+✅ **What to look for**
+- `store_metadata_aux` shows a valid `message_pgarbled_cid` (IPFS CID), `message_digits`, and `pinpad_digits`.
+- Key-manager confirms commitment stored (CID + digits + permutation).
+
+❌ **Red flags**
+- Missing CID or digits; commit not stored.
+
+---
+
+#### Trusted Action Validation — Input Check
+
+> TAVP validation logs
+
+```bash
+[2025-08-27T15:26:52Z INFO  pallet_tx_validation::pallet] [tx-validation] check_input: who = , ipfs_cid = "QmZHKMEKiWq5dbmxP7nWRJ2dPQvc1bY8YfbiZSQGVhfj8e", input_digits = [2, 3]
+[2025-08-27T15:26:52Z INFO  pallet_tx_validation::pallet] [tx-validation] check_input: input_digits_str = "\u{2}\u{3}", input_digits_int = [2, 3], pinpad_permutation = BoundedVec([2, 9, 0, 4, 3, 7, 5, 1, 8, 6], 10)
+[2025-08-27T15:26:52Z INFO  pallet_tx_validation::pallet] [tx-validation] check_input: computed_inputs_from_permutation = [0, 4], message_digits = BoundedVec([0, 4], 10)
+[2025-08-27T15:26:52Z INFO  pallet_tx_validation::pallet] [tx-validation] TxPass
+```
+
+✅ **What to look for**
+
+- `computed_inputs_from_permutation` equals `message_digits`.
+- `TxPass` is present (challenge solved and authorized).
+
+❌ **Red flags**
+
+- `TxFail`, or mismatch between computed and message digits.
+
+
+:::info MORE DETAILS
+Learn more on **[Authentication Layer](/developers/category/authentication-layer)**
+
+**[`computed_inputs_from_permuation`](/developers/Milestones/M1/demo-tutorial/cli-demo-with-docker#how-to-find-the-correct-code-for-the-node)** detailed
+:::
+
+
+---
+
+#### Chain Context (Header → Current Block)
+
+> chain context logs
+
+```bash
+[2025-08-27T15:26:52Z DEBUG pallet_dot_client::pallet] [get_current_block] Block number: 2596404
+```
+
+✅ **What to look for**
+
+- Correct chain context (Asset Hub Paseo).
+- Concrete current block number (used for era anchoring).
+
+---
+
+#### Balance Check (Sender)
+
+> balance check logs here
+
+```bash
+[2025-08-27T15:26:41Z INFO  pallet_dot_client::pallet] [get_account] Fetching account address for:
+[2025-08-27T15:26:41Z DEBUG pallet_dot_client::pallet] [get_balance] Account info: <wasm:stripped>
+[2025-08-27T15:26:41Z DEBUG pallet_dot_client::pallet] [submit_transaction] Sender Balance: 49990867380224, Required: 2001000000
+```
+
+
+✅ **What to look for**
+
+- Sender’s free balance comfortably above required amount/fees.
+- The line printing **Sender Balance** and the computed **Required**.
+
+❌ **Red flags**
+
+- Insufficient balance or missing account info.
+
+---
+
+#### Transaction UX Message (Optional)
+
+> transaction UX message logs
+
+```bash
+[2025-08-27T15:26:41Z DEBUG pallet_key_manager::pallet] [generate_tx_message] Generated message: Transfer 100 DOT to
+```
+
+✅ **What to look for**
+
+- A human-readable message (useful for audit/UI), even if the unit label is a placeholder.
+- Message aligns with the SCALE-encoded call that follows.
+
+❌ **Red flags**
+
+- Message missing crucial fields (destination/amount).
+
+---
+
+#### Call Construction (Balances.transfer_keep_alive)
+
+> call construction logs
+
+```bash
+[2025-08-27T15:26:52Z DEBUG pallet_dot_client::pallet] [build_transfer_call] Call bytes: 0x0a030037d9896adf719567fef230c9386a6a5c1fb3077e63463c7f8e49a43e6b92adf202093d00
+[2025-08-27T15:26:52Z DEBUG pallet_dot_client::pallet] [build_transfer_call] Destination:
+[2025-08-27T15:26:52Z DEBUG pallet_dot_client::pallet] [submit_transaction] Era: period=64, phase=52
+```
+
+✅ **What to look for**
+
+- Call bytes start with pallet `0x0a` and call `0x03` (`Balances.transfer_keep_alive`).
+- Destination appears (SS58) and the compact-encoded amount is present in the bytes.
+
+❌ **Red flags**
+
+- Empty destination, malformed call bytes.
+
+---
+
+#### Runtime Pinning (Versions)
+
+> runtime version logs here
+
+```bash
+[2025-08-27T15:26:52Z DEBUG pallet_dot_client::pallet] [get_runtime_metadata] Runtime version: RuntimeVersion { spec_version: 1006002, transaction_version: 15 }
+```
+
+✅ **What to look for**
+
+- `specVersion` and `transactionVersion` logged (payload must match runtime).
+- Detect any runtime upgrade mid-flow.
+
+---
+
+#### Signing Context (Era, Genesis, Block Hash, Payload)
+
+> signing context logs
+
+```bash
+[2025-08-27T15:26:52Z DEBUG pallet_dot_client::pallet] [get_genesis_hash] Response: Object {"result": "0xd6eec26135305a8ad257a20d003357284c8aa03d0bdb2b357ab0a22371e11ef2"}
+[2025-08-27T15:26:52Z DEBUG pallet_dot_client::pallet] [get_block_hash] Response: Object {"result": "0x898b98163e3ed953e34714833fcc48f0e604dd789d3182a19636fbbb53934658"}
+[2025-08-27T15:26:52Z INFO  pallet_dot_client::pallet] [submit_transaction] Spec version: 1006002, Transaction version: 15, Genesis hash: "d6eec26135305a8ad257a20d003357284c8aa03d0bdb2b357ab0a22371e11ef2", Block hash: [137, 139, 152, 22, 62, 62, 217, 83, 227, 71, 20, 131, 63, 204, 72, 240, 230, 4, 221, 120, 157, 49, 130, 161, 150, 54, 251, 187, 83, 147, 70, 88]
+[2025-08-27T15:26:52Z DEBUG pallet_dot_client::pallet] Generated hex payload: "0x0a030037d9896adf719567fef230c9386a6a5c1fb3077e63463c7f8e49a43e6b92adf202093d0045032402286bee0000b2590f000f000000d6eec26135305a8ad257a20d003357284c8aa03d0bdb2b357ab0a22371e11ef2898b98163e3ed953e34714833fcc48f0e604dd789d3182a19636fbbb5393465800"
+```
+
+✅ **What to look for**
+
+- Mortal era printed with **period** and **phase** (ensure the window is long enough).
+- `genesisHash` and recent `blockHash` used in the payload.
+- Generated hex payload printed (reproducibility).
+
+❌ **Red flags**
+
+- Era too tight, risking *Invalid Transaction: Era*.
+
+> **is 64 too tight?**
+---
+
+#### Signature & Extrinsic Build
+
+> note: signing logs here
+
+```bash
+[2025-08-27T15:26:52Z DEBUG pallet_dot_client::pallet] [submit_transaction] Signing raw payload
+[2025-08-27T15:26:52Z DEBUG pallet_dot_client::pallet] [submit_transaction] Encoded MultiSignature: 0x0096a85de5e6e5fbac2c9948e73ffba10add6e3cd38385c54d5282dff9d32265fe0888800545687e6eaa052c04fe91489cf288a9f8cd5cc9cd916cb045c5b0fb06
+[2025-08-27T15:26:52Z DEBUG pallet_dot_client::pallet] [build_extrinsic] Extrinsic hex: 0x4d02
+[2025-08-27T15:26:52Z DEBUG pallet_dot_client::pallet] [build_extrinsic] Extrinsic hex: 0x4d02840037d9896adf719567fef230c9386a6a5c1fb3077e63463c7f8e49a43e6b92adf20096a85de5e6e5fbac2c9948e73ffba10add6e3cd38385c54d5282dff9d32265fe0888800545687e6eaa052c04fe91489cf288a9f8cd5cc9cd916cb045c5b0fb0645032402286bee00000a030037d9896adf719567fef230c9386a6a5c1fb3077e63463c7f8e49a43e6b92adf202093d00
+```
+
+
+✅ **What to look for**
+- Signature type (e.g., `ed25519`) and encoded signature printed.
+- Full extrinsic hex assembled (signature + call).
+
+---
+
+#### Submission & Transaction Hash
+
+> note: extrinsic submission logs here
+
+```bash
+[2025-08-27T15:26:52Z DEBUG pallet_dot_client::pallet] [submit_extrinsic] Submitting extrinsic: 0x4d02840037d9896adf719567fef230c9386a6a5c1fb3077e63463c7f8e49a43e6b92adf20096a85de5e6e5fbac2c9948e73ffba10add6e3cd38385c54d5282dff9d32265fe0888800545687e6eaa052c04fe91489cf288a9f8cd5cc9cd916cb045c5b0fb0645032402286bee00000a030037d9896adf719567fef230c9386a6a5c1fb3077e63463c7f8e49a43e6b92adf202093d00
+[2025-08-27T15:26:52Z DEBUG pallet_dot_client::rpc] [author_submitExtrinsic] Request: {"method":"author_submitExtrinsic","params":["0x4d02840037d9896adf719567fef230c9386a6a5c1fb3077e63463c7f8e49a43e6b92adf20096a85de5e6e5fbac2c9948e73ffba10add6e3cd38385c54d5282dff9d32265fe0888800545687e6eaa052c04fe91489cf288a9f8cd5cc9cd916cb045c5b0fb0645032402286bee00000a030037d9896adf719567fef230c9386a6a5c1fb3077e63463c7f8e49a43e6b92adf202093d00"]}
+[2025-08-27T15:26:52Z DEBUG pallet_dot_client::rpc] Response: {"result":"0x1e58d3a0a3fdf08440a683b67248819a6a64c8249b486b3aae9a686e7ec8de3d"}
+[2025-08-27T15:26:52Z DEBUG pallet_dot_client::pallet] [submit_extrinsic] RPC response: Object {"result": "0x1e58d3a0a3fdf08440a683b67248819a6a64c8249b486b3aae9a686e7ec8de3d"}
+```
+
+
+✅ **What to look for**
+- RPC returns a **transaction hash** → extrinsic accepted into the pool.
+
+---
+
+#### Next step for on-chain proof
+
+Use `submitAndWatch` or read `System::Events` at the inclusion block to capture:
+
+- `balances.Transfer { from, to, amount }`  
+- `transactionPayment.TransactionFeePaid { who, actual_fee }`  
+- `system.ExtrinsicSuccess`
+
+---
+
+#### Sidechain/Parentchain Sync (Context Only)
+
+> sidechain/parentchain sync logs
+
+```bash
+[+] Received finalized header update (2681), syncing parent chain...
+[+] Found 1 block(s) to sync
+[+] Found 1 event vector(s) to sync
+Synced 2681 out of 2681 finalized parentchain blocks
+[+] Found 0 block(s) to sync
+Syncing Parentchain block number 2681 at Sidechain block number  32131
+```
+
+✅ **What to look for**
+- Confirms your enclave/sidechain is syncing with the parent chain (not the transfer itself).
+
+
+
+### 🛠️ ETH Transaction
+
+This section explains how to read a TAVP-gated ETH transfer executed via the Interstellar ETH client. Each section should be replaced with the corresponding log snippet.
+
+---
+
+#### Chain / Sidechain Context
+
+> chain sync
+```bash
+2025-08-27T17:47:38.120108000Z Syncing Parentchain block number 3385 at Sidechain block number 40578
+```
+
+✅ **What to look for**
+
+- Sidechain and parentchain blocks are syncing.
+- Correct parentchain block anchored.  
+
+---
+
+#### Transaction Initialization
+
+>transaction init logs
+```bash
+2025-08-27T17:47:41.206381000Z [DEBUG pallet_eth_client::pallet] initialize_transaction: START
+2025-08-27T17:47:41.206930000Z [DEBUG pallet_eth_client::pallet] fetch_nonce: START
+2025-08-27T17:47:41.273594000Z [DEBUG pallet_eth_client::pallet] fetch_nonce: got: 0
+2025-08-27T17:47:41.273812000Z [DEBUG pallet_eth_client::pallet] fetch_latest_base_fee: got: 4335919
+2025-08-27T17:47:41.361051000Z [DEBUG pallet_eth_client::pallet] fetch_max_priority_fee: got: 1003495
+```
+
+✅ **What to look for**  
+
+- ETH client pallet initializes transaction.  
+- Nonce fetched from RPC.  
+- Latest base fee and max priority fee fetched.  
+
+❌ **Red flags** 
+
+- Missing nonce or gas parameters.  
+
+---
+
+#### Balance Check (Sender)
+
+> balance check logs
+```bash
+2025-08-27T17:47:41.434121000Z [DEBUG pallet_eth_client::pallet] balance = 50000000000000000, total_cost = 145203181993000, max_fee_per_gas = 9675333, gas_limit = 21000
+```
+
+✅ **What to look for** 
+
+- Sender’s ETH balance printed.  
+- Computed `total_cost` vs balance.  
+
+❌ **Red flags**  
+
+- Insufficient ETH balance for transfer + gas.  
+
+---
+
+#### Transaction UX Message
+
+> UX message logs here
+```bash
+
+2025-08-27T17:47:41.436139000Z [DEBUG pallet_key_manager::pallet] [generate_tx_message] Generated message: Transfer 145000000000000 ETH to 0x689a1baa0268d9906e7ba915b37675f57fd2fedb
+```
+
+✅ **What to look for** 
+
+- Human-readable transfer message (amount + destination).  
+- Matches SCALE/RLP encoded transaction that follows.  
+
+❌ **Red flags**  
+
+- Message missing destination or amount.  
+
+---
+
+#### Trusted Action Validation — Commitment
+
+> TAVP commitment logs
+
+```bash
+2025-08-27T17:47:42.459867000Z [INFO  pallet_tx_validation::pallet] [tx-validation] store_metadata_aux: who = , message_pgarbled_cid = "QmV1wJNh73iigUEFShBUD9iL7i76pDfev9vK6cWjkGdzx9", message_digits = [5, 5], pinpad_digits = [2, 3, 9, 0, 8, 5, 6, 4, 7, 1]
+2025-08-27T17:47:42.460099000Z [INFO  pallet_key_manager::pallet] [ETH-client]-[key-manager]- Commitment prepared and stored: cid="QmV1wJNh73iigUEFShBUD9iL7i76pDfev9vK6cWjkGdzx9"
+```
+
+✅ **What to look for**
+
+- `store_metadata_aux` shows valid CID, digits, and pinpad permutation.  
+- Key-manager confirms commitment stored.  
+
+❌ **Red flags**  
+
+- Missing CID or digits; commit not stored.  
+
+---
+
+#### Trusted Action Validation — Input Check
+
+> TAVP input check logs
+```bash
+2025-08-27T17:47:51.181678000Z [INFO  pallet_tx_validation::pallet] [tx-validation] check_input: who = , ipfs_cid = "QmV1wJNh73iigUEFShBUD9iL7i76pDfev9vK6cWjkGdzx9", input_digits = [5, 5]
+2025-08-27T17:47:51.181794000Z [INFO  pallet_tx_validation::pallet] [tx-validation] check_input: computed_inputs_from_permutation = [5, 5], message_digits = BoundedVec([5, 5], 10)
+2025-08-27T17:47:51.181911000Z [INFO  pallet_tx_validation::pallet] [tx-validation] TxPass
+```
+
+
+✅ **What to look for**
+
+- `computed_inputs_from_permutation` matches `message_digits`.  
+- `TxPass` logged.  
+
+❌ **Red flags** 
+
+- `TxFail` or mismatch.  
+
+---
+
+#### Transaction Build & Signing
+
+> transaction build logs
+```bash
+2025-08-27T17:47:41.434614000Z [DEBUG pallet_eth_client::pallet] create_eip1559_signed_rlp: START
+```
+
+
+✅ **What to look for**
+
+- EIP-1559 RLP signed transaction created.  
+- Prepared raw transaction before submission.  
+
+---
+
+#### Submission & Transaction Hash
+
+
+> submission logs
+```bash
+2025-08-27T17:47:51.688736000Z [DEBUG pallet_eth_client::pallet] send_raw_transaction: response_body = {...}
+2025-08-27T17:47:51.688957000Z [INFO  pallet_eth_client::pallet] send_transaction: OK: 0x6593fb0b75fb4eae41e6d918f1ab99dd011f4b1e95c6d913b607968d7f6a0471
+```
+
+✅ **What to look for** 
+
+- `send_raw_transaction` RPC response includes tx hash.  
+- Client logs `send_transaction: OK: 0x...`  
+
+❌ **Red flags**  
+
+- RPC error or missing hash.  
+
+---
+
+#### Parentchain Inclusion / Sync
+
+> parentchain sync logs
+
+```bash
+2025-08-27T17:48:01.199764000Z [+] Received finalized header update (3387), syncing parent chain...
+2025-08-27T17:48:01.245818000Z [+] Found 1 event vector(s) to sync
+```
+
+✅ **What to look for**  
+
+- Parentchain finalized headers advancing.  
+- Confirm block containing transaction is synced.  
+
+
+### 🛠️ SOL Transaction
+
+This section explains how to read a TAVP-gated SOL transfer executed via the Interstellar SOL client. Each section should be replaced with the corresponding log snippet.
+
+---
+
+#### Balance Check (Sender)
+
+>balance check logs
+
+```bash
+2025-08-27T18:38:38.146384000Z [DEBUG pallet_sol_client::rpc] [send_request] Received response for method getBalance: {"result":{"context":{"apiVersion":"2.3.6","slot":354059343},"value":100000000}}
+2025-08-27T18:38:38.146741000Z [INFO  pallet_sol_client::pallet] [get_balance_account_str] Balance fetched for account 4m1pDLuwmxzTYdxbVFJNEp9g1sXRZN2MJUK4XEDpB42D: 100000000
+```
+
+✅ **What to look for**  
+- RPC `getBalance` response with correct slot and balance.  
+- Balance printed for the account.  
+
+❌ **Red flags**  
+- Missing or zero balance when transfer expected.  
+
+---
+
+#### Transaction UX Message
+
+> UX message loggs
+```bash
+2025-08-27T18:38:38.146931000Z [DEBUG pallet_key_manager::pallet] [generate_tx_message] Generated message: Transfer 12300000 SOL to CTB18qngXLsqujuG4SGkZBr2xhg6Ndatki1ebjAUGAqC
+```
+
+
+✅ **What to look for**  
+- Human-readable transfer message (amount + destination).  
+- Matches encoded transaction data that follows.  
+
+❌ **Red flags**  
+- Missing destination or mismatched amount.  
+
+---
+
+#### Trusted Action Validation — Commitment
+
+> TAVP commitment logs
+```bash
+2025-08-27T18:38:39.139427000Z [INFO  pallet_tx_validation::pallet] [tx-validation] store_metadata_aux: message_pgarbled_cid = "QmZqyBqKvTYbM5RVwxWAZBGwrfKUeKxuKANoP1bJhMx9Uo", message_digits = [9, 7], pinpad_digits = [9, 7, 4, 6, 3, 0, 8, 2, 1, 5]
+2025-08-27T18:38:39.140108000Z [INFO  pallet_key_manager::pallet] [SOL-client]-[key-manager]- Commitment prepared and stored: cid="QmZqyBqKvTYbM5RVwxWAZBGwrfKUeKxuKANoP1bJhMx9Uo"
+```
+
+
+✅ **What to look for**  
+- `store_metadata_aux` shows CID, message_digits, and pinpad digits.  
+- Key-manager confirms commitment stored (CID, digits, permutation).  
+
+❌ **Red flags**  
+- Commitment missing or malformed.  
+
+---
+
+#### Trusted Action Validation — Input Check
+
+> TAVP input check logs
+```bash
+2025-08-27T18:38:48.179536000Z [INFO  pallet_tx_validation::pallet] [tx-validation] check_input: ipfs_cid = "QmZqyBqKvTYbM5RVwxWAZBGwrfKUeKxuKANoP1bJhMx9Uo", input_digits = [0, 1]
+2025-08-27T18:38:48.179681000Z [INFO  pallet_tx_validation::pallet] [tx-validation] check_input: computed_inputs_from_permutation = [9, 7], message_digits = BoundedVec([9, 7], 10)
+2025-08-27T18:38:48.179744000Z [INFO  pallet_tx_validation::pallet] [tx-validation] TxPass
+```
+
+✅ **What to look for**  
+- `computed_inputs_from_permutation` matches `message_digits`.  
+- `TxPass` logged.  
+
+❌ **Red flags**  
+- `TxFail` or mismatch.  
+
+---
+
+#### Blockhash & Transaction Simulation
+
+> blockhash + simulation logs
+```bash
+2025-08-27T18:38:48.254095000Z [DEBUG pallet_sol_client::rpc] [send_request] Received response for method getLatestBlockhash: {"blockhash":"FZGNbhT3ij4g7NRNsUuoQTzSuzdV3JxZnxG7P4pSBqUB","lastValidBlockHeight":309803450}
+2025-08-27T18:38:49.212380000Z [DEBUG pallet_sol_client::rpc] [send_request] Received response for method simulateTransaction: {"result":{"value":{"err":null,"logs":["Program 11111111111111111111111111111111 invoke [1]","Program 11111111111111111111111111111111 success"],"unitsConsumed":150}}}
+2025-08-27T18:38:49.213005000Z [INFO  pallet_sol_client::pallet] [simulate_transaction] Transaction simulation successful
+```
+
+✅ **What to look for**  
+- `getLatestBlockhash` returns valid blockhash + lastValidBlockHeight.  
+- `simulateTransaction` RPC succeeds with no error.  
+- Program logs indicate success.  
+
+❌ **Red flags**  
+- Blockhash invalid or simulation returns error.  
+
+---
+
+#### Transaction Submission & Signature
+
+> transaction submission logs
+```bash
+2025-08-27T18:38:52.145311000Z [DEBUG pallet_sol_client::rpc] [send_request] Received response for method sendTransaction: {"result":"3QuGubLdzpSi6M3Xy2VxW5ZNJZPnxwy8MfRfvKurDA3MyNYMvgKFVPXt16xzDiHbbn4Px6hfYiq6t7haA6MdbdAb"}
+2025-08-27T18:38:52.145987000Z [INFO  pallet_sol_client::pallet] [send_transaction] Transaction sent with signature: 3QuGubLdzpSi6M3Xy2VxW5ZNJZPnxwy8MfRfvKurDA3MyNYMvgKFVPXt16xzDiHbbn4Px6hfYiq6t7haA6MdbdAb
+```
+
+✅ **What to look for**  
+- `sendTransaction` RPC returns a signature (base58).  
+- Client logs transaction signature and blockhash.  
+
+❌ **Red flags**  
+- RPC error or missing signature.  
+
+---
+
+#### Parentchain Inclusion / Sync
+
+> parentchain sync logs
+
+```bash
+2025-08-27T18:38:49.334912000Z [+] Received finalized header update (3641), syncing parent chain...
+2025-08-27T18:39:01.341838000Z [+] Received finalized header update (3642), syncing parent chain...
+2025-08-27T18:39:01.387644000Z [+] Found 1 event vector(s) to sync
+```
+
+✅ **What to look for**  
+- Finalized headers advance.  
+- Event vectors found
+
+
 
 
 
