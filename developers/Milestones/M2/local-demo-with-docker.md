@@ -265,6 +265,16 @@ Set-NetFirewallProfile -Profile Domain,Private,Public -Enabled True
 ```
 :::
 
+:::info Milestone 2 Scope Clarification  
+During **Milestone 2**, our primary objective is to validate the backend capabilities required to generate, sign, and execute transactions across different chains.  
+
+At this stage, the focus is on ensuring correctness and robustness of the transaction pipeline at the infrastructure level. User-facing aspects such as **application UI/UX**, **visual polish**, or **cosmetic design** are not yet part of the milestone scope. Especially because our focus is the delivery of a mobile SDK. 
+
+In addition, while the backend successfully submits transactions, we have not yet integrated **state tracking from the backend** (e.g., monitoring transaction inclusion and confirmation events). This will be addressed in subsequent milestones, once the foundational backend logic is fully validated.  
+:::  
+
+
+
 ## 4. Run the Android App Demo
 
 ### Step 1: Connect & Onboard
@@ -291,6 +301,10 @@ Then on your portfolio screen:
 Feel free to contact us, we will send you SOL or BTC for their respective testnet.
 :::
 
+:::note Test Setup  
+For simplicity during Milestone 2 testing — and to minimize the need for testnet tokens — the **sender and receiver addresses are set to the same account**. This allows us to validate transaction generation and submission without requiring external token funding.  
+:::  
+
 
 ### Step 2: Test Transactions
 
@@ -311,19 +325,6 @@ Feel free to contact us, we will send you SOL or BTC for their respective testne
 
 > The transaction validation will be conditional on an ammount threshold managed by the [Transaction Management Layer](/developers/components/transaction-management-layer) on M3
 
-
-:::note Test Setup  
-For simplicity during Milestone 2 testing — and to minimize the need for testnet tokens — the **sender and receiver addresses are set to the same account**. This allows us to validate transaction generation and submission without requiring external token funding.  
-:::  
-
-
-:::info Milestone 2 Scope Clarification  
-During **Milestone 2**, our primary objective is to validate the backend capabilities required to generate, sign, and execute transactions across different chains.  
-
-At this stage, the focus is on ensuring correctness and robustness of the transaction pipeline at the infrastructure level. User-facing aspects such as **application UI/UX**, **visual polish**, or **cosmetic design** are not yet part of the milestone scope. Especially because our focus is the delivery of a mobile SDK. 
-
-In addition, while the backend successfully submits transactions, we have not yet integrated **state tracking from the backend** (e.g., monitoring transaction inclusion and confirmation events). This will be addressed in subsequent milestones, once the foundational backend logic is fully validated.  
-:::  
 
 📖 **How to Track a Transaction**
 
@@ -352,7 +353,7 @@ Here are the log patterns to look for in each chain’s backend output:
 ```bash
 [2025-08-27T15:26:52Z DEBUG pallet_dot_client::pallet] [submit_extrinsic] RPC response: Object {"result": "0x1e58d3a0a3fdf08440a683b67248819a6a64c8249b486b3aae9a686e7ec8de3d"}
 ```
-## ETH
+### ETH
 ```bash
 2025-08-27T17:47:51.688957000Z [INFO  pallet_eth_client::pallet] send_transaction: OK: 0x6593fb0b75fb4eae41e6d918f1ab99dd011f4b1e95c6d913b607968d7f6a0471
 ```
