@@ -277,14 +277,19 @@ Set-NetFirewallProfile -Profile Domain,Private,Public -Enabled True
 
 ### Step 2: Fund your wallet
 
-following is suggested faucets for DOT/PAS, SOL, ETH, BTC
+following is suggested faucets for DOT/PAS, SOL, ETH, BTC:
 - [DOT/PAS](https://faucet.polkadot.io/?parachain=1000)
-- [Solana](https://faucet.solana.com/)
+- [SOL](https://faucet.solana.com/)
 - [ETH](https://cloud.google.com/application/web3/faucet/ethereum/sepolia)
-- BTC
+- [BTC](https://faucet.testnet4.dev/)
 
-- Simply click on your DOT, SOL, ETH, BTC symbol to see your address.
-- Click on the address to copy it, then paste it in the corresponding faucet.
+Then on your portfolio screen:
+- Simply click on the correponding DOT, SOL, ETH, BTC symbol to see your address.
+- Click on `Create Pair` if needed and then on the address to copy it, then paste it in the corresponding faucet.
+
+:::warning if you experienced issue withe the faucet
+Feel free to contact us to require SOL or BTC, we will send you 
+
 
 
 ### Step 2: Test Transactions
@@ -297,12 +302,65 @@ following is suggested faucets for DOT/PAS, SOL, ETH, BTC
 </div>
 
   - Enter the one-time code (2-digit), or experiment with trial/feedback
-  - Check toasted messages whith Action Validation Screen
-    - **Creating a demo transaction...**
+  - Check toasted messages whith Action Validation Screen:
+    - **Creating transaction...**
     - [error] No circuits available after 10s; exiting!
     - [after taping one-time code digits]
     - **Validating transaction...**
-    - **Transaction done!**
+    - **Transaction Validated**
+
+> The transaction validation will be conditional on an ammount threshold managed by the [Transaction Management Layer](/developers/components/transaction-management-layer) on M3
+
+
+:::info Milestone 2 Scope Clarification  
+During **Milestone 2**, our primary objective is to validate the backend capabilities required to generate, sign, and execute transactions across different chains.  
+
+At this stage, the focus is on ensuring correctness and robustness of the transaction pipeline at the infrastructure level. User-facing aspects such as **application UI/UX**, **visual polish**, or **cosmetic design** are not yet part of the milestone scope. Especially because our focus is the delivery of a mobile SDK. 
+
+In addition, while the backend successfully submits transactions, we have not yet integrated **state tracking from the backend** (e.g., monitoring transaction inclusion and confirmation events). This will be addressed in subsequent milestones, once the foundational backend logic is fully validated.  
+:::  
+
+📖 **How to Track a Transaction**
+
+Copy the transaction hash (or signature) printed in the backend logs when a transaction is submitted.
+
+- DOT/Paseo → extrinsic hash (hexadecimal, 0x…)
+- ETH → starts with 0x…
+- SOL → long base58 signature string
+- BTC → transaction ID (txid, hexadecimal 0x…)
+
+Paste this value into the corresponding block explorer (alternatively you can also paste your **address**):
+
+- [Polkadot / Paseo (DOT): Subscan](Subscanhttps://assethub-paseo.subscan.io/account)
+- [Ethereum (ETH): Etherscan](https://sepolia.etherscan.io/) 
+- [Solana (SOL): Solscan](https://solscan.io/?cluster=testnet)
+- [Bitcoin (BTC): Mempool.space](https://mempool.space/testnet4)
+
+
+The explorer will display transaction status, inclusion block, and fee information.
+
+🔎 **Example Log Lines Containing Transaction Hashes**
+
+Here are the log patterns to look for in each chain’s backend output:
+
+### DOT
+```bash
+[INFO  submit_extrinsic] Extrinsic submitted with hash: 0x1234abcd5678ef...
+```
+#### ETH
+```bash
+2025-08-27T17:47:51.688957000Z [INFO  pallet_eth_client::pallet] send_transaction: OK: 0x6593fb0b75fb4eae41e6d918f1ab99dd011f4b1e95c6d913b607968d7f6a0471
+```
+### SOL
+```bash
+2025-08-27T18:38:52.145987000Z [INFO  pallet_sol_client::pallet] [send_transaction] Transaction sent with signature: 3QuGubLdzpSi6M3Xy2VxW5ZNJZPnxwy8MfRfvKurDA3MyNYMvgKFVPXt16xzDiHbbn4Px6hfYiq6t7haA6MdbdAb
+```
+### BTC
+```bash
+[INFO  pallet_btc_client::pallet] send_transaction: OK: txid=0x9f8b6a…23c
+```
+
+
 
 :::warning Low-end devices and emulator limitations
 If you are using an emulator with low-end GPU, or a low-end or outdated Android device with limited GPU, the user experience may be significantly degraded. 
@@ -342,13 +400,7 @@ TO POTENTIALLY REUSE WITH OTHERS IMAGE
 </div>
 ---
 
-
 > 🛠️ You can check the logs from your local stack to see whtat happen begind the hood when you interact with the blockchain: `extrinsics` sent
-
-
-
-
-
 
 ## Interpreting Logs
 
