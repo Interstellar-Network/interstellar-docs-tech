@@ -303,13 +303,18 @@ Feel free to contact us, we will send you SOL or BTC for their respective testne
 
   - Enter the one-time code (2-digit), or experiment with trial/feedback
   - Check toasted messages whith Action Validation Screen:
-    - **Creating transaction...**
+    - **Creating transaction validation...**
     - [error] No circuits available after 10s; exiting!
     - [after taping one-time code digits]
     - **Validating transaction...**
     - **Transaction Validated**
 
 > The transaction validation will be conditional on an ammount threshold managed by the [Transaction Management Layer](/developers/components/transaction-management-layer) on M3
+
+
+:::note Test Setup  
+For simplicity during Milestone 2 testing — and to minimize the need for testnet tokens — the **sender and receiver addresses are set to the same account**. This allows us to validate transaction generation and submission without requiring external token funding.  
+:::  
 
 
 :::info Milestone 2 Scope Clarification  
@@ -331,7 +336,7 @@ Copy the transaction hash (or signature) printed in the backend logs when a tran
 
 Paste this value into the corresponding block explorer (alternatively you can also paste your **address**):
 
-- [Polkadot / Paseo (DOT): Subscan](Subscanhttps://assethub-paseo.subscan.io/account)
+- [Polkadot / Paseo (DOT): Subscan](https://assethub-paseo.subscan.io/account)
 - [Ethereum (ETH): Etherscan](https://sepolia.etherscan.io/) 
 - [Solana (SOL): Solscan](https://solscan.io/?cluster=testnet)
 - [Bitcoin (BTC): Mempool.space](https://mempool.space/testnet4)
@@ -345,7 +350,7 @@ Here are the log patterns to look for in each chain’s backend output:
 
 ### DOT
 ```bash
-[INFO  submit_extrinsic] Extrinsic submitted with hash: 0x1234abcd5678ef...
+[2025-08-27T15:26:52Z DEBUG pallet_dot_client::pallet] [submit_extrinsic] RPC response: Object {"result": "0x1e58d3a0a3fdf08440a683b67248819a6a64c8249b486b3aae9a686e7ec8de3d"}
 ```
 ## ETH
 ```bash
@@ -569,7 +574,7 @@ Learn more on **[Authentication Layer](/developers/category/authentication-layer
 > transaction UX message logs
 
 ```bash
-[2025-08-27T15:26:41Z DEBUG pallet_key_manager::pallet] [generate_tx_message] Generated message: Transfer 100 DOT to
+[2025-08-27T15:26:41Z DEBUG pallet_key_manager::pallet] [generate_tx_message] Generated message: Transfer 1000000 DOT to
 ```
 
 ✅ **What to look for**
@@ -640,7 +645,6 @@ Learn more on **[Authentication Layer](/developers/category/authentication-layer
 
 - Era too tight, risking *Invalid Transaction: Era*.
 
-> **is 64 too tight?**
 ---
 
 #### Signature & Extrinsic Build
