@@ -323,7 +323,9 @@ For simplicity during Milestone 2 testing — and to minimize the need for testn
     - **Validating transaction...**
     - **Transaction Validated**
 
-> The transaction validation will be conditional on an ammount threshold managed by the [Transaction Management Layer](/developers/components/transaction-management-layer) on M3
+:::note Upcoming Feature (M3)  
+In Milestone 3, transaction validation will become **conditional on an amount threshold**. This threshold will be managed by the **Transaction Management Layer (TML)**, allowing policies such as requiring validation only for transfers above a specified value.  
+:::  
 
 
 📖 **How to Track a Transaction**
