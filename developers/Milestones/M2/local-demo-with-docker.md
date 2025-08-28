@@ -287,9 +287,9 @@ Then on your portfolio screen:
 - Simply click on the correponding DOT, SOL, ETH, BTC symbol to see your address.
 - Click on `Create Pair` if needed and then on the address to copy it, then paste it in the corresponding faucet.
 
-:::warning if you experienced issue withe the faucet
-Feel free to contact us to require SOL or BTC, we will send you 
-
+:::warning if you experienced issue with some faucet
+Feel free to contact us, we will send you SOL or BTC for their respective testnet.
+:::
 
 
 ### Step 2: Test Transactions
@@ -347,7 +347,7 @@ Here are the log patterns to look for in each chain’s backend output:
 ```bash
 [INFO  submit_extrinsic] Extrinsic submitted with hash: 0x1234abcd5678ef...
 ```
-#### ETH
+## ETH
 ```bash
 2025-08-27T17:47:51.688957000Z [INFO  pallet_eth_client::pallet] send_transaction: OK: 0x6593fb0b75fb4eae41e6d918f1ab99dd011f4b1e95c6d913b607968d7f6a0471
 ```
