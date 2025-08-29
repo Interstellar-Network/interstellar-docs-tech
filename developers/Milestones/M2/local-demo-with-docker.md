@@ -73,7 +73,7 @@ chmod +x docker-ipfs-init.sh
 ```
 
 ```bash
-# Step 3: Copy the `.env` files in this directory
+# Step 3: Place the .env file we send in this directory
 ```
 
 ```bash
