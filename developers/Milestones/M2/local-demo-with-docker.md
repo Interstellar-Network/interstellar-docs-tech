@@ -328,13 +328,23 @@ For simplicity during Milestone 2 testing — and to minimize the need for testn
 
 ### Step 2: Test Transactions
 
-- Trigger the **Trusted Action Validation Protocol (TAVP)** screen
+:::info Atomic Units in Testing  
+For testing purposes, the transaction validation screens display balances and transfer amounts in the **atomic units** of each chain:  
 
-  - Send a test transaction to a contact
+- **DOT / Paseo:** planck  
+- **BTC:** satoshi (sat)  
+- **ETH:** gwei  
+- **SOL:** lamports  
+
+This approach ensures precision and consistency during backend validation, even if these units are less user-friendly than standard denominations.  
+:::  
+
+- Send a coin to a contact
+
 <div style={{ textAlign: "center" }}>
   <img src="/img/Send_Currency_Demo.gif" alt="wallet menu" width="200"/>
 </div>
-
+  - Trigger the **Trusted Action Validation Protocol (TAVP)** screen
   - Enter the one-time code (2-digit), or experiment with trial/feedback
   - Check toasted messages whith Action Validation Screen:
     - **Creating transaction validation...**
