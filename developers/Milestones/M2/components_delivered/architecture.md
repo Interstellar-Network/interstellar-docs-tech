@@ -57,7 +57,7 @@ These components are defined structurally but will be fully implemented and deli
 - Encapsulates coin-specific transaction input and feedback via unified UX components.  
 - Some elements already run inside enclave logic; full modularization is planned in M3.
 
-### 2. **Key Management Service (KMS) in Signer Layer**### 1. **Client Layer**
+### 2. **Key Management Service (KMS) in Signer Layer**
 
 - Provides in-enclave keypair generation and signing for supported chains.  
 - Keys reside only in enclave runtime memory (no SGX sealing in M2).  
@@ -90,10 +90,9 @@ These components are defined structurally but will be fully implemented and deli
 ## Integration Flow
 
 1. **User** initiates a transaction request via a secure client interface.
-2. The request flows through the Account Abstraction layer.
-3. A pre-signing hook **triggers TAVP** in KMS.
-4. Upon succesfull validation the signer layer processes the request.
-5. KMS returns the raw signature, which is then broadcast using chain-specific logic.
+2. A pre-signing hook **triggers TAVP** in KMS.
+3. Upon succesfull validation the signer layer processes the request.
+4. KMS returns the raw signature, which is then broadcast using chain-specific logic.
 
 ---
 

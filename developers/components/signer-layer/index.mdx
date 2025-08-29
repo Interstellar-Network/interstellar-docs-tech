@@ -8,7 +8,9 @@ import { Table, TableHeader, TableRow, TableCell, TableBody } from "@site/src/co
 # Signer Layer
 
 The Signer Layer provides the interfaces and runtime components responsible for key management and digital signatures across supported blockchains.  
-In **M2**, it delivers a **basic KMS** inside Integritee workers. In **M3**, it adds a **Signer Orchestrator** capable of routing signing requests according to policies (**SignRoutes**). Multi-TEE (TDX/SEV/Arm CCA) and distributed backends (TSS/MPC/NMC) are **post-mainnet**.
+In **M2**, it delivers a **basic KMS** inside Integritee workers. In **M3** KMS security will be enhanced to manage SGX sealing of keys.
+Post-testnet, it adds a **Signer Orchestrator** capable of routing signing requests according to policies (**SignRoutes**)
+to manage potentially multi-TEE (TDX/SEV/Arm CCA) and distributed backends (TSS/MPC/NMC).
 
 ---
 
@@ -18,7 +20,7 @@ To simplify the testnet and focus resources:
 
 - The planned **Transaction Request pallet** and **Sidechains Registry pallet** are **not delivered**.  
 - We limit the network to **L1 Integritee node + L2 Integritee workers** for testnet.  
-- The previous role of a “sidechains registry” is replaced by a **Signer Orchestrator** (inside workers) that will evolve to route across backends and, post-mainnet, across TEE families and/or MPC backends.
+- The previous role of a “sidechains registry” is replaced by a future **Signer Orchestrator** (inside workers) that will evolve to route across backends and, post-mainnet, across TEE families and/or MPC backends.
 
 This positions the Signer Layer as the single point where **policy** and **signing backend selection** converge.
 
@@ -30,11 +32,11 @@ This positions the Signer Layer as the single point where **policy** and **signi
 - Confine private key material to trusted runtime (Integritee worker); no host exposure.  
 - **M2:** functional testnet with KMS only (no sealing).  
 - **M3:** SGX sealing, basic orchestration, attestation-gated policies.  
-- **Post-mainnet:** optional multi-TEE routing and distributed signing (TSS/MPC/NMC).
+- **Post-testnet:** optional multi-TEE routing and distributed signing (TSS/MPC/NMC).
 
 ---
 
-## Architecture (M2 → M3 → Post-Mainnet)
+## Architecture (M2 → M3 → Post-Testnet)
 
 <Table>
   <TableHeader>
@@ -58,14 +60,14 @@ This positions the Signer Layer as the single point where **policy** and **signi
       <TableCell>M3</TableCell>
       <TableCell>Local KMS (Integritee)</TableCell>
       <TableCell>SGX sealing & recovery</TableCell>
-      <TableCell>Signer Orchestrator + SignRoutes</TableCell>
+      <TableCell>   </TableCell>
       <TableCell>Conditional via Transaction Management Layer policies (e.g., amount thresholds)</TableCell>
     </TableRow>
     <TableRow>
       <TableCell>Post-Mainnet</TableCell>
       <TableCell>+ optional TDX/SEV/Arm CCA; +optional TSS/MPC/NMC</TableCell>
       <TableCell>Vendor-neutral, audited</TableCell>
-      <TableCell>Multi-TEE routing, heterogeneous quorum (optional)</TableCell>
+      <TableCell>Multi-TEE/MPC routing Signer Orchestrator + SignRoutes routing, heterogeneous quorum (optional)</TableCell>
       <TableCell>Policy-driven, auditable</TableCell>
     </TableRow>
   </TableBody>
@@ -81,7 +83,7 @@ This positions the Signer Layer as the single point where **policy** and **signi
 - Signs canonical digests; private keys never leave enclave runtime.  
 - Ephemeral keys (no sealing/persistence in M2).  
 
-### 2) Signer Orchestrator (M3)
+### 2) Signer Orchestrator (Post Testnet)
 
 - **Purpose:** select a signing backend based on declarative **SignRoutes**.  
 - **Backends in M3:** Local KMS (Integritee) only.  
@@ -91,7 +93,7 @@ This positions the Signer Layer as the single point where **policy** and **signi
 
 ## SignRoutes (policy model)
 
-A **SignRoute** is a minimal policy that determines if, when, and how a signing request may proceed, and which backend should serve it. In M2, this is effectively a single default route to the KMS. In M3, routes are evaluated by the Orchestrator; **Transaction Management Layer** supplies the contextual inputs (amount, asset, destination, tags).
+A **SignRoute** is a minimal policy that determines if, when, and how a signing request may proceed, and which backend should serve it. In M2, this is effectively a single default route to the KMS. In M3, routes are evaluated by **Transaction Management Layer** supplies the contextual inputs (amount, asset, destination, tags).
 
 ### Matching fields (examples)
 
@@ -128,7 +130,7 @@ A **SignRoute** is a minimal policy that determines if, when, and how a signing 
 ```
 
 > In **M2**, both routes still resolve to the **same KMS backend**; the difference is the **TAVP requirement**.  
-> In **M3**, the same policy structure allows swapping or augmenting the backend (still KMS pre-mainnet), while adding **attestation constraints**.
+> In **Post Testnet**, the same policy structure allows swapping or augmenting the backend (still KMS pre-mainnet), while adding **attestation constraints**.
 
 ---
 
@@ -157,7 +159,7 @@ delete_key(key_id)
 
 - **M2:** Runtime isolation only (Integritee workers); **no SGX sealing**; not production-grade custody.  
 - **M3:** SGX sealing & recovery; **attestation-gated** access paths; auditable, non-sensitive event trails.  
-- **Post-mainnet:** Multi-TEE, optional heterogeneous quorum, optional TSS/MPC/NMC.
+- **Post-Testnet** Multi-TEE, optional heterogeneous quorum, optional TSS/MPC/NMC.
 
 ---
 
@@ -165,13 +167,12 @@ delete_key(key_id)
 
 - **Policy authoring** lives in the Transaction Management Layer (thresholds, allowlists, tags).  
 - The layer evaluates contextual rules and attaches a `policy_id` or inline policy to the signing request.  
-- The Signer Orchestrator applies the matching **SignRoute**, enforces `require_tavp`, and selects the backend (KMS in pre-mainnet).
 
 **Example flow (M3):**
 1. Transaction constructed and normalized (Account Abstraction).  
-2. Transaction Management applies policies (e.g., `amount_gte: 100` → `require_tavp: true`).  
-3. Request is sent to Signer Layer with `policy_id`.  
-4. Orchestrator enforces TAVP (if required) and routes to `kms-integritee`.  
+2. Transaction Management applies policies (e.g., `amount_gte: 100` → `require_tavp: true`). 
+3. Enforces TAVP (if required) and routes to `kms-integritee` 
+4. Request is sent to Signer Layer.   
 5. Signature is returned; broadcasting proceeds in Client Layer.
 
 ---
@@ -185,7 +186,7 @@ delete_key(key_id)
       <TableCell><strong>Primitive</strong></TableCell>
       <TableCell><strong>M2 Backend</strong></TableCell>
       <TableCell><strong>M3</strong></TableCell>
-      <TableCell><strong>Post-Mainnet</strong></TableCell>
+      <TableCell><strong>Post-Testnet</strong></TableCell>
     </TableRow>
   </TableHeader>
   <TableBody>
@@ -193,29 +194,29 @@ delete_key(key_id)
       <TableCell>Ethereum / EVM</TableCell>
       <TableCell>ECDSA (secp256k1)</TableCell>
       <TableCell>Local KMS (Integritee)</TableCell>
-      <TableCell>Sealing + Orchestrator</TableCell>
-      <TableCell>Multi-TEE routing; optional TSS (GG18/GG20)</TableCell>
+      <TableCell>Sealing</TableCell>
+      <TableCell>optional Multi-TEE routing; optional TSS (GG18/GG20)</TableCell>
     </TableRow>
     <TableRow>
       <TableCell>Polkadot/Substrate</TableCell>
       <TableCell>sr25519 / ed25519</TableCell>
       <TableCell>Local KMS (Integritee)</TableCell>
-      <TableCell>Sealing + Orchestrator</TableCell>
-      <TableCell>Multi-TEE routing; optional FROST (EdDSA)</TableCell>
+      <TableCell>Sealing</TableCell>
+      <TableCell>optional Multi-TEE routing; optional FROST (EdDSA)</TableCell>
     </TableRow>
     <TableRow>
       <TableCell>Solana</TableCell>
       <TableCell>Ed25519</TableCell>
       <TableCell>Local KMS (Integritee)</TableCell>
-      <TableCell>Sealing + Orchestrator</TableCell>
-      <TableCell>Multi-TEE routing; optional FROST</TableCell>
+      <TableCell>Sealing</TableCell>
+      <TableCell>optional Multi-TEE routing; optional FROST</TableCell>
     </TableRow>
     <TableRow>
       <TableCell>Bitcoin</TableCell>
       <TableCell>ECDSA (secp256k1)</TableCell>
       <TableCell>Local KMS (Integritee)</TableCell>
-      <TableCell>Sealing + Orchestrator</TableCell>
-      <TableCell>Multi-TEE routing; optional MuSig2/TSS</TableCell>
+      <TableCell>Sealing</TableCell>
+      <TableCell>optional Multi-TEE routing; optional MuSig2/TSS</TableCell>
     </TableRow>
   </TableBody>
 </Table>
@@ -225,5 +226,5 @@ delete_key(key_id)
 ## Roadmap
 
 - **M2:** Basic KMS in Integritee workers; no sealing; static route.  
-- **M3:** SGX sealing & recovery; Signer Orchestrator with SignRoutes; attestation-gated policies; conditional TAVP.  
-- **Post-Mainnet:** Multi-TEE diversity (TDX/SEV/Arm CCA); optional TSS/MPC/NMC; heterogeneous quorum.
+- **M3:** SGX sealing & recovery; conditional TAVP (Transaction Management Layer).  
+- **Post-Testnet:** Signer Orchestrator with SignRoutes; attestation-gated policies** Multi-TEE diversity (TDX/SEV/Arm CCA); optional TSS/MPC/NMC; heterogeneous quorum.
