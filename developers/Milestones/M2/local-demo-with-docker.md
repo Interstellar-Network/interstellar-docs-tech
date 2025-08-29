@@ -48,15 +48,35 @@ can run on any OS supported by Android Studio (expect some emulator limitations 
 > You may also use **Podman** as an alternative to Docker.
 
 ## 2. Launch the Interstellar Stack Install 
+
+:::info BTC RPC API Key  
+The BTC worker connects to a **Bitcoin Testnet RPC endpoint** using a hosted provider.  
+For simplicity, we provide curators with a ready-to-use `.env` file.  
+
+Place the file in the **same directory** as `docker-compose.yml`.  
+It contains a single variable:  
+
+```bash
+BITCOIN_TESTNET_API_KEY=<API_KEY_WE_SEND>
+```
+⚠️ If you prefer to use your own provider, simply replace the value of BITCOIN_TESTNET_API_KEY in .env.
+:::
+
 ```bash
 # Step 1: Create a working directory
-mkdir interstellar_m1_demo && cd interstellar_m1_demo
+mkdir interstellar_m2_demo && cd interstellar_m2_demo
 
 # Step 2: Download the stack config
 curl -L -o docker-compose.yml https://raw.githubusercontent.com/Interstellar-Network/containers/refs/heads/main/docker-compose.yml
 curl -L -o docker-ipfs-init.sh https://raw.githubusercontent.com/Interstellar-Network/containers/refs/heads/main/docker-ipfs-init.sh
 chmod +x docker-ipfs-init.sh
+```
 
+```bash
+# Step 3: Copy the `.env` files in this directory
+```
+
+```bash
 # Step 3: Start Docker (if needed)
 sudo service docker start  # (for most Linux distros)
 
