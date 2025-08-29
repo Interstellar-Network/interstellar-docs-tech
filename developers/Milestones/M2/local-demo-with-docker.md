@@ -1011,6 +1011,152 @@ This section explains how to read a TAVP-gated SOL transfer executed via the Int
 - Finalized headers advance.  
 - Event vectors found
 
+---
+### BTC Transaction
+
+This section explains how to read a TAVP-gated BTC transfer executed via the Interstellar BTC client. Each section should be replaced with the corresponding log snippet.
+
+---
+
+#### Transaction Initialization
+
+> init logs
+```bash
+2025-08-29T14:26:35.231345000Z [DEBUG pallet_btc_client::pallet] initialize_transaction: START
+2025-08-29T14:26:35.231675000Z [DEBUG pallet_btc_client::pallet] Address validation successful: tb1qhc43vxwmfe4r7a94mwgaef2ukwk4nhec52f4xq
+```
+
+✅ **What to look for**  
+- Transaction initialization starts.  
+- Recipient address validated.  
+- UTXO availability checked.  
+
+❌ **Red flags**  
+- Invalid recipient address.  
+- No UTXOs available.  
+
+---
+
+#### UTXO Fetch & Balance Validation
+
+> utxo logs
+```bash
+2025-08-29T14:26:39.971161000Z [DEBUG pallet_btc_client::pallet] parse_utxos_from_response: parsed UTXO 0: txid=53acf714cc3b2f1cad53d66c1b4c6b1bd3ff7a22381ee73c463855bf3f5e5668, vout=1, amount=500000 sats
+2025-08-29T14:26:39.971393000Z [INFO  pallet_btc_client::pallet] parse_utxos_from_response: SUCCESS: parsed 1 UTXOs, total_value=500000 sats
+2025-08-29T14:26:39.972834000Z [INFO  pallet_btc_client::pallet] UTXO check passed: available=500000 sats, needed=16500 sats (amount=14500 + fee=2000)
+```
+
+✅ **What to look for**  
+- UTXOs fetched and parsed.  
+- Total available value printed.  
+- Required amount + fee compared with available balance.  
+
+❌ **Red flags**  
+- Empty UTXO set.  
+- Insufficient value to cover amount + fees.  
+
+---
+
+#### Transaction UX Message
+
+> UX message
+```bash
+2025-08-29T14:26:39.973713000Z [DEBUG pallet_key_manager::pallet] [generate_tx_message] Generated message: Transfer 14500 BTC to tb1qhc43vxwmfe4r7a94mwgaef2ukwk4nhec52f4xq
+```
+
+✅ **What to look for**  
+- Human-readable message with sats amount and destination address.  
+
+❌ **Red flags**  
+- Missing destination or mismatched amount.  
+
+---
+
+#### Trusted Action Validation — Commitment
+
+> TAVP commitment logs here
+```bash
+2025-08-29T14:26:40.982106000Z [INFO  pallet_tx_validation::pallet] [tx-validation] store_metadata_aux: message_pgarbled_cid = "QmQby4a7R7a38Rp4CMPv8H4ggcf9Mxgx2eog4jJhteQBuK", message_digits = [9, 3], pinpad_digits = [2, 1, 7, 8, 0, 9, 3, 6, 4, 5]
+2025-08-29T14:26:40.982332000Z [INFO  pallet_key_manager::pallet] [BTC-client]-[key-manager]- Commitment prepared and stored: cid="QmQby4a7R7a38Rp4CMPv8H4ggcf9Mxgx2eog4jJhteQBuK"
+```
+
+✅ **What to look for**  
+- Commitment CID, message digits, and pinpad digits printed.  
+- Key-manager confirms storage of commitment.  
+
+❌ **Red flags**  
+- Missing CID or digits; commit not stored.  
+
+---
+
+#### Trusted Action Validation — Input Check
+
+> TAVP input check logs
+```bash
+2025-08-29T14:26:59.128916000Z [INFO  pallet_tx_validation::pallet] [tx-validation] check_input: ipfs_cid = "QmQby4a7R7a38Rp4CMPv8H4ggcf9Mxgx2eog4jJhteQBuK", input_digits = [5, 6]
+2025-08-29T14:26:59.129025000Z [INFO  pallet_tx_validation::pallet] [tx-validation] check_input: computed_inputs_from_permutation = [9, 3], message_digits = BoundedVec([9, 3], 10)
+2025-08-29T14:26:59.129074000Z [INFO  pallet_tx_validation::pallet] [tx-validation] TxPass
+```
+
+✅ **What to look for**  
+- Input digits checked against stored commitment.  
+- `TxPass` confirmation.  
+
+❌ **Red flags**  
+- `TxFail` or mismatch between digits.  
+
+---
+
+#### Transaction Construction & Signing
+
+> signing logs
+```bash
+2025-08-29T14:27:03.918425000Z [INFO  pallet-btc-client] Unsigned transaction created: inputs=1, outputs=2, total_input_value=500000 sats
+2025-08-29T14:27:03.918599000Z [INFO  pallet_btc_client::pallet] Signing input 0: 53acf714cc3b2f1cad53d66c1b4c6b1bd3ff7a22381ee73c463855bf3f5e5668:1, amount=500000 sats
+2025-08-29T14:27:03.918989000Z [DEBUG pallet_btc_client::pallet] Successfully converted to Bitcoin DER signature: 71 bytes
+2025-08-29T14:27:03.919129000Z [DEBUG pallet_btc_client::pallet] Transaction signing completed: 1 inputs signed
+```
+
+✅ **What to look for**  
+- UTXO selection and change calculation.  
+- Unsigned transaction created with correct inputs/outputs.  
+- Transaction signed (DER signatures produced).  
+
+❌ **Red flags**  
+- Incorrect change computation.  
+- Signing errors.  
+
+---
+
+#### Transaction Broadcast & Hash
+
+> broadcast logs
+```bash
+2025-08-29T14:27:03.919469000Z [DEBUG pallet_btc_client::pallet] RPC request: method=sendrawtransaction, params=[0200000000010168565e3f...]
+2025-08-29T14:27:03.981372000Z [DEBUG pallet_btc_client::pallet] Transaction broadcast successful: txid=60e95abf0d674143fae1ef11f115386a6dadcb4438ee0ab5c1a4e26438844878
+```
+
+✅ **What to look for**  
+- `sendrawtransaction` RPC called.  
+- Transaction successfully broadcast with txid.  
+
+❌ **Red flags**  
+- RPC error or missing txid.  
+
+---
+
+#### Parentchain Inclusion / Sync
+
+> parentchain sync logs
+```bash
+2025-08-29T14:26:37.130937000Z [+] Received finalized header update (855), syncing parent chain...
+2025-08-29T14:27:01.151365000Z [+] Received finalized header update (857), syncing parent chain...
+```
+
+
+✅ **What to look for**  
+- Parentchain finalized headers advancing.  
+- Event vectors synced.  
 
 
 
