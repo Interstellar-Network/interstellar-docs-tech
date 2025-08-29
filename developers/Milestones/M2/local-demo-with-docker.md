@@ -1012,7 +1012,7 @@ This section explains how to read a TAVP-gated SOL transfer executed via the Int
 - Event vectors found
 
 ---
-### BTC Transaction
+### 🛠️ BTC Transaction
 
 This section explains how to read a TAVP-gated BTC transfer executed via the Interstellar BTC client. Each section should be replaced with the corresponding log snippet.
 
