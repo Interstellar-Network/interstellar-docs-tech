@@ -1177,6 +1177,20 @@ You can inspect chain state and transactions via:
 - This setup replicates the same runtime environment used in hosted testnets but fully self-contained
 - Ideal for offline testing, developer evaluation, or deeper inspection of runtime logs
 
+
+:::info Recovery Testing Scope  
+Please note that **re-testing the recovery process is not part of Milestone 2**. At this stage, our focus is on validating backend transaction generation and execution.  
+
+Recovery flows will be revisited and refined in future milestones (including **M4**) and are planned to be fully integrated with the **SDK delivery**. This ensures curators do not spend unnecessary time on functionality that is still evolving and will be better validated later in the roadmap.  
+:::  
+
+
+
+
+
+
+
+
 ---
 :::note Technical Preview – Foundation for Secure Mobile SDKs  
 This Android application is provided as a technical demonstration of Interstellar’s secure Web3 account infrastructure. It serves as a foundation for the forthcoming Android and iOS SDKs, which are still under active development.  
