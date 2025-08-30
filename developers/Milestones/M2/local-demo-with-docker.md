@@ -67,8 +67,8 @@ BITCOIN_TESTNET_API_KEY=<API_KEY_WE_SEND>
 mkdir interstellar_m2_demo && cd interstellar_m2_demo
 
 # Step 2: Download the stack config
-curl -L -o docker-compose.yml https://raw.githubusercontent.com/Interstellar-Network/containers/refs/heads/main/docker-compose.yml
-curl -L -o docker-ipfs-init.sh https://raw.githubusercontent.com/Interstellar-Network/containers/refs/heads/main/docker-ipfs-init.sh
+curl -L -o docker-compose.yml https://raw.githubusercontent.com/Interstellar-Network/containers/refs/tags/testnet-m2/docker-compose.yml
+curl -L -o docker-ipfs-init.sh https://raw.githubusercontent.com/Interstellar-Network/containers/refs/tags/testnet-m2/docker-ipfs-init.sh
 chmod +x docker-ipfs-init.sh
 ```
 
@@ -141,7 +141,7 @@ Once built, these circuits are uploaded to IPFS and used to enable real-time, **
 
 ### Download the APK
 
-From the official [Interstellar GitHub Release](https://github.com/Interstellar-Network/containers/releases/tag/testnet-m1) (specific APKs preconfigured to connect to `localhost`):
+From the official [Interstellar GitHub Release](https://github.com/Interstellar-Network/containers/releases/tag/testnet-m2) (specific APKs preconfigured to connect to `localhost`):
 
 - `androidApp-arm64-release.apk` — for Android devices and Apple Silicon(M1/M2/M3/M4)
 - `androidApp-x86_64-release.apk` — for Android emulators running on x86_64 platforms (e.g., Windows PCs, Intel-based Mac)
@@ -324,7 +324,6 @@ Feel free to contact us, we will send you SOL or BTC for their respective testne
 :::note Test Setup  
 For simplicity during Milestone 2 testing — and to minimize the need for testnet tokens — the **sender and receiver addresses are set to the same account**. This allows us to validate transaction generation and submission without requiring external token funding.  
 :::  
-
 
 ### Step 2: Test Transactions
 
