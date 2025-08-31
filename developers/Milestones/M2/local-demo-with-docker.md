@@ -330,11 +330,11 @@ Feel free to contact us, we will send you SOL or BTC for their respective testne
 <div style={{ display: "flex", gap: "20px", justifyContent: "center" }}>
   <figure style={{ textAlign: "center" }}>
     <img src="/img/portfolio_funded_black.png" alt="portfolio funded black" width="200"/>
-    <figcaption>Portfolio Funded - dark mode</figcaption>
+    <figcaption>Portfolio Screen - Funded - dark mode</figcaption>
   </figure>
   <figure style={{ textAlign: "center" }}>
     <img src="/img/portfolio_funded_white.png" alt="portfolio funded white" width="200"/>
-    <figcaption>Send Transaction - light mode</figcaption>
+    <figcaption>Send Screen - Funded - light mode</figcaption>
   </figure>
 </div>
 
