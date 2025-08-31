@@ -317,15 +317,26 @@ Then on your portfolio screen:
 - Simply click on the correponding DOT, SOL, ETH, BTC symbol to see your address.
 - Click on `Create Pair` if needed and then on the address to copy it, then paste it in the corresponding faucet.
 
+
+
+
 :::warning if you experienced issue with some faucet
 Feel free to contact us, we will send you SOL or BTC for their respective testnet.
 :::
 
-:::note Test Setup  
-For simplicity during Milestone 2 testing — and to minimize the need for testnet tokens — the **sender and receiver addresses are set to the same account**. This allows us to validate transaction generation and submission without requiring external token funding.  
-:::  
+**Once Portfolio funded you are ready to move on the Send Screen:**
 
-### Step 2: Test Transactions
+
+<div style={{ display: "flex", gap: "20px", justifyContent: "center" }}>
+  <figure style={{ textAlign: "center" }}>
+    <img src="/img/portfolio_funded_black.png" alt="portfolio funded black" width="200"/>
+    <figcaption>Portfolio Funded - dark mode</figcaption>
+  </figure>
+  <figure style={{ textAlign: "center" }}>
+    <img src="/img/portfolio_funded_white.png" alt="portfolio funded white" width="200"/>
+    <figcaption>Send Transaction - light mode</figcaption>
+  </figure>
+</div>
 
 :::info Atomic Units in Testing  
 For testing purposes, the transaction validation screens display balances and transfer amounts in the **atomic units** of each chain:  
@@ -336,6 +347,13 @@ For testing purposes, the transaction validation screens display balances and tr
 - **SOL:** lamports  
 
 This approach ensures precision and consistency during backend validation, even if these units are less user-friendly than standard denominations.  
+:::  
+
+
+### Step 2: Test Transactions
+
+:::note Test Setup  
+For simplicity during Milestone 2 testing — and to minimize the need for testnet tokens — the **sender and receiver addresses are set to the same account**. This allows us to validate transaction generation and submission without requiring external token funding.  
 :::  
 
 - Send a coin to a contact
@@ -410,31 +428,6 @@ In the future, we plan to introduce a **trusted beneficiary** feature. This will
 to register known recipient addresses on-chain through a secure validation process, preventing attackers from substituting contact names with malicious public keys. This enhancement will make the wallet both more secure and user-friendly.
 :::
 
-
-TO POTENTIALLY REUSE WITH OTHERS IMAGE
-
-<div style={{ display: "flex", gap: "20px", justifyContent: "center" }}>
-  <figure style={{ textAlign: "center" }}>
-    <img src="/img/initial_backup.png" alt="initial backup" width="200"/>
-    <figcaption>Initial Backup</figcaption>
-  </figure>
-  <figure style={{ textAlign: "center" }}>
-    <img src="/img/vca.png" alt="+ vca" width="200"/>
-    <figcaption>+ CLOUD BACKUP added</figcaption>
-  </figure>
-</div>
-  
-
-<div style={{ display: "flex", gap: "20px", justifyContent: "center" }}>
-  <figure style={{ textAlign: "center" }}>
-    <img src="/img/vca_nfc.png" alt="vca+nfc items" width="200"/>
-    <figcaption>CLOUD BACKUP + NFC Item</figcaption>
-  </figure>
-  <figure style={{ textAlign: "center" }}>
-    <img src="/img/threshold_changed.png" alt="threshold changed" width="200"/>
-    <figcaption>Threshold Changed</figcaption>
-  </figure>
-</div>
 ---
 
 > 🛠️ You can check the logs from your local stack to see whtat happen begind the hood when you interact with the blockchain: `extrinsics` sent
