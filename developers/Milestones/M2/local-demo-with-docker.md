@@ -382,7 +382,7 @@ Copy the transaction hash (or signature) printed in the backend logs when a tran
 - DOT/Paseo → extrinsic hash (hexadecimal, 0x…)
 - ETH → starts with 0x…
 - SOL → long base58 signature string
-- BTC → transaction ID (txid, hexadecimal 0x…)
+- BTC → transaction ID (txid, hexadecimal …)
 
 Paste this value into the corresponding block explorer (alternatively you can also paste your **address**):
 
@@ -412,7 +412,7 @@ Here are the log patterns to look for in each chain’s backend output:
 ```
 ### BTC
 ```bash
-[INFO  pallet_btc_client::pallet] send_transaction: OK: txid=0x9f8b6a…23c
+[INFO  pallet_btc_client::pallet] send_transaction: OK: txid=60e95abf0d674143fae1ef11f115386a6dadcb4438ee0ab5c1a4e26438844878
 ```
 
 
