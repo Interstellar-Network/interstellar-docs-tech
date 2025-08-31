@@ -356,7 +356,7 @@ This approach ensures precision and consistency during backend validation, even 
 For simplicity during Milestone 2 testing — and to minimize the need for testnet tokens — the **sender and receiver addresses are set to the same account**. This allows us to validate transaction generation and submission without requiring external token funding.  
 :::  
 
-- Send a coin to a contact
+- **Send a coin**
 
 <div style={{ textAlign: "center" }}>
   <img src="/img/Send_Currency_Demo.gif" alt="wallet menu" width="200"/>
