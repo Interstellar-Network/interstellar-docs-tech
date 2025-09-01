@@ -318,7 +318,7 @@ Then on your portfolio screen:
 - Click on `Create Pair` if needed and then on the address to copy it, then paste it in the corresponding faucet.
 
 
-
+**Wipe down** on portfolio or cryptocurrency accounts screen trigger a refresh of balance.
 
 :::warning if you experienced issue with some faucet
 Feel free to contact us, we will send you SOL or BTC for their respective testnet.
@@ -364,8 +364,8 @@ For simplicity during Milestone 2 testing — and to minimize the need for testn
   - Trigger the **Trusted Action Validation Protocol (TAVP)** screen
   - Enter the one-time code (2-digit), or experiment with trial/feedback
   - Check toasted messages whith Action Validation Screen:
-    - **Creating transaction validation...**
-    - [error] No circuits available after 10s; exiting!
+    - **Initializing Transaction...**
+    - [error] No circuits available after 10s; **Something went wrong!** (usually due to insuficient balance)
     - [after taping one-time code digits]
     - **Validating transaction...**
     - **Transaction Validated**
@@ -414,6 +414,22 @@ Here are the log patterns to look for in each chain’s backend output:
 ```bash
 [INFO  pallet_btc_client::pallet] send_transaction: OK: txid=60e95abf0d674143fae1ef11f115386a6dadcb4438ee0ab5c1a4e26438844878
 ```
+
+
+:::info Handling Insufficient Balance Errors  
+When a transaction is attempted without enough funds to cover the transfer amount and network fees, the client aborts before submission.  
+
+All chain clients (DOT, ETH, SOL, BTC) follow the same pattern: the **initialize_transaction** step fails, and the error is returned in the logs. For example, in the SOL client:  
+
+```bash
+[ERROR itp_stf_executor::executor] Stf execute failed: Dispatch("SolClient Initialize Transaction error: ... message: Some(\"InsufficientBalance\") })
+```
+If an insufficient balance error occurs, the VCA token is not sent to the app, and the screen instead displays a generic “Something went wrong!” message.
+
+This behavior ensures no invalid transactions are broadcast and provides a clear error message for debugging and verification.
+:::
+
+
 
 
 
@@ -1179,10 +1195,6 @@ This section explains how to read a TAVP-gated BTC transfer executed via the Int
 ✅ **What to look for**  
 - Parentchain finalized headers advancing.  
 - Event vectors synced.  
-
-
-
-
 
 
 
