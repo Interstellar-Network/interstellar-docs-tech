@@ -368,7 +368,7 @@ For simplicity during Milestone 2 testing — and to minimize the need for testn
     - [error] No circuits available after 10s; **Something went wrong!** (usually due to insuficient balance)
     - [after taping one-time code digits]
     - **Validating transaction...**
-    - **Transaction Validated**
+    
 
 :::note Upcoming Feature (M3)  
 In Milestone 3, transaction validation will become **conditional on an amount threshold**. This threshold will be managed by the **Transaction Management Layer (TML)**, allowing policies such as requiring validation only for transfers above a specified value.  
@@ -424,7 +424,7 @@ All chain clients (DOT, ETH, SOL, BTC) follow the same pattern: the **initialize
 ```bash
 [ERROR itp_stf_executor::executor] Stf execute failed: Dispatch("SolClient Initialize Transaction error: ... message: Some(\"InsufficientBalance\") })
 ```
-If an insufficient balance error occurs, the VCA token is not sent to the app, and the screen instead displays a generic “Something went wrong!” message.
+At this stage of the app/SDK devellopement, if an insufficient balance error occurs, the VCA token is not transfered to the app, and the screen instead displays a generic “Something went wrong!” message.
 
 This behavior ensures no invalid transactions are broadcast and provides a clear error message for debugging and verification.
 :::
