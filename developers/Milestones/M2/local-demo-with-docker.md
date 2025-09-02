@@ -317,14 +317,16 @@ Then on your portfolio screen:
 - Simply click on the correponding DOT, SOL, ETH, BTC symbol to see your address.
 - Click on `Create Pair` if needed and then on the address to copy it, then paste it in the corresponding faucet.
 
-
-**Wipe down** on portfolio or cryptocurrency accounts screen trigger a refresh of balance.
+> BTC transaction from the faucet usually can take up to one hour.
 
 :::warning if you experienced issue with some faucet
 Feel free to contact us, we will send you SOL or BTC for their respective testnet.
 :::
 
 **Once Portfolio funded you are ready to move on the Send Screen:**
+
+
+> **Wipe down** on the portfolio or balance/address screen triggers a manual refresh of balances. This is a temporary workaround until the app natively tracks chain states more accurately, which will be available with the SDK delivery.
 
 
 <div style={{ display: "flex", gap: "20px", justifyContent: "center" }}>
@@ -353,8 +355,9 @@ This approach ensures precision and consistency during backend validation, even 
 ### Step 2: Test Transactions
 
 :::note Test Setup  
-For simplicity during Milestone 2 testing — and to minimize the need for testnet tokens — the **sender and receiver addresses are set to the same account**. This allows us to validate transaction generation and submission without requiring external token funding.  
-:::  
+For simplicity during Milestone 2 testing — and to minimize the need for testnet tokens — the **sender and receiver addresses are set to the same account**, except for Solana (which uses a predefined address). This setup accelerates testing for curators by avoiding manual address inputs, while still allowing us to validate transaction generation and submission without requiring external token funding.  
+:::
+
 
 - **Send a coin**
 
@@ -364,7 +367,7 @@ For simplicity during Milestone 2 testing — and to minimize the need for testn
   - Trigger the **Trusted Action Validation Protocol (TAVP)** screen
   - Enter the one-time code (2-digit), or experiment with trial/feedback
   - Check toasted messages whith Action Validation Screen:
-    - **Initializing Transaction...**
+    - **Initializing a transaction...**
     - [error] No circuits available after 10s; **Something went wrong!** (usually due to insuficient balance)
     - [after taping one-time code digits]
     - **Validating transaction...**
