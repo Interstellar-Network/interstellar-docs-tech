@@ -359,7 +359,7 @@ For simplicity during Milestone 2 testing — and to minimize the need for testn
 :::
 
 
-- **Send a coin**
+- **Send DOTs, SOLs,ETH,BTCs to a contact**
 
 <div style={{ textAlign: "center" }}>
   <img src="/img/Send_Currency_Demo.gif" alt="wallet menu" width="200"/>
