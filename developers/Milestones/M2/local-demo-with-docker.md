@@ -176,8 +176,8 @@ Ensure that your device is configured for **english** language
 ### Option 2: Emulator
 
 1. [Create](https://developer.android.com/studio/run/managing-avds#createavd)  a `Pixel 7` or equivalent emulator `API 31+` - `API 35` 
-2. Edit the emulator and select an API 31+ below the default API 36
-<img src="/img/API35.png" alt="API 35"  width="250"/>
+2. Edit the emulator and select an API 31+ below the default API 36 (API 34 more stable)
+<img src="/img/API34.png" alt="API 34"  width="250"/>
 
 3. Launch the emulator
 4. Drag and drop the APK onto the emulator window to install
@@ -187,7 +187,7 @@ Our app currently crashes on Android API 36. The issue is **not caused by the ne
 page model**, as it runs correctly on API 35 with 16KB pages. 
 API 36 is a **very recent release** and may introduce subtle runtime or platform-level changes 
 that affect low-level Rust code (e.g., garbled circuit evaluator or frame renderer). 
-Until further investigation, **we recommend using API 35 or earlier for testing.**
+Until further investigation, **we recommend using API 34 (more stable on emulator) or earlier for testing.**
 :::
 
 :::note Software Rendering Required on Apple Silicon (M1/M2)
