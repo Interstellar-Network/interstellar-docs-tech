@@ -341,7 +341,7 @@ Feel free to contact us, we will send you SOL or BTC for their respective testne
 </div>
 
 :::info Atomic Units in Testing  
-For testing purposes, the transaction validation screens display balances and transfer amounts in the **atomic units** of each chain:  
+For testing purposes, the account/address and transaction validation screens display balances and transfer amounts in the **atomic units** of each chain:  
 
 - **DOT / Paseo:** planck  
 - **BTC:** satoshi (sat)  
@@ -359,11 +359,13 @@ For simplicity during Milestone 2 testing — and to minimize the need for testn
 :::
 
 
-- **Send DOTs, SOLs,ETH,BTCs to a contact**
+- **Send DOTs, SOLs, ETHs, BTCs to a contact**
 
 <div style={{ textAlign: "center" }}>
   <img src="/img/Send_Currency_Demo.gif" alt="wallet menu" width="200"/>
 </div>
+
+
   - Trigger the **Trusted Action Validation Protocol (TAVP)** screen
   - Enter the one-time code (2-digit), or experiment with trial/feedback
   - Check toasted messages whith Action Validation Screen:
