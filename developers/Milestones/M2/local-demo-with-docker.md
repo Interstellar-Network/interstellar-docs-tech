@@ -309,7 +309,7 @@ In addition, while the backend successfully submits transactions, we have not ye
 
 following is suggested faucets for DOT/PAS, SOL, ETH, BTC:
 - [DOT/PAS](https://faucet.polkadot.io/?parachain=1000)
-- [SOL](https://faucet.solana.com/)
+- [SOL](https://faucet.solana.com/) select **testnet** not **devnet** on the dropdown
 - [ETH](https://cloud.google.com/application/web3/faucet/ethereum/sepolia)
 - [BTC](https://faucet.testnet4.dev/)
 
