@@ -389,13 +389,6 @@ export default function YCPage() {
             }
 
 
-
-
-
-
-
-
-
           `}</style>
 
           {/* HERO */}
@@ -457,15 +450,15 @@ export default function YCPage() {
                 </li>
                 <li>
                   <span className="yc-list-bullet" />
-                  <span>Short cognitive interaction that only a human can perform reliably at speed.</span>
+                  <span>Short cognitive interaction that only the <strong>right human</strong> can perform reliably at speed.</span>
                 </li>
                 <li>
                   <span className="yc-list-bullet" />
-                  <span>Proof is bound to <strong>that exact action</strong> and verified by a decentralized signer network.</span>
+                  <span>Proof is bound to <strong>that exact action</strong> at the <strong>right time</strong> and verified by a decentralized signer network.</span>
                 </li>
               </ul>
               <div className="yc-chip-row">
-                <span className="yc-chip">If the human didn’t approve it, it doesn’t happen.</span>
+                <span className="yc-chip">If the <strong> right human</strong> didn’t approve it, it doesn’t happen.</span>
               </div>
             </div>
           </section>
@@ -655,9 +648,11 @@ export default function YCPage() {
             <div className="yc-section-title">5 · Vision</div>
             <h2 className="yc-section-heading">Human authority over autonomous finance</h2>
             <p className="yc-section-text">
-              As trading or payment agents, smart contracts, and AI systems gain autonomy, we provide the
-              <strong> cryptographic governor</strong> that keeps them aligned with people:
-              no system can execute irreversible actions unless a human truly intended them.
+
+              As trading and payment agents, smart contracts, and AI systems gain autonomy, 
+              Interstellar becomes the <strong> human-intent control plane </strong> that keeps them aligned 
+              with people: no system can execute an irreversible action unless the right human, 
+              cryptographically and behaviorally verified in that moment, has explicitly approved it.
             </p>
           </section>
 
