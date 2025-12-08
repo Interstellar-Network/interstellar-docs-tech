@@ -693,20 +693,17 @@ export default function YCPage() {
               Interstellar · Proof of Human Intent SDK &amp; decentralized signing network
             </div>
             <div className="yc-footer-links">
-              <a
-                className="yc-link"
-                href="https://interstellar.network"
-                target="_blank"
-                rel="noreferrer"
-              >
-                interstellar.network
+              <a className="yc-link" href="/developers/Manifesto/">
+                <strong>Interstellar Manifesto</strong>
               </a>
+              <a className="yc-link" href="/developers/Milestones/M1/Components%20Delivered/Architecture">
+                <strong>Architecture</strong>
+              </a>
+              
               <a className="yc-link" href="mailto:team@interstellar.network">
                 team@interstellar.network
               </a>
-              <a className="yc-link" href="/docs/intro">
-                Docs
-              </a>
+              
             </div>
           </footer>
         </div>
