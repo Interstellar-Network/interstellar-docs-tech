@@ -439,7 +439,7 @@ export default function YCPage() {
               <div className="yc-card-header">2 · Our Answer</div>
               <div className="yc-card-title">Proof of Human Intent (PoHI)</div>
               <p className="yc-card-text">
-                A new trust layer that binds a <strong>human-only interaction</strong> to a
+                A new trust layer that cryptographically binds a <strong>human-only interaction</strong> to a
                 <strong> specific action</strong> — transaction, trade, or contract call — and produces a
                 cryptographic proof that malware and AI cannot fake.
               </p>
