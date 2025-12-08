@@ -244,6 +244,24 @@ export default function YCPage() {
               color: var(--yc-text-soft);
             }
 
+
+            .yc-status-dot {
+              width: 0.32rem;
+              height: 0.32rem;
+              border-radius: 999px;
+              display: inline-block;
+              margin-right: 0.4rem;
+            }
+
+            .yc-status-dot-green {
+              background: linear-gradient(135deg, #22c55e, #a3e635);
+            }
+
+            .yc-status-dot-red {
+              background: linear-gradient(135deg, #ef4444, #f87171);
+            }
+
+
             .yc-tag-dot {
               width: 0.32rem;
               height: 0.32rem;
@@ -430,10 +448,21 @@ export default function YCPage() {
                 </li>
               </ul>
               <div className="yc-chip-row">
-                <span className="yc-chip">Identity proven</span>
-                <span className="yc-chip">Intent hijacked</span>
+                <span className="yc-chip">
+                  <span className="yc-status-dot yc-status-dot-green"></span>
+                  Identity proven
+                </span>
+                <span className="yc-chip">
+                  <span className="yc-status-dot yc-status-dot-red"></span>
+                  Intent hijacked
+                </span>
               </div>
+              
             </div>
+
+
+
+             
 
             <div className="yc-card">
               <div className="yc-card-header">2 · Our Answer</div>
@@ -458,8 +487,11 @@ export default function YCPage() {
                 </li>
               </ul>
               <div className="yc-chip-row">
-                <span className="yc-chip">If the <strong> right human</strong> didn’t approve it, it doesn’t happen.</span>
-              </div>
+                <span className="yc-chip">
+                  <span className="yc-status-dot yc-status-dot-green"></span>
+                  If the <strong>right human</strong> didn’t approve it, it doesn’t happen.
+                </span>
+              </div>     
             </div>
           </section>
 
@@ -564,13 +596,13 @@ export default function YCPage() {
                     </span>
                   </div>
                   <div className="yc-compare-row">
-                    • Action executes only if a <strong>human PoHI challenge</strong> has been passed for that specific intent.
+                    • Sensitive Action, high amount transaction executes only if a <strong>human PoHI challenge</strong> has been passed for that specific intent.
                   </div>
                   <div className="yc-compare-row">
                     • Decentralized signer network refuses signatures when PoHI and action mismatch.
                   </div>
                   <div className="yc-compare-row">
-                    • Works even on compromised devices — malware cannot manufacture valid human intent.
+                    • Works even on compromised devices — malware cannot manufacture <strong>valid human intent</strong>.
                   </div>
                 </div>
               </div>
