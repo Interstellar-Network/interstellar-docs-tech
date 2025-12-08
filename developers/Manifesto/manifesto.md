@@ -3,8 +3,8 @@ sidebar_label: 'Vision Manifesto'
 sidebar_position: 2
 ---
 
-# ✴️ Interstellar Manifesto
-### *A Guardian Layer for Human-Machine Interaction in the Age of Adversarial AI*
+# Interstellar Manifesto
+### *An Intent Layer for Human-Machine Interaction in the Age of Adversarial AI*
 
 ---
 
@@ -26,9 +26,9 @@ Interstellar represents a shift from protecting systems to **protecting human in
 
 ---
 
-## III. The Vision: A Guardian Layer Around Human Perception
+## III. The Vision: An Intent Layer Around Human Perception
 
-We are building the **first decentralized cryptographic protection layer** around the human interface — a **Guardian Layer** that shields how you see, decide, and act in digital space.
+We are building the **first decentralized cryptographic protection layer** around the human interface — an **Intent Layer** that shields how you see, decide, and act in digital space.
 
 * A **visual cryptographic filter** readable only by your perception
 * A **behavioral interface** that responds to cognitive intent
@@ -41,7 +41,7 @@ This Guardian Layer is not theoretical — it is already partially implemented i
 * Garbled circuits for cryptographic rendering of information (only visual for now)
 * Stateless, privacy-preserving behavioral filters (work in progress)
 
-These layers form the **foundational components of the Guardian Layer**. 
+These layers form the **foundational components of the Intent Layer**. 
 
 ---
 

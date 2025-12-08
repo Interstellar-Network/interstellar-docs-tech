@@ -3,7 +3,7 @@ sidebar_label: 'Hardware Wallets vs Interstellar'
 sidebar_position: 4
 ---
 
-# 🔍 Hardware Wallets, Airgap Wallets, and Interstellar: A Comparison
+# Hardware Wallets, Airgap Wallets, and Interstellar: A Comparison
 
 ## Introduction
 
