@@ -602,7 +602,7 @@ export default function YCPage() {
                     • Decentralized signer network refuses signatures when PoHI and action mismatch.
                   </div>
                   <div className="yc-compare-row">
-                    • Works even on compromised devices — malware cannot manufacture <strong>valid human intent</strong>.
+                    • Secure even on compromised devices — malware and superintelligent AI cannot produce a <strong>cryptographically valid human-intent signal</strong>.
                   </div>
                 </div>
               </div>
