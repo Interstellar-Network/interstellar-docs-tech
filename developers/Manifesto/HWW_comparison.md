@@ -13,7 +13,7 @@ However, the evolution of threat models — particularly those involving **AI-ge
 
 > **Interstellar is not just an addition to the security stack — it represents a new category of protection. While we acknowledge the legacy and utility of HWWs and airgap wallets, our aim is to offer a future-proof alternative that can ultimately replace these tools where appropriate — by securing the *human layer*, not just the cryptographic key.**
 
-This document compares Interstellar’s Guardian Layer architecture to these traditional models, including critical aspects like **approval clarity**, **supply chain risk**, **UX fidelity**, **recovery**, and **cost-to-security efficiency**.
+This document compares Interstellar’s Intent Layer architecture to these traditional models, including critical aspects like **approval clarity**, **supply chain risk**, **UX fidelity**, **recovery**, and **cost-to-security efficiency**.
 
 ---
 
@@ -54,7 +54,7 @@ In Feb 2025, a high-profile exploit targeted users of **Gnosis Safe multisigs** 
 * The system validates the *intent*, not just the cryptographic validity of the transaction
 
 ---
-## Multisig Integration: From Legacy Devices to Guardian Nodes
+## Multisig Integration: From Legacy Devices to Intent layer Nodes
 
 Interstellar is designed to support **multi-party approval flows** that include both advanced mobile-native validation and legacy signer compatibility.
 
