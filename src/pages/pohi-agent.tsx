@@ -577,16 +577,16 @@ export default function PoHIPage() {
                   </p>
 
                   <div className="pohi-contact-actions">
-                    <a className="pohi-btn pohi-btn-primary" href="mailto:contact@interstellar.gg?subject=PoHI%20integration%20call">
-                      Request integration call
+                    <a className="pohi-btn pohi-btn-primary" href="mailto:contact@interstellar.network?subject=PoHI%20integration%20call">
+                      Request integration call - waiting list
                     </a>
-                    <a className="pohi-btn pohi-btn-ghost" href="mailto:contact@interstellar.gg?subject=PoHI%20pilot%20outline">
+                    <a className="pohi-btn pohi-btn-ghost" href="mailto:contact@interstellar.?subject=PoHI%20pilot%20outline">
                       Ask for pilot outline
                     </a>
                   </div>
 
                   <div className="pohi-mini-caption">
-                    Replace contact@interstellar.gg with your preferred address. You can also wire this to a Calendly link.
+                    contact@interstellar.network -Calendly link coming soon-
                   </div>
                 </div>
 
@@ -625,8 +625,8 @@ export default function PoHIPage() {
                     Interstellar PoHI
                   </div>
                   <div className="pohi-footer-right">
-                    <a className="pohi-footer-link" href="/yc/">
-                      Back to YC page
+                    <a className="pohi-footer-link" href="/pohi-core/">
+                      PoHI details and simulation
                     </a>
                     <span className="pohi-footer-sep" aria-hidden="true" />
                     <a className="pohi-footer-link" href="#problem" onClick={scrollTo("problem")}>

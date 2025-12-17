@@ -4,7 +4,7 @@ import Layout from "@theme/Layout";
 export default function YCPage() {
   return (
     <Layout
-      title="YC – Interstellar PoHI"
+      title="Interstellar PoHI"
       description="Interstellar – Proof of Human Intent SDK and decentralized signing network"
     >
       <main className="yc-page">
@@ -686,6 +686,19 @@ export default function YCPage() {
               with people: no system can execute an irreversible action unless the right human, 
               cryptographically and behaviorally verified in that moment, has explicitly approved it.
             </p>
+            <a
+                href="/pohi-agent"
+                target="_blank"
+                rel="noreferrer"
+                className="yc-demo-cta"
+              >
+                PoHI for agents and autonous finance
+              </a>
+
+
+
+
+
           </section>
 
           <footer className="yc-footer">
