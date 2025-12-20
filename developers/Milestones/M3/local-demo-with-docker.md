@@ -353,7 +353,7 @@ This approach ensures precision and consistency during backend validation, even 
 
 
 :::note New Feature (M3)  
-In Milestone 3, transaction validation become **conditional on an amount threshold**. This threshold will be managed by the **Transaction Management Layer (TML)**, allowing policies such as requiring validation only for transfers above a specified value.  
+In Milestone 3, transaction validation become **conditional on an amount threshold**. This threshold is managed by the **Transaction Management Layer (TML)**, allowing policies such as requiring validation only for transfers above a specified value.  
 :::  
 
 

@@ -16,7 +16,7 @@ It allows direct access to the core milestone logic through our mobile app, so y
 
 This is the most complete and reliable way to test the M3 features:
 
-- **Transaction with DOT, ETH, BTC, SOL** with **conditional** transaction validation (based on TAVP)
+- **Transaction with DOT, ETH, BTC, SOL** with **conditional** transaction validation (based on TAVP), also demonstrating an updated Key Management service with SGX sealing.
 
 <!--
 No Docker, CLI, or blockchain setup is required. Just install the demo app on an Android phone or emulator and you're ready to evaluate.
