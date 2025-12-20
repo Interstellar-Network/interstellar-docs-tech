@@ -297,6 +297,18 @@ In addition, while the backend successfully submits transactions, we have not ye
 
 ## 4. Run the Android App Demo
 
+:::warning App reinstall required
+
+If you already have an older version of the Interstellar Android app installed, **you must uninstall it before installing the M3 build**.
+
+The app uses local secure storage and cached configuration; keeping a previous version may lead to inconsistent behavior during transaction signing or validation.
+
+:::
+
+
+
+
+
 ### Step 1: Connect & Onboard
 - **Launch the app**
   - Register a new mobile account
