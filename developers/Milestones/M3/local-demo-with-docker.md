@@ -395,18 +395,7 @@ This setup allows reviewers to validate **both flows** quickly, without manual t
 :::
 
 
-
-
-
-
-
-
-
-
-
-
-
-  - Trigger the **Trusted Action Validation Protocol (TAVP)** screen
+  - if the **Trusted Action Validation Protocol (TAVP)** screen appears:
   - Enter the one-time code (2-digit), or experiment with trial/feedback
   - Check toasted messages whith Action Validation Screen:
     - **Initializing a transaction...**
@@ -500,29 +489,6 @@ to register known recipient addresses on-chain through a secure validation proce
 
 When interacting with the mobile app (e.g., authentication, transaction validation, recovery),
  key log messages are printed by both `integritee-node` and `integritee-service`. 
-
-
-### Trusted Action Validation Highlight
- These logs help verify that **Trusted Action Validation** flows used both in transaction validation and recovery are working as expected.
-
-### Key messages to look for:
-
-#### Challenge screen rendering (garbled circuit evaluation):
-
-```bash
-[tx-validation] store_metadata_aux: message_digits = [9, 7], pinpad_digits = [8, 4, 6, 7, 3, 1, 5, 2, 9, 0]
-```
-
-#### Succesfull or Failed Validations (timing or incorrect code touchscreens positions)
-
-- If you enter an invalid code:
-  ```
-  [tx-validation] TxFail
-  ```
-- If correct:
-  ```
-  [tx-validation] TxPass
-  ```
 
 
 ### 🛠️ Mobile Registration
@@ -878,6 +844,55 @@ Above threshold would insert VCA commitment + validation before broadcast (same 
   - Look for simulation <code>err</code> and <code>check_transaction_err</code> markers.
 - If BTC broadcast fails:
   - Inspect RPC response from <code>sendrawtransaction</code> and whether signing completed for all inputs.
+
+
+## 🔐 Interpreting SGX sealing logs (M3)
+
+In **Milestone 3**, the KMS introduces **SGX-backed key sealing**, allowing private keys to persist securely across enclave restarts. This behavior is observable directly in the logs emitted by the signing flow.
+
+### Key log markers to look for
+
+During transaction signing (for ETH, BTC, SOL, or DOT), you will typically see:
+
+- <code>[unseal_seed] Delegating to crypto_ops::unseal_seed</code>  
+- <code>[do_sign_prehashed] Seed unsealed successfully, proceeding with signing</code>  
+- <code>[do_sign_prehashed] Seed zeroed after signing</code>  
+
+(or <code>[do_sign]</code> depending on the chain)
+
+### What this means
+
+- **Unsealing**  
+  The private key material is **recovered from SGX-sealed storage** and loaded into enclave memory just before signing.
+
+- **Signing**  
+  The transaction payload is signed entirely inside the enclave. The private key is never exposed outside trusted memory.
+
+- **Zeroization**  
+  After signing completes, the key material is explicitly **zeroed from enclave memory**, limiting its lifetime to the minimum required window.
+
+This sequence confirms that:
+- Keys are **persisted securely** using SGX sealing  
+- Keys are **only present in memory when strictly necessary**  
+- No plaintext key material survives beyond the signing operation
+
+### Important note
+
+You may still see warnings such as:
+
+- <code>storage::start_transaction unimplemented</code>  
+- <code>storage::commit_transaction unimplemented</code>  
+
+These are related to the Substrate WASM execution environment and **do not indicate a failure of SGX sealing**. The sealing and unsealing operations are handled at the enclave level and remain fully effective.
+
+---
+
+### Summary
+
+When reviewing logs in M3:
+- The presence of <code>unseal_seed</code> followed by successful signing confirms **SGX-backed key recovery**.
+- The subsequent zeroization log confirms **safe key lifecycle management**.
+- This behavior represents the **only functional change between M2 and M3** in the KMS.
 
 
 
