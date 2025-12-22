@@ -67,8 +67,8 @@ BITCOIN_TESTNET_API_KEY=<API_KEY_WE_SEND>
 mkdir interstellar_m2_demo && cd interstellar_m2_demo
 
 # Step 2: Download the stack config
-curl -L -o docker-compose.yml https://raw.githubusercontent.com/Interstellar-Network/containers/releases/tag/testnet-m3/docker-compose.yml
-curl -L -o docker-ipfs-init.sh https://raw.githubusercontent.com/Interstellar-Network/containers/releases/tag/testnet-m3/docker-ipfs-init.sh
+curl -L -o docker-compose.yml https://raw.githubusercontent.com/Interstellar-Network/containers/refs/tags/testnet-m3/docker-compose.yml
+curl -L -o docker-ipfs-init.sh https://raw.githubusercontent.com/Interstellar-Network/containers/refs/tags/testnet-m3/docker-ipfs-init.sh
 chmod +x docker-ipfs-init.sh
 ```
 
