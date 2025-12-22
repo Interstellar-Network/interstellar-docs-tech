@@ -295,8 +295,8 @@ Set-NetFirewallProfile -Profile Domain,Private,Public -Enabled True
 ```
 :::
 
-:::info Milestone 2 Scope Clarification  
-During **Milestone 2**, our primary objective is to validate the backend capabilities required to generate, sign, and execute transactions across different chains.  
+:::info Milestone 3 Scope Clarification  
+During **Milestone 3**, our primary objective is to validate the backend capabilities required to generate, sign, and execute transactions across different chains.  
 
 At this stage, the focus is on ensuring correctness and robustness of the transaction pipeline at the infrastructure level. User-facing aspects such as **application UI/UX**, **visual polish**, or **cosmetic design** are not yet part of the milestone scope. Especially because our focus is the delivery of a mobile SDK. 
 
