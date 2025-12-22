@@ -159,6 +159,16 @@ While the app runs on Apple Silicon (M1–M4), emulator performance may vary due
 
 :::
 
+:::warning App reinstall required
+
+If you already have an older version of the Interstellar Android app installed, **you must uninstall it before installing the M3 build**.
+
+The app uses local secure storage and cached configuration; keeping a previous version may lead to inconsistent behavior during transaction signing or validation.
+
+:::
+
+
+
 
 ### Option 1: Physical Device
 
@@ -296,18 +306,6 @@ In addition, while the backend successfully submits transactions, we have not ye
 
 
 ## 4. Run the Android App Demo
-
-:::warning App reinstall required
-
-If you already have an older version of the Interstellar Android app installed, **you must uninstall it before installing the M3 build**.
-
-The app uses local secure storage and cached configuration; keeping a previous version may lead to inconsistent behavior during transaction signing or validation.
-
-:::
-
-
-
-
 
 ### Step 1: Connect & Onboard
 - **Launch the app**
@@ -495,7 +493,7 @@ to register known recipient addresses on-chain through a secure validation proce
 
 ---
 
-> 🛠️ You can check the logs from your local stack to see whtat happen begind the hood when you interact with the blockchain: `extrinsics` sent
+> You can check the logs from your local stack to see whtat happen begind the hood when you interact with the blockchain: `extrinsics` sent
 
 ## 🛠️ Interpreting Logs
 
@@ -503,7 +501,7 @@ When interacting with the mobile app (e.g., authentication, transaction validati
  key log messages are printed by both `integritee-node` and `integritee-service`. 
 
 
-### 🛠️ Mobile Registration
+###  Mobile Registration
 
 This log trace shows what happens when a new device connects to the system and is not yet registered under a root account. The backend detects the missing account and proceeds with registration:
 
