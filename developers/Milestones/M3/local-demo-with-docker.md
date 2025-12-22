@@ -448,19 +448,26 @@ Here are the log patterns to look for in each chain’s backend output:
 
 ### DOT
 ```bash
-[2025-08-27T15:26:52Z DEBUG pallet_dot_client::pallet] [submit_extrinsic] RPC response: Object {"result": "0x1e58d3a0a3fdf08440a683b67248819a6a64c8249b486b3aae9a686e7ec8de3d"}
+DEBUG dot_client::client] [send_raw_transaction] RPC response: Object {"id": Number(1), "jsonrpc": String("2.0"), "result": String("0x146594ef3f09219cd2f6a9f24a29a8a5ebfcb9f9b46a6b95e0d302995fbaa0fc")
+INFO pallet_tx_manager::pallet] Transaction broadcast successful: 0x146594ef3f09219cd2f6a9f24a29a8a5ebfcb9f9b46a6b95e0d302995fbaa0fc
 ```
 ### ETH
 ```bash
-2025-08-27T17:47:51.688957000Z [INFO  pallet_eth_client::pallet] send_transaction: OK: 0x6593fb0b75fb4eae41e6d918f1ab99dd011f4b1e95c6d913b607968d7f6a0471
+DEBUG eth_client::client] rpc_request: START 
+INFO pallet_tx_manager::pallet] Transaction broadcast successful: 0x2b116ccc2f92fafb9aa0108625876f0ca8d62de050ac7672091b3b4091360e69
 ```
 ### SOL
 ```bash
-2025-08-27T18:38:52.145987000Z [INFO  pallet_sol_client::pallet] [send_transaction] Transaction sent with signature: 3QuGubLdzpSi6M3Xy2VxW5ZNJZPnxwy8MfRfvKurDA3MyNYMvgKFVPXt16xzDiHbbn4Px6hfYiq6t7haA6MdbdAb
+[INFO sol_client::client] [broadcast_transaction] Transaction sent with signature: 3QuGubLdzpSi6M3Xy2VxW5ZNJZPnxwy8MfRfvKurDA3MyNYMvgKFVPXt16xzDiHbbn4Px6hfYiq6t7haA6MdbdAb
+NFO pallet_tx_manager::pallet] Transaction broadcast successful:
+3QuGubLdzpSi6M3Xy2VxW5ZNJZPnxwy8MfRfvKurDA3MyNYMvgKFVPXt16xzDiHbbn4Px6hfYiq6t7haA6MdbdAb
 ```
 ### BTC
 ```bash
-[INFO  pallet_btc_client::pallet] send_transaction: OK: txid=60e95abf0d674143fae1ef11f115386a6dadcb4438ee0ab5c1a4e26438844878
+[INFO  btc_client::client] Transaction broadcast Successfull: txid=60e95abf0d674143fae1ef11f115386a6dadcb4438ee0ab5c1a4e26438844878
+INFO pallet_tx_manager::pallet] Transaction broadcast successful:
+60e95abf0d674143fae1ef11f115386a6dadcb4438ee0ab5c1a4e26438844878
+
 ```
 
 
