@@ -459,7 +459,7 @@ INFO pallet_tx_manager::pallet] Transaction broadcast successful: 0x2b116ccc2f92
 ### SOL
 ```bash
 [INFO sol_client::client] [broadcast_transaction] Transaction sent with signature: 3QuGubLdzpSi6M3Xy2VxW5ZNJZPnxwy8MfRfvKurDA3MyNYMvgKFVPXt16xzDiHbbn4Px6hfYiq6t7haA6MdbdAb
-NFO pallet_tx_manager::pallet] Transaction broadcast successful:
+INFO pallet_tx_manager::pallet] Transaction broadcast successful:
 3QuGubLdzpSi6M3Xy2VxW5ZNJZPnxwy8MfRfvKurDA3MyNYMvgKFVPXt16xzDiHbbn4Px6hfYiq6t7haA6MdbdAb
 ```
 ### BTC
