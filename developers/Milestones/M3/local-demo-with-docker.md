@@ -372,7 +372,7 @@ In addition the Key Management system is now protected through the sealing of th
 ### Step 2: Test Transactions with conditional validations
 
 :::note Test Setup  
-For simplicity during Milestone 3 testing — and to minimize the need for testnet tokens — the **sender and receiver addresses are set to the same account**, except for Solana (which uses a predefined address). This setup accelerates testing for curators by avoiding manual address inputs, while still allowing us to validate transaction generation and submission without requiring external token funding.  
+For simplicity during Milestone 3 testing — and to minimize the need for testnet tokens — the **sender and receiver addresses are set to the same account**. This setup accelerates testing for curators by avoiding manual address inputs, while still allowing us to validate transaction generation and submission without requiring external token funding.  
 :::
 
 
