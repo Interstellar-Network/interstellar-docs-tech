@@ -464,7 +464,7 @@ INFO pallet_tx_manager::pallet] Transaction broadcast successful:
 ```
 ### BTC
 ```bash
-[INFO  btc_client::client] Transaction broadcast Successfull: txid=60e95abf0d674143fae1ef11f115386a6dadcb4438ee0ab5c1a4e26438844878
+[INFO  btc_client::client] Transaction broadcast successfull: txid=60e95abf0d674143fae1ef11f115386a6dadcb4438ee0ab5c1a4e26438844878
 INFO pallet_tx_manager::pallet] Transaction broadcast successful:
 60e95abf0d674143fae1ef11f115386a6dadcb4438ee0ab5c1a4e26438844878
 
