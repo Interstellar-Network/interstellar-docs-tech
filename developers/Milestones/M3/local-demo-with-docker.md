@@ -146,6 +146,8 @@ From the official [Interstellar GitHub Release](https://github.com/Interstellar-
 - `androidApp-arm64-release.apk` — for Android devices and Apple Silicon(M1/M2/M3/M4)
 - `androidApp-x86_64-release.apk` — for Android emulators running on x86_64 platforms (e.g., Windows PCs, Intel-based Mac)
 
+> **Latest version recommended**
+
 :::tip Recommended Test Setup – Hardware & Emulator Guidance
 
 While the app runs on Apple Silicon (M1–M4), emulator performance may vary due to ARM virtualization and GPU constraints. For accurate testing—especially for Rust-based rendering and cryptographic logic—choose the best available setup:
