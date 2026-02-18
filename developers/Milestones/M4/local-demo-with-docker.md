@@ -332,9 +332,23 @@ The distribution is protected against automation and ensures one allocation per 
 
 Navigate to:
 
-**Wallet → Distribute → Create Campaign**
+**Airdrop Gift Icon → Create Campaign + Icom**
 
 <!-- screenshot: campaign_creation_screen -->
+
+<div style={{ display: "flex", gap: "20px", justifyContent: "center" }}>
+  <figure style={{ textAlign: "center" }}>
+    <img src="/img/airdrop_campaign_black.png" alt="campaign" width="200"/>
+    <figcaption>Campaign Screen</figcaption>
+  </figure>
+  <figure style={{ textAlign: "center" }}>
+    <img src="/img/fill_campaign_parameter_black.png" alt="portfolio funded white" width="200"/>
+    <figcaption>Campaign parameters</figcaption>
+  </figure>
+</div>
+
+
+
 
 Fill in the parameters:
 
@@ -346,7 +360,7 @@ Fill in the parameters:
 | Freeze period | Lock duration after claim |
 | Expiration | Campaign closing time |
 
-Tap **Create Campaign**
+Tap **Create**
 
 The wallet generates a dedicated funding address.
 
@@ -469,11 +483,23 @@ This guide shows how to acquire testnet assets directly inside the wallet using 
 
 Navigate to:
 
-**Wallet → Buy**
+**$ icon → Buy/Sell**
 
 Select the desired network and asset.
 
 <!-- screenshot: buy_asset_select -->
+
+<div style={{ display: "flex", gap: "20px", justifyContent: "center" }}>
+  <figure style={{ textAlign: "center" }}>
+    <img src="/img/buy_fiat_black.png" alt="fiat" width="200"/>
+    <figcaption>Fiat Screen</figcaption>
+  </figure>
+  <figure style={{ textAlign: "center" }}>
+    <img src="/img/buy_fiat_on.png" alt="fiat on" width="200"/>
+    <figcaption>fiat on/off provider</figcaption>
+  </figure>
+</div>
+
 
 ---
 
@@ -483,31 +509,87 @@ Enter the fiat amount to simulate purchase.
 
 The wallet displays the estimated token amount.
 
-<!-- screenshot: buy_amount_entry -->
-
 Tap **Continue**
 
 ---
+### Step 3 — Registration
 
-### Step 3 — Provider Confirmation
+
+You enter now in a registration procees.
+
+<div style={{ display: "flex", gap: "20px", justifyContent: "center" }}>
+  <figure style={{ textAlign: "center" }}>
+    <img src="/img/sign_in_mail.png" alt="fiat" width="200"/>
+    <figcaption>Provide an email</figcaption>
+  </figure>
+  <figure style={{ textAlign: "center" }}>
+    <img src="/img/OTP_mail.png" alt="fiat on" width="200"/>
+    <figcaption>OTP with email</figcaption>
+  </figure>
+</div>
+
+
+:::note 
+We recommend adding a UK address for sandbox accounts since these work best with our test credit cards.
+
+**IMPORTANT:** you need to use "skip button" when asked for photo ID and liveness check
+:::
+
+
+<div style={{ display: "flex", gap: "20px", justifyContent: "center" }}>
+  <figure style={{ textAlign: "center" }}>
+    <img src="/img/info_moonpay.png" alt="fiat" width="200"/>
+    <figcaption>Provide your personnel info</figcaption>
+  </figure>
+  <figure style={{ textAlign: "center" }}>
+    <img src="/img/choose_UK.png" alt="fiat on" width="200"/>
+    <figcaption>Choose UK/match test card</figcaption>
+  </figure>
+</div>
+
+
+> When registration is completed, pay attention to select a debit or credit card instead of revolut
+
+### Step 4 — Choose a payment card
+
+<div style={{ display: "flex", gap: "20px", justifyContent: "center" }}>
+  <figure style={{ textAlign: "center" }}>
+    <img src="/img/no_revolut.png" alt="fiat" width="200"/>
+    <figcaption>don't use revolut!</figcaption>
+  </figure>
+  <figure style={{ textAlign: "center" }}>
+    <img src="/img/choose_card.png" alt="fiat on" width="200"/>
+    <figcaption>Choose debit or credit card</figcaption>
+  </figure>
+</div>
+
+
+#### Test Card to use (frictionless recomended)
+
+| Card Type                  | Card Number           | Expiration | CVC |
+|---------------------------|-----------------------|-----------|----|
+| Visa 3DS Frictionless (UK) | 4485 0403 7153 6584 | 12/2030   | 123 |
+| Visa 3DS Challenge (UK)    | 4242 4242 4242 4242 | 12/2030   | 123 |
+
+
+### Step 5 — Provider Confirmation
 
 The payment provider interface opens.
 
 Confirm the transaction.
 
-<!-- screenshot: provider_confirmation -->
+<div style={{ display: "flex", gap: "20px", justifyContent: "center" }}>
+  <figure style={{ textAlign: "center" }}>
+    <img src="/img/pay_w_card.png" alt="fiat" width="200"/>
+    <figcaption>Pay with card</figcaption>
+  </figure>
+  <figure style={{ textAlign: "center" }}>
+    <img src="/img/end_on_ramp.png" alt="end on ramp" width="200"/>
+    <figcaption>End fiat on ramp</figcaption>
+  </figure>
+</div>
 
----
 
-### Step 4 — Secure Validation
-
-Return to the wallet and approve the operation.
-
-This step ensures the purchase cannot be triggered automatically.
-
-<!-- screenshot: buy_secure_validation -->
-
----
 
 ### Step 5 — Receive Funds
 
