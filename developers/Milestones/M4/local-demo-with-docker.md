@@ -519,11 +519,11 @@ You enter now in a registration procees.
 
 <div style={{ display: "flex", gap: "20px", justifyContent: "center" }}>
   <figure style={{ textAlign: "center" }}>
-    <img src="/img/sign_in_mail.png" alt="fiat" width="200"/>
+    <img src="/img/sign_in_mail.png" alt="sign in mail" width="200"/>
     <figcaption>Provide an email</figcaption>
   </figure>
   <figure style={{ textAlign: "center" }}>
-    <img src="/img/OTP_mail.png" alt="fiat on" width="200"/>
+    <img src="/img/OTP_mail.png" alt="OTP mail" width="200"/>
     <figcaption>OTP with email</figcaption>
   </figure>
 </div>
@@ -538,11 +538,11 @@ We recommend adding a UK address for sandbox accounts since these work best with
 
 <div style={{ display: "flex", gap: "20px", justifyContent: "center" }}>
   <figure style={{ textAlign: "center" }}>
-    <img src="/img/info_moonpay.png" alt="fiat" width="200"/>
+    <img src="/img/info_moonpay.png" alt="info moonpay" width="200"/>
     <figcaption>Provide your personnel info</figcaption>
   </figure>
   <figure style={{ textAlign: "center" }}>
-    <img src="/img/choose_UK.png" alt="fiat on" width="200"/>
+    <img src="/img/choose_UK.png" alt="choose UK" width="200"/>
     <figcaption>Choose UK/match test card</figcaption>
   </figure>
 </div>
@@ -554,11 +554,11 @@ We recommend adding a UK address for sandbox accounts since these work best with
 
 <div style={{ display: "flex", gap: "20px", justifyContent: "center" }}>
   <figure style={{ textAlign: "center" }}>
-    <img src="/img/no_revolut.png" alt="fiat" width="200"/>
+    <img src="/img/no_revolut.png" alt="no revolut" width="200"/>
     <figcaption>don't use revolut!</figcaption>
   </figure>
   <figure style={{ textAlign: "center" }}>
-    <img src="/img/choose_card.png" alt="fiat on" width="200"/>
+    <img src="/img/choose_card.png" alt="choose card" width="200"/>
     <figcaption>Choose debit or credit card</figcaption>
   </figure>
 </div>
@@ -580,7 +580,7 @@ Confirm the transaction.
 
 <div style={{ display: "flex", gap: "20px", justifyContent: "center" }}>
   <figure style={{ textAlign: "center" }}>
-    <img src="/img/pay_w_card.png" alt="fiat" width="200"/>
+    <img src="/img/pay_w_card.png" alt="pay with card" width="200"/>
     <figcaption>Pay with card</figcaption>
   </figure>
   <figure style={{ textAlign: "center" }}>
