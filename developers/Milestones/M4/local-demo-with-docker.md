@@ -572,6 +572,21 @@ We recommend adding a UK address for sandbox accounts since these work best with
 | Visa 3DS Challenge (UK)    | 4242 4242 4242 4242 | 12/2030   | 123 |
 
 
+<div style={{ display: "flex", gap: "20px", justifyContent: "center" }}>
+  <figure style={{ textAlign: "center" }}>
+    <img src="/img/type_card_number.png" alt="type card number" width="200"/>
+    <figcaption>Fill the card number</figcaption>
+  </figure>
+  <figure style={{ textAlign: "center" }}>
+    <img src="/img/add_card.png" alt="add card" width="200"/>
+    <figcaption>Visa 3DS Challenge</figcaption>
+  </figure>
+</div>
+
+> in this example we used the Visa with challenge, it adds an additional control step you can avoid by using the frictionless card.
+
+
+
 ### Step 5 — Provider Confirmation
 
 The payment provider interface opens.
