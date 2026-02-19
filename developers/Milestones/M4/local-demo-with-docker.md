@@ -532,7 +532,7 @@ You enter now in a registration procees.
 :::note 
 We recommend adding a UK address for sandbox accounts since these work best with our test credit cards.
 
-**IMPORTANT:** you need to use "skip button" when asked for photo ID and liveness check
+**IMPORTANT:** you need to use the "skip" button when asked for photo ID and liveness check
 :::
 
 
