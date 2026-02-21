@@ -324,7 +324,6 @@ The distribution is protected against automation and ensures one allocation per 
 - Wallet application installed (campaign creator only)
 - Sufficient balance to fund the campaign
 - Supported network selected
-- Internet connectivity
 
 ---
 
@@ -334,7 +333,7 @@ Navigate to:
 
 **Airdrop Gift Icon → Create Campaign + Icom**
 
-<!-- screenshot: campaign_creation_screen -->
+
 
 <div style={{ display: "flex", gap: "20px", justifyContent: "center" }}>
   <figure style={{ textAlign: "center" }}>
@@ -342,11 +341,10 @@ Navigate to:
     <figcaption>Campaign Screen</figcaption>
   </figure>
   <figure style={{ textAlign: "center" }}>
-    <img src="/img/fill_campaign_parameter_black.png" alt="portfolio funded white" width="200"/>
+    <img src="/img/campaign_set.png" alt="portfolio funded white" width="200"/>
     <figcaption>Campaign parameters</figcaption>
   </figure>
 </div>
-
 
 
 
@@ -357,82 +355,105 @@ Fill in the parameters:
 | Asset | Token to distribute |
 | Amount per claim | Allocation per participant |
 | Claim limit | Maximum number of recipients |
+| Registration period | How long registration phase lasts |
 | Freeze period | Lock duration after claim |
 | Expiration | Campaign closing time |
 
+:::note
+All period should be define in blocks numbers
+
+- **Freeze period** should be superiour to **Registration period**
+- A Campaign will move to Closed state if now is superior to **Registration period** and it was not yet funded
+- Default values proposed are choosen to facilitate the testing
+:::
+
 Tap **Create**
 
-The wallet generates a dedicated funding address.
+
+<div style={{ display: "flex", gap: "20px", justifyContent: "center" }}>
+  <figure style={{ textAlign: "center" }}>
+    <img src="/img/campaign_created.png" alt="campaign" width="200"/>
+    <figcaption>Campaign Link</figcaption>
+  </figure>
+  <figure style={{ textAlign: "center" }}>
+    <img src="/img/campaign_init.png" alt="portfolio funded white" width="200"/>
+    <figcaption>Campaign information</figcaption>
+  </figure>
+</div>
+
+
+The wallet generates a unique **deep link** to share with all participants and then a dedicated funding address.
 
 ---
 
 ### Step 2 — Fund the Campaign
 
 Send funds to the generated campaign address.
-
-<!-- screenshot: campaign_funding_address -->
-
 Once the balance is detected, the campaign becomes **Active**.
 
 ---
 
-### Step 3 — Generate Distribution Link
+:::info TIP FOR reviewers
 
-Open the campaign details and select:
+Once the campaign is active you can set-up a recovery (Cloud Icon) for the wallet that created the campaign. The quicker is with an inputed NFC ex: 12345678 and then reset your app (Setting Icon) to simulate a new app
+:::
 
-**Share Campaign**
 
-You can:
+### Step 3 — Register to the Campaign
 
-- Copy link
-- Share link
-- Display QR code
+Use the deep link you got during the campaign creation.
 
-<!-- screenshot: campaign_share_link_qr -->
+:::info TIP for reviewers
 
-The same link can be reused for all participants.
+You can use the following adb cmd example:
+```
+adb shell am start -W -a android.intent.action.VIEW -d "interstellar://airdrop/campaign/campaign_ID" gg.interstellar.wallet.android
+```
+to provide your app with the link replace the quoted "deep link" with the one you receive during campaign creation
+:::
 
----
+When done the app will prompt you to register with "Register Now" button i.e type a one time code
 
-### Step 4 — Claim Assets (Existing Wallet)
 
-1. User opens the link
-2. Wallet opens automatically
-3. First validation confirms presence
-4. Claim is registered
+<div style={{ display: "flex", gap: "20px", justifyContent: "center" }}>
+  <figure style={{ textAlign: "center" }}>
+    <img src="/img/register_ready.png" alt="register ready" width="200"/>
+    <figcaption>Register Now</figcaption>
+  </figure>
+  <figure style={{ textAlign: "center" }}>
+    <img src="/img/registered.png" alt="" width="200"/>
+    <figcaption>Registered</figcaption>
+  </figure>
+</div>
 
-<!-- screenshot: claim_existing_wallet -->
 
 The allocation enters the **Frozen state** until the freeze period expires.
 
 ---
 
-### Step 5 — Claim Assets (New User — App Not Installed)
+### Step 5 — Claim Assets
 
-1. User clicks the link
-2. Redirected to install the wallet
-3. After installation the link resumes automatically
-4. First validation occurs
-5. Claim registered
+You need to wait for the **Freeze period** to end
 
-<!-- screenshot: claim_new_install_flow -->
 
-No manual input or account setup required.
+<div style={{ display: "flex", gap: "20px", justifyContent: "center" }}>
+  <figure style={{ textAlign: "center" }}>
+    <img src="/img/registered_not_claimed.png" alt="registered not claimmed" width="200"/>
+    <figcaption>Registered</figcaption>
+  </figure>
+  <figure style={{ textAlign: "center" }}>
+    <img src="/img/claim_ready.png" alt="" width="200"/>
+    <figcaption>Claim Ready</figcaption>
+  </figure>
+</div>
 
----
 
-### Step 6 — Unlock Funds (Second Validation)
+Click on the **"Claim Airdrop"** button to get your assets when it appears, you will be prompted with a validation screen i.e one time code to input to proceed with the claim.
 
-After the freeze period:
-
-1. User opens the wallet
-2. Confirms unlock action
-3. Second validation occurs
-4. Funds become spendable
-
-<!-- screenshot: claim_unlock_validation -->
 
 ---
+
+
 
 ### Campaign Completion
 
@@ -441,6 +462,24 @@ The campaign automatically closes when:
 - Claim limit reached
 - Expiration reached
 - Creator closes manually
+
+:::info TIP FOR reviewers
+You can recover the wallet account associated to the campaign creation
+using your NFC number (quicker) or the recovery item(s) you have choosen  to check the campaign status
+:::
+
+
+<div style={{ display: "flex", gap: "20px", justifyContent: "center" }}>
+  <figure style={{ textAlign: "center" }}>
+    <img src="/img/campaign_init.png" alt="campaign init" width="200"/>
+    <figcaption>Init</figcaption>
+  </figure>
+  <figure style={{ textAlign: "center" }}>
+    <img src="/img/campaign_result.png" alt="" width="200"/>
+    <figcaption>Result</figcaption>
+  </figure>
+</div>
+
 
 ---
 
@@ -622,634 +661,209 @@ After confirmation, the assets appear in the wallet balance.
 
 You have successfully acquired assets through the integrated on-ramp.
 
+------------------
 
-
-
-
-
-
-
-## 4. Run the Android App Demo
-
-### Step 1: Connect & Onboard
-- **Launch the app**
-  - Register a new mobile account
-  - Validate biometric & SE-based registration
-- Check toasted messages
-  - **Registering**
-  - **Registered**
-
-### Step 2: Fund your wallet
-
-following is suggested faucets for DOT/PAS, SOL, ETH, BTC:
-- [DOT/PAS](https://faucet.polkadot.io/?parachain=1000)
-- [SOL](https://faucet.solana.com/) select **testnet** not **devnet** on the dropdown
-- [ETH](https://cloud.google.com/application/web3/faucet/ethereum/sepolia)
-- [BTC](https://faucet.testnet4.dev/)
-
-Then on your portfolio screen:
-- Simply click on the correponding DOT, SOL, ETH, BTC symbol to see your address.
-- Click on `Create Pair` if needed and then on the address to copy it, then paste it in the corresponding faucet.
-
-> BTC transaction from the faucet usually can take up to one hour.
-
-:::warning if you experienced issue with some faucet
-Feel free to contact us, we will send you SOL or BTC for their respective testnet.
-:::
-
-**Once Portfolio funded you are ready to move on the Send Screen:**
-
-
-> **Wipe down** on the portfolio or balance/address screen triggers a manual refresh of balances. This is a temporary workaround until the app natively tracks chain states more accurately, which will be available with the SDK delivery.
-
-
-<div style={{ display: "flex", gap: "20px", justifyContent: "center" }}>
-  <figure style={{ textAlign: "center" }}>
-    <img src="/img/portfolio_funded_black.png" alt="portfolio funded black" width="200"/>
-    <figcaption>Portfolio Screen - Funded - dark mode</figcaption>
-  </figure>
-  <figure style={{ textAlign: "center" }}>
-    <img src="/img/portfolio_funded_white.png" alt="portfolio funded white" width="200"/>
-    <figcaption>Send Screen - Funded - light mode</figcaption>
-  </figure>
-</div>
-
-:::info Atomic Units in Testing  
-For testing purposes, the account/address and transaction validation screens display balances and transfer amounts in the **atomic units** of each chain:  
-
-- **DOT / Paseo:** planck  
-- **BTC:** satoshi (sat)  
-- **ETH:** gwei  
-- **SOL:** lamports  
-
-This approach ensures precision and consistency during backend validation, even if these units are less user-friendly than standard denominations.  
-:::  
-
-
-:::note New Features (M3)  
-In Milestone 3, transaction validation become **conditional on an amount threshold**. This threshold is managed by the **Transaction Management Layer (TML)**, allowing policies such as requiring validation only for transfers above a specified value.
-In addition the Key Management system is now protected through the sealing of the private keys as well as related sensitive information. 
-:::  
-
-
-
-### Step 2: Test Transactions with conditional validations
-
-:::note Test Setup  
-For simplicity during Milestone 3 testing — and to minimize the need for testnet tokens — the **sender and receiver addresses are set to the same account**. This setup accelerates testing for curators by avoiding manual address inputs, while still allowing us to validate transaction generation and submission without requiring external token funding.  
-:::
-
-
-- **Send DOTs, SOLs, ETHs, BTCs to a contact**
-
-<div style={{ textAlign: "center" }}>
-  <img src="/img/Send_Currency_Demo.gif" alt="wallet menu" width="200"/>
-</div>
-
-
-:::note Test setup (Milestone 3)
-
-For simplicity during **Milestone 3**, transaction thresholds and prefilled amounts are intentionally calibrated so that **changing a single digit** is enough to switch between the two execution paths:
-
-- **Below threshold** → auto-approved transaction  
-- **Above threshold** → VCA-gated transaction
-
-The default amounts are defined in  
-<code>androidApp/src/main/java/gg/interstellar/wallet/android/data/WalletData.kt</code>  
-and are chosen so that a typical faucet allocation allows **~10–20 transactions per chain** without refilling.
-
-| Chain | Prefilled amount (example) | Threshold | How to trigger VCA |
-|------|----------------------------|-----------|--------------------|
-| BTC  | 0.00015 BTC                | 0.0002    | Change to 0.00025 |
-| ETH  | 0.00025 ETH                | 0.0003    | Change to 0.00035 |
-| DOT  | 0.55 DOT                   | 0.6       | Change to 0.65    |
-| SOL  | 0.02 SOL                   | 0.025     | Change to 0.03    |
-
-This setup allows reviewers to validate **both flows** quickly, without manual threshold tuning or repeated faucet usage.
-
-:::
-
-
-  - if the **Trusted Action Validation Protocol (TAVP)** screen appears:
-  - Enter the one-time code (2-digit), or experiment with trial/feedback
-  - Check toasted messages whith Action Validation Screen:
-    - **Initializing a transaction...**
-    - [error] No circuits available after 10s; **Something went wrong!** (usually due to insuficient balance)
-    - [after taping one-time code digits]
-    - **Validating transaction...**
-    
-
-
-
-
-
-
-
-
-
-📖 **How to Track a Transaction**
-
-Copy the transaction hash (or signature) printed in the backend logs when a transaction is submitted.
-
-- DOT/Paseo → extrinsic hash (hexadecimal, 0x…)
-- ETH → starts with 0x…
-- SOL → long base58 signature string
-- BTC → transaction ID (txid, hexadecimal …)
-
-Paste this value into the corresponding block explorer (alternatively you can also paste your **address**):
-
-- [Polkadot / Paseo (DOT): Subscan](https://assethub-paseo.subscan.io/account)
-- [Ethereum (ETH): Etherscan](https://sepolia.etherscan.io/) 
-- [Solana (SOL): Solscan](https://solscan.io/?cluster=testnet)
-- [Bitcoin (BTC): Mempool.space](https://mempool.space/testnet4)
-
-
-The explorer will display transaction status, inclusion block, and fee information.
-
-🔎 **Example Log Lines Containing Transaction Hashes**
-
-Here are the log patterns to look for in each chain’s backend output:
-
-### DOT
-```bash
-DEBUG dot_client::client] [send_raw_transaction] RPC response: Object {"id": Number(1), "jsonrpc": String("2.0"), "result": String("0x146594ef3f09219cd2f6a9f24a29a8a5ebfcb9f9b46a6b95e0d302995fbaa0fc")
-INFO pallet_tx_manager::pallet] Transaction broadcast successful: 0x146594ef3f09219cd2f6a9f24a29a8a5ebfcb9f9b46a6b95e0d302995fbaa0fc
-```
-### ETH
-```bash
-DEBUG eth_client::client] rpc_request: START 
-INFO pallet_tx_manager::pallet] Transaction broadcast successful: 0x2b116ccc2f92fafb9aa0108625876f0ca8d62de050ac7672091b3b4091360e69
-```
-### SOL
-```bash
-[INFO sol_client::client] [broadcast_transaction] Transaction sent with signature: 3QuGubLdzpSi6M3Xy2VxW5ZNJZPnxwy8MfRfvKurDA3MyNYMvgKFVPXt16xzDiHbbn4Px6hfYiq6t7haA6MdbdAb
-INFO pallet_tx_manager::pallet] Transaction broadcast successful:
-3QuGubLdzpSi6M3Xy2VxW5ZNJZPnxwy8MfRfvKurDA3MyNYMvgKFVPXt16xzDiHbbn4Px6hfYiq6t7haA6MdbdAb
-```
-### BTC
-```bash
-[INFO  btc_client::client] Transaction broadcast successfull: txid=60e95abf0d674143fae1ef11f115386a6dadcb4438ee0ab5c1a4e26438844878
-INFO pallet_tx_manager::pallet] Transaction broadcast successful:
-60e95abf0d674143fae1ef11f115386a6dadcb4438ee0ab5c1a4e26438844878
-```
-
-
-:::info Handling Insufficient Balance Errors  
-When a transaction is attempted without enough funds to cover the transfer amount and network fees, the client aborts before submission.  
-
-All chain clients (DOT, ETH, SOL, BTC) follow the same pattern: the **initialize_transaction** step fails, and the error is returned in the logs. For example, in the SOL client:  
-
-```bash
-[ERROR itp_stf_executor::executor] Stf execute failed: Dispatch("SolClient Initialize Transaction error: ... message: Some(\"InsufficientBalance\") })
-```
-At this stage of the app/SDK devellopement, if an insufficient balance error occurs, the VCA token is not transfered to the app, and the screen instead displays a generic “Something went wrong!” message.
-
-This behavior ensures no invalid transactions are broadcast and provides a clear error message for debugging and verification.
-:::
-
-
-
-
-
-:::warning Low-end devices and emulator limitations
-If you are using an emulator with low-end GPU, or a low-end or outdated Android device with limited GPU, the user experience may be significantly degraded. 
-Although the validation screen may be harder to read in such conditions, 
-you should still be able to complete the test process.
-:::
-
-:::info FUTURE ENHANCEMENT
-In the future, we plan to introduce a **trusted beneficiary** feature. This will enable users 
-to register known recipient addresses on-chain through a secure validation process, preventing attackers from substituting contact names with malicious public keys. This enhancement will make the wallet both more secure and user-friendly.
-:::
-
----
-
-> You can check the logs from your local stack to see whtat happen begind the hood when you interact with the blockchain: `extrinsics` sent
 
 ## 🛠️ Interpreting Logs
 
-When interacting with the mobile app (e.g., authentication, transaction validation, recovery),
- key log messages are printed by both `integritee-node` and `integritee-service`. 
+### Airdrop Campaign — Logs Walkthrough (Create → Fund → Register → Claim)
+
+This page walks through the **end-to-end secure asset distribution** flow using the **ETH** campaign captured in the logs as example(that match tutorials screenshot example).
+
+It covers:
+
+1. Campaign creation and activation (funding)
+2. **Registration of participants** (VCA validation via `pallet_tx_validation`)
+3. Transition to claim phase
+4. **Claim** (second VCA validation + external transfer)
+
+> The same lifecycle applies to **DOT / BTC / SOL**. Only the asset name (`chain=...`) and fee/address specifics differ.
+
+---
+
+### Context: Campaign Identifiers
+
+This run uses:
+
+- **campaign_id:** `fc603459-af5e-43e7-97e0-1bc20c2bdad0`
+- **campaign funding address (ETH):** `0xee4c93c7b1d422a80769759daa323addf399200e`
+
+You will see both repeated throughout the flow.
+
+---
+
+### 1) Campaign Status Query (Before Funding)
 
 
-###  Mobile Registration
-
-This log trace shows what happens when a new device connects to the system and is not yet registered under a root account. The backend detects the missing account and proceeds with registration:
 
 ```bash
-[INFO  pallet_mobile_registry::pallet] ensure_has_root_account failed for  while checking if registered: Module(ModuleError { index: 16, error: [0, 0, 0, 0], message: Some("RootAccountNotFound") })  
-[DEBUG pallet_mobile_registry::pallet] register_mobile start for    
-[DEBUG pallet_mobile_registry::pallet] register_mobile: new registration for   
-[DEBUG pallet_mobile_registry::pallet] register_mobile end  
+2026-02-21T12:57:16Z DEBUG pallet_airdrop::pallet campaign_info_of STARTED: account=, campaign_id=CampaignId { id: fc603459-af5e-43e7-97e0-1bc20c2bdad0 }
+2026-02-21T12:57:16Z DEBUG pallet_airdrop::pallet get_campaign_balance STARTED: chain=ETH
+2026-02-21T12:57:16Z DEBUG eth_client::client fetch_balance: formated address = "0xee4c93c7b1d422a80769759daa323addf399200e"
+2026-02-21T12:57:16Z DEBUG eth_client::client fetch_balance: RPC response = RpcResponse { result: Some("0x0"), error: None }
 ```
----
 
-#### ✅ What to Look For
+Status evaluation includes **block-based phase boundaries**:
 
-- `RootAccountNotFound`: expected on first connection from a new mobile identity.
-- `register_mobile start` → `register_mobile end`: confirms that registration was initiated and completed.
-- These logs confirm that the system automatically falls back to registering the mobile when not yet linked to a root account.
-
-:::info more details
-Learn more on **[Account Abstraction Layer](/developers/category/aa-layer)**
-:::
-
-
-:::info MORE DETAILS
-Learn more on **[Authentication Layer](/developers/category/authentication-layer)**
-
-**[`computed_inputs_from_permuation`](/developers/Milestones/M1/demo-tutorial/cli-demo-with-docker#how-to-find-the-correct-code-for-the-node)** detailed
-:::
-
-
-import { Table, TableHeader, TableRow, TableCell, TableBody } from "@site/src/components/ui/table";
-import { Badge } from "@site/src/components/ui/badge";
-
-## 🛠️ Multi-chain Transaction Logs with threshold gated transfer
-
-This section explains how to read the logs emitted during a **conditional TAVP-gated transfer** executed via the Interstellar transaction clients for **DOT, ETH, BTC, and SOL**.
-
-As of M3, `pallet_tx_manager` decides whether a transfer must be **VCA-confirmed** depending on a per-chain configured threshold:
-
-- **Below threshold:** transaction is **auto-approved** and broadcast directly.
-- **Above threshold:** `pallet_tx_manager` generates a **VCA commitment**, waits for VCA input validation, then broadcasts.
-
-> **Note**
->
-> The same log structure applies regardless of the target network environment. The “threshold → (optional) VCA → broadcast” flow and its log markers remain identical.
-
----
-
-## Common structure (applies to all chains)
-
-<Table>
-  <TableHeader>
-    <TableRow>
-      <TableCell>Stage</TableCell>
-      <TableCell>What happens</TableCell>
-      <TableCell>Key log markers</TableCell>
-    </TableRow>
-  </TableHeader>
-  <TableBody>
-    <TableRow>
-      <TableCell><strong>1. Start</strong></TableCell>
-      <TableCell>Transaction preparation begins (account + chain + amount in base units).</TableCell>
-      <TableCell><code>[prepare_transaction] START</code></TableCell>
-    </TableRow>
-
-    <TableRow>
-      <TableCell><strong>2. Threshold check</strong></TableCell>
-      <TableCell>Reads <code>TX_THRESHOLD_\*</code>, parses it to base units, compares with amount.</TableCell>
-      <TableCell>
-        <code>TX_THRESHOLD_\*</code>, <code>below_threshold=...</code>
-      </TableCell>
-    </TableRow>
-
-    <TableRow>
-      <TableCell><strong>3. Build + sign</strong></TableCell>
-      <TableCell>Chain-specific preflight, transaction construction, and signing.</TableCell>
-      <TableCell>
-        <code>...client::...</code> build/sign logs + <code>pallet_key_manager</code> signing markers
-      </TableCell>
-    </TableRow>
-
-    <TableRow>
-      <TableCell><strong>4A. Below threshold path</strong></TableCell>
-      <TableCell>Auto-approve and broadcast immediately (no VCA commitment).</TableCell>
-      <TableCell>
-        <code>Below threshold, auto-approving transaction</code> + broadcast success marker
-      </TableCell>
-    </TableRow>
-
-    <TableRow>
-      <TableCell><strong>4B. Above threshold path</strong></TableCell>
-      <TableCell>Create VCA commitment (message + digits), store metadata + pending tx.</TableCell>
-      <TableCell>
-        <code>Above threshold, requiring VCA confirmation</code>, <code>Commitment stored</code>
-      </TableCell>
-    </TableRow>
-
-    <TableRow>
-      <TableCell><strong>5. VCA validation</strong></TableCell>
-      <TableCell>Validate user input via the randomized pinpad permutation.</TableCell>
-      <TableCell>
-        <code>[tx-validation] check_input</code> + <code>TxPass</code>
-      </TableCell>
-    </TableRow>
-
-    <TableRow>
-      <TableCell><strong>6. Broadcast</strong></TableCell>
-      <TableCell>Submit signed transaction/extrinsic and obtain a network tx hash / signature / txid.</TableCell>
-      <TableCell>
-        <code>Transaction broadcast successful</code> or <code>Auto-approved transaction broadcast successful</code>
-      </TableCell>
-    </TableRow>
-  </TableBody>
-</Table>
-
-
-### Fields worth recognizing
-- <code>amount_base_units</code>: chain base unit amount (wei, sats, lamports, planck-like units, etc.).
-- <code>TX_THRESHOLD_\{CHAIN\}</code>: environment variable used to configure the VCA threshold for that chain.
-- <code>below_threshold=true|false</code>: the decision input; the explicit decision log line follows at INFO.
-- <code>message_digits</code> and <code>pinpad_digits</code>: VCA challenge and pinpad permutation used to validate the user input.
-- Final broadcast markers include a chain-native identifier:
-  - DOT: extrinsic hash (<code>0x...</code>)
-  - ETH: transaction hash (<code>0x...</code>)
-  - BTC: transaction id (<code>txid=...</code>)
-  - SOL: transaction signature (base58)
-
-
-
-
-
-## DOT — Conditional VCA-gated transfer
-
-### 1) Start + threshold evaluation
-
-Anchor line:
-
-- <code>[prepare_transaction] START - ... chain=DOT, amount_base_units=...</code>
-
-Threshold resolution appears as:
-
-- <code>env_var=TX_THRESHOLD_DOT</code>
-- <code>Read value: ...</code>
-- <code>Parsed ... to ... base units</code>
-- <code>threshold=..., amount=..., below_threshold=...</code>
-
-Decision line (INFO):
-- If above: <code>Above threshold, requiring VCA confirmation</code>
-- If below: <code>Below threshold, auto-approving transaction</code>
-
-### 2) Build + sign (DOT client)
-
-Typical DOT client markers include:
-- Account/balance RPC reads: <code>state_getStorage</code>
-- Chain context: <code>system_chain</code>, <code>system_properties</code>, <code>state_getRuntimeVersion</code>
-- Extrinsic build/sign:
-  - <code>build_call Balances.transfer_keep_alive</code>
-  - <code>Generated hex payload</code>
-  - <code>Encoded MultiSignature</code>
-  - <code>Extrinsic hex</code>
-
-### 3) Above threshold path: VCA commitment + validation + broadcast
-
-Commitment creation:
-- <code>[generate_tx_message] Generated message: Transfer ... DOT to ...</code>
-- <code>[tx-validation] store_metadata_aux: ... message_pgarbled_cid="Qm..." message_digits=[...], pinpad_digits=[...]</code>
-- <code>Commitment stored with cid="Qm..." digits=... pinpad_digits=...</code>
-- <code>store_pending_transaction: SUCCESS</code>
-
-Input validation:
-- <code>[tx-validation] check_input: ... input_digits=[...]</code>
-- <code>computed_inputs_from_permutation = [...], message_digits = [...]</code>
-- <code>TxPass</code>
-- <code>VCA validation successful</code>
-
-Broadcast:
-- <code>author_submitExtrinsic</code>
-- <code>Transaction broadcast successful: 0x...</code>
-
-### 4) Below threshold path: auto-approve broadcast
-
-You should see:
-- <code>Below threshold, auto-approving transaction</code>
-- immediate submission + <code>Auto-approved transaction broadcast successful: ...</code> (or equivalent final marker)
-
----
-
-## ETH — Conditional VCA-gated transfer (EIP-1559)
-
-### 1) Start + threshold evaluation
-
-Anchor line:
-- <code>[prepare_transaction] START - ... chain=ETH, amount_base_units=...</code>
-
-Threshold parsing:
-- <code>env_var=TX_THRESHOLD_ETH</code>
-- <code>Parsed ... to ... base units</code>
-- <code>below_threshold=...</code>
-
-Decision line (INFO):
-- <code>Above threshold, requiring VCA confirmation</code>
-  or
-- <code>Below threshold, auto-approving transaction</code>
-
-### 2) ETH preflight + build + sign
-
-You will typically see:
-- Fee discovery:
-  - <code>fetch_latest_base_fee: got: ...</code>
-  - <code>fetch_max_priority_fee: got: ...</code>
-- Balance check:
-  - <code>fetch_balance: formated address = "0x..."</code>
-  - <code>fetch_balance: RPC response = ...</code>
-- Signing:
-  - <code>pallet_key_manager ... do_sign_prehashed</code>
-  - <code>create_eip1559_signed_rlp: START</code>
-
-### 3) Above threshold path: VCA commitment + validation + broadcast
-
-Commitment creation:
-- <code>[ETH] ... Entering garble_and_store_commitment</code>
-- <code>Generated message: Transfer ... ETH to 0x...</code>
-- <code>store_metadata_aux ... message_pgarbled_cid="Qm..." message_digits=[...], pinpad_digits=[...]</code>
-- <code>Commitment stored ...</code>
-- <code>store_pending_transaction: SUCCESS</code>
-
-Validation:
-- <code>check_input ...</code>
-- <code>computed_inputs_from_permutation = [...], message_digits = [...]</code>
-- <code>TxPass</code>
-
-Broadcast:
-- <code>send_raw_transaction: START</code>
-- <code>Transaction broadcast successful: 0x...</code>
-
----
-
-## BTC — Threshold-gated transfer (UTXO-based)
-
-BTC differs structurally because transaction construction includes UTXO scanning, selection, and per-input signing.
-
-### 1) Start + threshold evaluation
-
-Anchor:
-- <code>[prepare_transaction] START - ... chain=BTC, amount_base_units=...</code>
-
-Threshold:
-- <code>env_var=TX_THRESHOLD_BTC</code>
-- <code>Parsed ... to ... base units</code>
-- <code>below_threshold=...</code>
-
-Decision line (INFO):
-- If below: <code>Below threshold, auto-approving transaction</code>
-- If above: <code>Above threshold, requiring VCA confirmation</code>
-
-### 2) UTXO discovery + unsigned tx creation
-
-Look for:
-- <code>fetch_utxos_for_address: START</code>
-- RPC scan:
-  - <code>Making RPC call: method=scantxoutset</code>
-- Parsing:
-  - <code>parse_utxos_from_response: ... parsed UTXO ...</code>
-  - <code>SUCCESS: parsed N UTXOs, total_value=... sats</code>
-- UTXO selection:
-  - <code>select_utxos: START for ... sats</code>
-  - <code>Selected ... UTXOs ... change: ...</code>
-- Unsigned tx created:
-  - <code>Unsigned transaction created: inputs=..., outputs=...</code>
-
-### 3) Signing (per-input) + broadcast
-
-Per-input signing markers:
-- <code>Signing input 0: txid:vout, amount=... sats</code>
-- <code>Sighash for input 0: ...</code>
-- <code>pallet_key_manager ... do_sign_prehashed</code>
-- <code>Successfully converted to Bitcoin DER signature</code>
-- <code>Created witness for input ...</code>
-- End of signing:
-  - <code>Transaction signing completed: ... inputs signed</code>
-
-Below threshold auto-approve and broadcast:
-- <code>[prepare_transaction] Below threshold, auto-approving transaction</code>
-- <code>Broadcasting transaction to Bitcoin network ...</code>
-- <code>Transaction broadcast successful: txid=...</code>
-- <code>[prepare_transaction] Auto-approved transaction broadcast successful: ...</code>
-
-Above threshold would insert the same VCA commitment + validation steps as described in DOT/ETH, then broadcast.
-
----
-
-## SOL — Threshold-gated transfer (lamports + simulate + send)
-
-SOL differs because a simulation step is performed before broadcast.
-
-### 1) Start + threshold evaluation
-
-Anchor:
-- <code>[prepare_transaction] START - ... chain=SOL, amount_base_units=...</code>
-
-Threshold:
-- <code>env_var=TX_THRESHOLD_SOL</code>
-- <code>Parsed ... to ... base units</code>
-- <code>below_threshold=...</code>
-
-Decision line (INFO):
-- <code>Below threshold, auto-approving transaction</code>
-  or
-- <code>Above threshold, requiring VCA confirmation</code>
-
-### 2) Balance check + build + sign
-
-Look for:
-- Address and balance:
-  - <code>[get_balance_account_str] Fetching balance for account: ...</code>
-  - <code>getBalance ... value=...</code>
-  - <code>✓ balance check passed</code>
-- Blockhash:
-  - <code>getLatestBlockhash ... blockhash="..."</code>
-- Signing:
-  - <code>pallet_key_manager ... do_sign</code>
-  - <code>[build_and_sign_transaction] transaction built and signed: ... bytes</code>
-
-### 3) Below threshold path: simulate then broadcast
-
-Auto-approve:
-- <code>[prepare_transaction] Below threshold, auto-approving transaction</code>
-
-Simulation:
-- <code>[simulate_transaction] Simulating transaction</code>
-- <code>simulateTransaction ... err=null</code>
-- <code>✓ no error detected in simulation response</code>
-- <code>Transaction simulation successful</code>
-
-Broadcast:
-- <code>sendTransaction ...</code>
-- <code>Transaction sent with signature: ...</code>
-- <code>[prepare_transaction] Auto-approved transaction broadcast successful: ...</code>
-
-Above threshold would insert VCA commitment + validation before broadcast (same pattern as DOT/ETH).
-
----
-
-### Quick troubleshooting markers
-
-- If the transaction was above threshold but never broadcast:
-  - Check for <code>store_pending_transaction: SUCCESS</code> then later <code>TxPass</code>.
-- If VCA fails:
-  - Compare <code>computed_inputs_from_permutation</code> and <code>message_digits</code>.
-- If SOL broadcast fails:
-  - Look for simulation <code>err</code> and <code>check_transaction_err</code> markers.
-- If BTC broadcast fails:
-  - Inspect RPC response from <code>sendrawtransaction</code> and whether signing completed for all inputs.
-
-
-## 🔐 Interpreting SGX sealing logs (M3)
-
-In **Milestone 3**, the KMS introduces **SGX-backed key sealing**, allowing private keys to persist securely across enclave restarts. This behavior is observable directly in the logs emitted by the signing flow.
-
-### Key log markers to look for
-
-During transaction signing (for ETH, BTC, SOL, or DOT), you will typically see:
-
-- <code>[unseal_seed] Delegating to crypto_ops::unseal_seed</code>  
-- <code>[do_sign_prehashed] Seed unsealed successfully, proceeding with signing</code>  
-- <code>[do_sign_prehashed] Seed zeroed after signing</code>  
-
-(or <code>[do_sign]</code> depending on the chain)
-
-### What this means
-
-- **Unsealing**  
-  The private key material is **recovered from SGX-sealed storage** and loaded into enclave memory just before signing.
-
-- **Signing**  
-  The transaction payload is signed entirely inside the enclave. The private key is never exposed outside trusted memory.
-
-- **Zeroization**  
-  After signing completes, the key material is explicitly **zeroed from enclave memory**, limiting its lifetime to the minimum required window.
-
-This sequence confirms that:
-- Keys are **persisted securely** using SGX sealing  
-- Keys are **only present in memory when strictly necessary**  
-- No plaintext key material survives beyond the signing operation
-
-### Important note
-
-You may still see warnings such as:
-
-- <code>storage::start_transaction unimplemented</code>  
-- <code>storage::commit_transaction unimplemented</code>  
-
-These are related to the Substrate WASM execution environment and **do not indicate a failure of SGX sealing**. The sealing and unsealing operations are handled at the enclave level and remain fully effective.
-
----
-
-### Summary
-
-When reviewing logs in M3:
-- The presence of <code>unseal_seed</code> followed by successful signing confirms **SGX-backed key recovery**.
-- The subsequent zeroization log confirms **safe key lifecycle management**.
-- This behavior represents the **only functional change between M2 and M3** in the KMS.
-
-
-
-
-#### Parentchain Inclusion / Sync
-
-> parentchain sync logs
 ```bash
-2025-08-29T14:26:37.130937000Z [+] Received finalized header update (855), syncing parent chain...
-2025-08-29T14:27:01.151365000Z [+] Received finalized header update (857), syncing parent chain...
+2026-02-21T12:57:16Z DEBUG pallet_airdrop evaluate_status: id=CampaignId { id: fc603459-af5e-43e7-97e0-1bc20c2bdad0 }, status=Created, now=6583, reg_end=7848, claim_end=1009149
 ```
 
+#### How to read this
 
-✅ **What to look for**  
-- Parentchain finalized headers advancing.  
-- Event vectors synced.  
+- `status=Created` → campaign exists but is **not yet activated**
+- `now=6583` → current parent-chain block number
+- `reg_end=7848` → registration is open until block **7848**
+- `claim_end=1009149` → claim period ends at block **1009149**
+
+---
+
+### 2) Funding & Activation
+
+Once the campaign escrow is funded, the wallet triggers `fund_campaign` to activate it.
+
+```bash
+2026-02-21T13:01:48Z DEBUG pallet_airdrop::pallet fund_campaign STARTED: campaign_id=CampaignId { id: fc603459-af5e-43e7-97e0-1bc20c2bdad0 }
+2026-02-21T13:01:48Z DEBUG eth_client::client fetch_balance: formated address = "0xee4c93c7b1d422a80769759daa323addf399200e"
+2026-02-21T13:01:48Z DEBUG eth_client::client fetch_balance: RPC response = RpcResponse { result: Some("0x221b262dd8000"), error: None }
+```
+
+The pallet compares required vs actual escrow balance:
+
+```bash
+2026-02-21T13:01:48Z INFO  pallet_airdrop Campaign id=CampaignId { id: fc603459-af5e-43e7-97e0-1bc20c2bdad0 }, required=500046202494800, actual_balance=600000000000000
+2026-02-21T13:01:48Z INFO  pallet_airdrop::pallet Campaign CampaignId { id: fc603459-af5e-43e7-97e0-1bc20c2bdad0 } funded with 600000000000000 ETH and activated
+```
+
+#### What this guarantees
+
+- the escrow holds enough funds to cover **allocations + fees + margin**
+- once funded, the campaign becomes eligible for **registration / claim** according to phase rules
+
+---
+
+### 3) Registration (VCA Validation via tx_validation)
+
+When the wallet opens the campaign (e.g., after injecting the deep link in the emulator), it queries campaign metadata and balance:
+
+In this design, registration is not a passive “link opened” event.
+It becomes effective when the user performs a **VCA one-time-code validation** (handled by `pallet_tx_validation`).
+
+When the user checks their campaign state, the runtime evaluates the campaign status:
+
+```bash
+2026-02-21T13:05:12Z DEBUG pallet_airdrop::pallet get_user_campaign_state STARTED: account=, campaign_id=CampaignId { id: fc603459-af5e-43e7-97e0-1bc20c2bdad0 }
+2026-02-21T13:05:12Z DEBUG pallet_airdrop evaluate_status: id=CampaignId { id: fc603459-af5e-43e7-97e0-1bc20c2bdad0 }, status=Registration, now=7057, reg_end=7848, claim_end=1009149
+```
+
+#### Meaning
+
+- At `now=7057`, the campaign is in **Registration** phase.
+- The user can register by completing a VCA validation.
+
+---
+
+### 4) Transition: Registration → Claim Phase
+
+When the registration window expires, the pallet moves the campaign to the claim phase:
+
+```bash
+2026-02-21T13:24:07Z DEBUG pallet_airdrop evaluate_status: id=CampaignId { id: fc603459-af5e-43e7-97e0-1bc20c2bdad0 }, status=Registration, now=8192, reg_end=7848, claim_end=1009149
+2026-02-21T13:24:07Z INFO  pallet_airdrop Campaign id=CampaignId { id: fc603459-af5e-43e7-97e0-1bc20c2bdad0 } registration expired. Moving to Claim phase.
+```
+
+#### Meaning
+
+- `now=8192` is after `reg_end=7848` → registration is closed
+- the campaign is now in **Claim** phase
+
+> Operationally, this is where any configured “waiting / freeze delay before claim” is enforced by phase boundaries. The wallet UI should guide the user accordingly.
+
+---
+
+### 5) Claim (Second VCA Validation + External Transfer)
+
+When the user claims the airdrop, `claim_airdrop` is called.
+
+### 5.1 Claim start and registration check
+
+```bash
+2026-02-21T13:29:28Z DEBUG pallet_airdrop::pallet claim_airdrop STARTED
+2026-02-21T13:29:28Z DEBUG pallet_airdrop::pallet claim_airdrop: taking active claim for user
+2026-02-21T13:29:28Z DEBUG pallet_airdrop::pallet claim_airdrop: checking registration for user  in campaign CampaignId { id: fc603459-af5e-43e7-97e0-1bc20c2bdad0 }
+```
+
+#### 5.2 VCA validation for the claim
+
+The airdrop pallet calls `validate_airdrop_vca`, which delegates the digit verification to `pallet_tx_validation`:
+
+```bash
+2026-02-21T13:29:28Z DEBUG pallet_airdrop::pallet validate_airdrop_vca STARTED: account=
+2026-02-21T13:29:28Z INFO  pallet_tx_validation::pallet [tx-validation] check_input: who = , ipfs_cid = "QmctBo1y4tyKwxpNvqgKUAhpc1quD9qyrKhZXkgZc3rPUU", input_digits = [7, 4]
+2026-02-21T13:29:28Z INFO  pallet_tx_validation::pallet [tx-validation] check_input: computed_inputs_from_permutation = [4, 9], message_digits = BoundedVec([4, 9], 10)
+2026-02-21T13:29:28Z INFO  pallet_tx_validation::pallet [tx-validation] TxPass
+```
+
+**Key points**
+
+- `ipfs_cid=...` ties the claim to the session/circuit material.
+- The digits are validated against the (randomized) pinpad permutation.
+- `TxPass` is the authoritative signal that the VCA validation succeeded.
+
+### 5.3 Transfer preparation and broadcast (ETH)
+
+Once validated, the pallet performs the external transfer:
+
+```bash
+2026-02-21T13:29:28Z DEBUG pallet_airdrop::pallet transfer_airdrop STARTED: recipient=, amount=250000000000000
+2026-02-21T13:29:28Z INFO  pallet_tx_manager::pallet [prepare_transaction] START - account=, chain=ETH, amount=Fixed(250000000000000), fee_type=Normal
+```
+
+The ETH client fetches fees and signs an EIP-1559 transaction, then broadcasts it:
+
+```bash
+2026-02-21T13:29:28Z DEBUG eth_client::client fetch_latest_base_fee: got: 32
+2026-02-21T13:29:28Z DEBUG eth_client::fee [eth-fee] fee_type=Normal, base_fee=32, priority_fee=1000000 -> max_fee=1000064, max_priority=1000000
+2026-02-21T13:29:28Z INFO  pallet_tx_manager::pallet [prepare_transaction] Auto-approved transaction broadcast successful: 0x0e5c8ee75eec5b1181e91c3cb7c2fa2ea3ef746b9daaf13dd748b5fd24c9b6aa
+2026-02-21T13:29:28Z INFO  pallet_airdrop::pallet External transfer successful
+```
+
+Finally, the campaign status is checked to ensure we are in the expected phase:
+
+```bash
+2026-02-21T13:29:28Z DEBUG pallet_airdrop evaluate_status: id=CampaignId { id: fc603459-af5e-43e7-97e0-1bc20c2bdad0 }, status=Claim, now=8514, reg_end=7848, claim_end=1009149
+2026-02-21T13:29:28Z DEBUG pallet_airdrop ensure: id=CampaignId { id: fc603459-af5e-43e7-97e0-1bc20c2bdad0 } status(Claim) == expected(Claim)
+```
+
+---
+
+### What to look for (Quick Checklist)
+
+When troubleshooting or validating a demo run, look for these milestones:
+
+- **Created, not funded:** `status=Created` + `fetch_balance ... 0x0`
+- **Funding recognized:** `required=... actual_balance=...` then `activated`
+- **Registration phase:** `status=Registration` with `now < reg_end`
+- **Phase transition:** `registration expired. Moving to Claim phase.`
+- **Claim attempt:** `claim_airdrop STARTED` + `checking registration for user`
+- **VCA success:** `[tx-validation] TxPass`
+- **External transfer:** `broadcast successful: 0x...` then `External transfer successful`
+
+---
+
+### Applies to DOT / BTC / SOL
+
+The same pattern remains:
+
+- campaign lifecycle and phase boundaries (Created → Registration → Claim)
+- two human-validated steps (registration VCA + claim VCA)
+- bot resistance enforced by `tx_validation`
+
+Only these vary per chain:
+
+- fee model and transaction encoding
+- address format and clients used (DOT/BTC/SOL client instead of ETH client)
+
 
 
 
