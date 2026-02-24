@@ -668,7 +668,7 @@ You have successfully acquired assets through the integrated on-ramp.
 
 ### Airdrop Campaign — Logs Walkthrough (Create → Fund → Register → Claim)
 
-This page walks through the **end-to-end secure asset distribution** flow using the **ETH** campaign captured in the logs as example(that match tutorials screenshot example).
+This page walks through the **end-to-end secure asset distribution** flow using the **ETH** campaign captured in the logs as example (that match tutorials screenshot example).
 
 It covers:
 
