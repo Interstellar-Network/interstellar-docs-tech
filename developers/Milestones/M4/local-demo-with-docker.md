@@ -389,6 +389,8 @@ The wallet generates a unique **deep link** to share with all participants and t
 ### Step 2 — Fund the Campaign
 
 Send funds to the generated campaign address.
+
+You can use: [Fund your wallet](https://interstellar-docs-tech.pages.dev/developers/Milestones/M3/local-demo-with-docker/#step-2-fund-your-wallet)
 Once the balance is detected, the campaign becomes **Active**.
 
 ---
