@@ -486,7 +486,7 @@ using your NFC number (quicker) or the recovery item(s) you have choosen  to che
 ### Important Rules
 
 - One claim per device
-- Recovery is prohibited during the claiming process
+- Campaign creator cannot claim
 - Funds locked before spending (freeze period)
 - Link reuse allowed (not unique)
 
@@ -890,14 +890,6 @@ You can inspect chain state and transactions via:
 - Ideal for offline testing, developer evaluation, or deeper inspection of runtime logs
 
 
-
-:::info Recovery Testing in Milestone 2  
-Recovery was introduced in **M1** and remains part of the overall testnet scope. All subsequent milestones are designed to remain **compatible with the recovery flow**, but in **M2 we are not re-testing or refining recovery**.  
-
-The focus of M2 is backend transaction generation and execution. Recovery will be revisited in future milestones (notably **M4**) and fully integrated with the **SDK delivery**, where its stability and developer usability can be validated in a realistic context.  
-
-This avoids redundant effort at this stage, while ensuring continuity from M1 to later milestones.  
-:::  
 
 
 
