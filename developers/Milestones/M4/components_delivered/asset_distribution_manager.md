@@ -30,8 +30,8 @@ This prevents farming, emulators, automation clusters, and uninstall/reinstall a
 ### Double Validation (Two‑Step VCA)
 Each claim requires two independent validations:
 
-1. Link Opening Validation
-   - Triggered when the user opens the link or scans the QR code
+1. Register to the airdrp campaign Validation
+   - Triggered when the user register
    - Proves real‑time human presence
    - Registers device participation in the campaign
 
@@ -54,7 +54,7 @@ The system records a cryptographic device fingerprint derived from runtime execu
 - emulator scaling
 - key duplication
 
-If a recovery procedure is in progress, claiming is blocked.
+**If a recovery procedure is in progress, claiming is blocked.**
 
 ---
 
@@ -82,7 +82,7 @@ When the limit is reached, the campaign closes automatically.
 ## Campaign Lifecycle
 
 ### 1 — Creation
-`create_airdrop_campaign(asset, claim_limit, time_limit, freeze_period)`
+`create_airdrop_campaign(asset, claim_limit, time_limit, register_period, freeze_period)`
 
 Properties:
 - creator becomes campaign owner
@@ -101,17 +101,17 @@ Once balance is detected, the campaign becomes claimable.
 ### 3 — Distribution
 Users interact through:
 - link click
-- QR code scan
+- QR code scan (later)
 
 Supported scenarios:
 - application already installed
-- application installed after opening the link
+- application installed after opening the link (later required app on Google play, Apple store)
 
 ---
 
 ### 4 — Claim Validation
 Flow:
-1. User opens link → Validation #1
+1. User opens link → Register → Validation #1
 2. Device registered
 3. After freeze period → Validation #2
 4. Funds unlocked
@@ -167,7 +167,7 @@ The wallet interface handles:
 
 - campaign creation
 - link generation
-- QR generation
+- QR generation (later)
 - claim status
 - freeze countdown
 
