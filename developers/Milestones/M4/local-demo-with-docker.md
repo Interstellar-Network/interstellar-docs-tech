@@ -486,9 +486,8 @@ using your NFC number (quicker) or the recovery item(s) you have choosen  to che
 ### Important Rules
 
 - One claim per device
-- Reinstall does not allow reclaim
-- Recovery blocks claiming
-- Funds locked before spending
+- Recovery is prohibited during the claiming process
+- Funds locked before spending (freeze period)
 - Link reuse allowed (not unique)
 
 ---
@@ -512,6 +511,13 @@ You have successfully distributed assets securely while preventing farming and a
 
 ## Fiat On-Ramp — Tutorial
 
+### Prerequisites to set-up the account
+ - A valid email
+ - A real working phone number
+Both are used to register and checked with respective email and SMS OTP.
+
+
+
 This guide shows how to acquire testnet assets directly inside the wallet using the integrated fiat on-ramp.
 
 > ⚠️ Current environment uses testnet tokens. No real money is transferred.
@@ -526,7 +532,6 @@ Navigate to:
 
 Select the desired network and asset.
 
-<!-- screenshot: buy_asset_select -->
 
 <div style={{ display: "flex", gap: "20px", justifyContent: "center" }}>
   <figure style={{ textAlign: "center" }}>
@@ -609,6 +614,10 @@ We recommend adding a UK address for sandbox accounts since these work best with
 |---------------------------|-----------------------|-----------|----|
 | Visa 3DS Frictionless (UK) | 4485 0403 7153 6584 | 12/2030   | 123 |
 | Visa 3DS Challenge (UK)    | 4242 4242 4242 4242 | 12/2030   | 123 |
+
+
+> Refs: [Monpay sandbox testing FAQ](https://dev.moonpay.com/docs/faq-sandbox-testing#sandbox-token-and-testnet-support)
+
 
 
 <div style={{ display: "flex", gap: "20px", justifyContent: "center" }}>
