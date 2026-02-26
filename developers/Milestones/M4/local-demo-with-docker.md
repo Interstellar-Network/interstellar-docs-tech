@@ -76,12 +76,12 @@ chmod +x docker-ipfs-init.sh
 ```bash
 # Step 3: Place the .env file we send in this directory
 ```
-
+> specific for M4 delivery - previous .env should not be reused
 ```bash
-# Step 3: Start Docker (if needed)
+# Step 4: Start Docker (if needed)
 sudo service docker start  # (for most Linux distros)
 
-# Step 4: Launch the stack
+# Step 5: Launch the stack
 sudo docker compose down --timeout 1 && sudo docker compose up --force-recreate
 ```
 
