@@ -12,6 +12,8 @@ The Asset Distribution Manager (ADM) defines a secure distribution mechanism for
 
 The core objective is to bind each claim to a verified human action performed in real time on a specific device, while maintaining a simple user experience (link or QR code interaction).
 
+And prevent this type of infrastructure to steal airdrop from real users: [Inisde 30 000 phone crypto airdrop bot farm](https://cointelegraph-magazine.com/inside-30000-phone-crypto-airdrop-bot-farm/)
+
 ---
 
 ## Security Model
@@ -22,6 +24,10 @@ The distribution relies on three independent guarantees:
 3. Economic Finality Delay — Claimed funds are frozen for a configurable period
 
 This prevents farming, emulators, automation clusters, and uninstall/reinstall attacks.
+
+
+
+
 
 ---
 
