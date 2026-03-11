@@ -395,7 +395,9 @@ Once the balance is detected, the campaign becomes **Active**.
 
 :::info TIP FOR reviewers
 
-Once the campaign is active you can set-up a recovery (Cloud Icon) for the wallet that created the campaign. The quicker is with an inputed NFC ex: 12345678 and then reset your app (Setting Icon) to simulate a new app
+Once the campaign is active you can set-up a recovery (Cloud Icon) for the wallet that created the campaign. The quicker is with an inputed NFC ex: 12345678 and then reset your app (Setting Icon) to simulate a new app.
+
+IMPORTANT: The app NEED to be restarted after the reset.
 :::
 
 
