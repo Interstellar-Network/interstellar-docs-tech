@@ -364,7 +364,9 @@ All period should be define in blocks numbers
 
 - **Freeze period** should be superiour to **Registration period**
 - A Campaign will move to Closed state if now is superior to **Registration period** and it was not yet funded
-- Default values proposed are choosen to facilitate the testing
+- Default values proposed are choosen to facilitate the testing:
+Periods last approx. 15mn (you should at least x2.5 x3 for BTC)
+
 :::
 
 Tap **Create**
@@ -430,7 +432,7 @@ When done the app will prompt you to register with "Register Now" button i.e typ
 
 
 The allocation enters the **Frozen state** until the freeze period expires.
-
+> This period last approx. 15 min if you used the default value (need to but tweaked to a longer period for BTC)
 ---
 
 ### Step 5 — Claim Assets
