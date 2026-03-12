@@ -526,6 +526,8 @@ This guide shows how to acquire testnet assets directly inside the wallet using 
 
 > ⚠️ Current environment uses testnet tokens. No real money is transferred.
 
+> Refs: [Moonpay sandbox testing FAQ](https://dev.moonpay.com/docs/faq-sandbox-testing#sandbox-token-and-testnet-support)
+
 ---
 
 ### Step 1 — Open Buy Interface
@@ -620,7 +622,7 @@ We recommend adding a UK address for sandbox accounts since these work best with
 | Visa 3DS Challenge (UK)    | 4242 4242 4242 4242 | 12/2030   | 123 |
 
 
-> Refs: [Monpay sandbox testing FAQ](https://dev.moonpay.com/docs/faq-sandbox-testing#sandbox-token-and-testnet-support)
+> Refs: [Moonpay sandbox testing FAQ](https://dev.moonpay.com/docs/faq-sandbox-testing#sandbox-token-and-testnet-support)
 
 
 
