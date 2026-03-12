@@ -390,7 +390,7 @@ The wallet generates a unique **deep link** to share with all participants and t
 
 ### Step 2 — Fund the Campaign
 
-Send funds to the generated campaign address.
+Send funds i.e `number of claims` * `amount per claim` + [approx. tx fees and some margin] to the generated campaign address.
 Once the balance is detected, the campaign becomes **Active**.
 
 ---
