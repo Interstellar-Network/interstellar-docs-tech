@@ -390,8 +390,9 @@ The wallet generates a unique **deep link** to share with all participants and t
 
 ### Step 2 — Fund the Campaign
 
-Send funds i.e `number of claims` * `amount per claim` + [approx. tx fees and some margin] to the generated campaign address.
-Once the balance is detected, the campaign becomes **Active**.
+1. Send funds i.e `number of claims` * `amount per claim` + [approx. tx fees and some margin] to the generated campaign address.
+
+2. You have to click "I have send the funds" on the Airdrop Campaign screen (below Campagin information) then the campaign becomes **Active**.
 
 ---
 
