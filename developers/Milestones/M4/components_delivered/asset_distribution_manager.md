@@ -90,7 +90,7 @@ It already raises the cost of abuse, but it does **not** yet enforce all continu
 In particular:
 
 - campaign participation is still primarily enforced at the **account** level
-- the current implementation does **not yet** block registration or claim while a recovery procedure is active
+- the current implementation does **not yet** block registration or claim when a recovery has been initiated or claimed during the campaign period
 - the current implementation does **not** establish strong device-account continuity in every recovery or reinstall scenario
 - a sufficiently motivated attacker may still attempt abuse across many accounts if they repeatedly involve live human effort
 
