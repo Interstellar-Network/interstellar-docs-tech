@@ -352,6 +352,8 @@ In M4, the primary user-facing implementation relies on app-native deep-link han
 
 This distinction is important: link management in ADM should currently be understood as **campaign access orchestration**, not as a claim in itself and not yet as **a general-purpose action-link framework** (part of the future roadmap).
 
+ADM currently uses links as a campaign access and routing layer. The broader roadmap for generalized action-oriented links is described in [Trusted Action Links](developers/components/TAL.md).
+
 ---
 
 ## Anti-Abuse Positioning
