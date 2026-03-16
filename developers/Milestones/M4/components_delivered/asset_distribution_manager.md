@@ -9,7 +9,7 @@ import { Badge } from "@site/src/components/ui/badge";
 # Asset Distribution Manager — Bot-Resistant Airdrop System
 
 
-REF: [Inisde 30 000 phone crypto airdrop bot farm](https://cointelegraph-magazine.com/inside-30000-phone-crypto-airdrop-bot-farm/)
+REF: [Inside a 30,000 phone crypto airdrop bot farm](https://cointelegraph-magazine.com/inside-30000-phone-crypto-airdrop-bot-farm/)
 
 
 
