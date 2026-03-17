@@ -18,7 +18,7 @@ This is the most complete and reliable way to test the M4 features:
 
 - Bot-resistant asset distribution tied to verified human action
 
-- One-claim-per-device enforcement with delayed unlock (freeze period)
+- One-claim-per-account enforcement with delayed unlock (freeze period)
 
 - Campaign lifecycle management (creation, funding, limits, closure)
 

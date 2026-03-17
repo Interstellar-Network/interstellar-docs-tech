@@ -51,16 +51,6 @@ The off-ramp therefore behaves as a **simulation of the production withdrawal fl
 
 ---
 
-## Security Considerations
-The integration maintains the same guarantees as standard transactions:
-
-- explicit user action required
-- secure validation before execution
-- protection against automated cash-out attempts
-
-This ensures that fiat interaction will inherit the protocol’s human-intent verification once enabled in production.
-
----
 
 ## Roadmap
 When mainnet assets are enabled:
@@ -68,5 +58,9 @@ When mainnet assets are enabled:
 - real fiat settlement will be activated
 - withdrawal to bank rails becomes available
 - regulatory provider configuration will replace test environment endpoints
+- Potential integration of TVAP to ensure fiat interaction the inherit prtocol's human-intent verification.
+    - explicit user action required
+    - secure validation before execution
+    - protection against automated cash-out attempt
 
 No architectural change is required — only provider environment switching and compliance configuration.
