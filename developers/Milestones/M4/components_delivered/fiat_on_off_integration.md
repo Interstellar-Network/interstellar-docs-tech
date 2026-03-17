@@ -36,8 +36,6 @@ Users can acquire supported assets directly in the wallet:
 - Choose fiat amount
 - Receive testnet tokens in the secured account
 
-The transaction still requires secure validation, ensuring that acquiring funds cannot be automated or triggered by background processes.
-
 ---
 
 ## Off-Ramp Limitation
@@ -58,7 +56,7 @@ When mainnet assets are enabled:
 - real fiat settlement will be activated
 - withdrawal to bank rails becomes available
 - regulatory provider configuration will replace test environment endpoints
-- Potential integration of TVAP to ensure fiat interaction the inherit prtocol's human-intent verification.
+- Potential integration of TAVP to ensure fiat interaction the inherit prtocol's human-intent verification.
     - explicit user action required
     - secure validation before execution
     - protection against automated cash-out attempt
