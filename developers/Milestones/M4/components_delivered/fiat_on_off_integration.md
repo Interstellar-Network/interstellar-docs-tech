@@ -56,7 +56,7 @@ When mainnet assets are enabled:
 - real fiat settlement will be activated
 - withdrawal to bank rails becomes available
 - regulatory provider configuration will replace test environment endpoints
-- Potential integration of TAVP to ensure fiat interaction the inherit prtocol's human-intent verification.
+- Potential integration of TAVP to ensure fiat interaction inherit protocol's human-intent verification.
     - explicit user action required
     - secure validation before execution
     - protection against automated cash-out attempt
