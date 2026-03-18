@@ -318,7 +318,7 @@ This guide explains how to:
 2. Generate shareable claim links
 3. Let users claim assets (existing wallet or new installation)
 
-The distribution is protected against automation and ensures one allocation per device.
+The distribution is protected against automation and ensures one allocation per account.
 
 ---
 
