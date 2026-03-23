@@ -8,7 +8,7 @@ import { Badge } from "@site/src/components/ui/badge";
 
 # Human Authorization Manifesto
 
-<Badge variant="secondary">Vision</Badge>
+**Vision**
 
 ## A new security boundary is needed
 
