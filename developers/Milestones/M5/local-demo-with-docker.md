@@ -1,0 +1,844 @@
+---
+sidebar_label: 'Android App with Local Node'
+sidebar_position: 1
+---
+
+# Android App with Local Nodes
+
+This guide explains how to run the full Interstellar stack **locally** using Docker or Podman. You will be able to launch the Substrate node, Integritee TEE worker, and IPFS service, then interact with the system using the **Interstellar Android demo app**.
+
+This setup enables full offline testing without relying on a hosted VPS.
+
+:::note Milestone 5 Scope
+Milestone 5 delivers the Wallet Connect integration whithin the Interstellar android wallet app tied to Interstelar infrastructure.
+
+All features have been **extensively tested with a focus on user experience**, demonstrating how simple, reliable, and intuitive these flows can be. The current interface has been **adjusted to support efficient testing**, while leaving room for further UX and UI refinements in the production-grade SDK.
+
+Although the system is **not yet production-ready**, it provides a robust foundation. 
+Broader edge case coverage, interoperability, and resilience guarantees will be the focus 
+of the upcoming SDK and future milestones. 
+Reviewers are encouraged to **focus on the functional flow and experience** of the key features in this milestone.
+:::
+
+
+:::info Tested Environment
+This compatibility note applies to the **backend stack**, tested on Ubuntu 24.04 LTS (x86_64) using Docker (`docker-compose`) or Podman (with manually installed `podman-compose`*).  
+The stack is expected to work on other recent Linux distributions, but this has not been officially verified.
+
+Known issue: May fail on Apple Silicon (M1/M2/M3/M4) - due to current SIMD usage and QEMU/Rosetta limitations - crash on M1/M2 (not tested on M3/M4)
+
+The **frontend** (e.g., Android emulator or physical device) 
+can run on any OS supported by Android Studio (expect some emulator limitations on Apple Silicon)
+
+*Compose tools are required to manage service startup dependencies (e.g., health checks).
+:::
+
+
+
+## 1. Prerequisites
+
+| Requirement        | Install Guide |
+|--------------------|----------------|
+| Docker             | [Install Docker](https://docs.docker.com/engine/install/) |
+| Docker Compose     | [Install docker-compose](https://docs.docker.com/compose/install/) |
+| `curl`, `wget`, `jq` | Installed via `apt`/`brew` or default in most environments |
+| Android Studio     |  [Install Android Studio](https://developer.android.com/studio) |
+| ADB (`adb reverse`) | Comes with Android Studio |
+
+> You may also use **Podman** as an alternative to Docker.
+
+## 2. Launch the Interstellar Stack Install 
+
+:::info BTC RPC API Key  
+The BTC worker connects to a **Bitcoin Testnet RPC endpoint** using a hosted provider.  
+For simplicity, we provide curators with a ready-to-use `.env` file.  
+
+Place the file in the **same directory** as `docker-compose.yml`.  
+It contains a single variable:  
+
+```bash
+BITCOIN_TESTNET_API_KEY=<API_KEY_WE_SEND>
+```
+⚠️ If you prefer to use your own provider, simply replace the value of BITCOIN_TESTNET_API_KEY in .env.
+:::
+
+```bash
+# Step 1: Create a working directory
+mkdir interstellar_m4_demo && cd interstellar_m4_demo
+
+# Step 2: Download the stack config
+curl -L -o docker-compose.yml https://raw.githubusercontent.com/Interstellar-Network/containers/refs/tags/testnet-m4/docker-compose.yml
+curl -L -o docker-ipfs-init.sh https://raw.githubusercontent.com/Interstellar-Network/containers/refs/tags/testnet-m4/docker-ipfs-init.sh
+chmod +x docker-ipfs-init.sh
+```
+
+```bash
+# Step 3: Place the .env file we send in this directory
+```
+> specific for M4 delivery - previous .env should not be reused
+```bash
+# Step 4: Start Docker (if needed)
+sudo service docker start  # (for most Linux distros)
+
+# Step 5: Launch the stack
+sudo docker compose down --timeout 1 && sudo docker compose up --force-recreate
+```
+
+### ⏳ Waiting for Master Circuit Generation
+
+Once the node and service are running, the system will automatically trigger the **generation of master circuits** from the hardware description files.
+
+These circuits are compiled using the Verilog logic generated from the original master circuits specifications, processed through the logic synthesis pipeline. This step may take several minutes depending on the environment.
+
+During this time, monitor the logs and wait for the following sequence of messages:
+
+```bash
+[ocw-circuits] callback_new_skcd_signed sent number : <number> 1-Success  - 0-Fail
+[ocw-circuits] callback_new_display_circuits_package_signed: (<CID_1>, <message_digits_number>), (<CID_2>, <pinpad_digits_number>) for <account_id>
+```
+Shortly before these messages, you will also see large blob uploads to IPFS such as:
+```bash
+Requested started id=<...> method=POST uri=http://ipfs:5001/api/v0/add
+```
+These blobs correspond to the master visual circuits (SKCD display circuits), which are the result 
+of the hardware synthesis pipeline. Their appearance in the logs is a strong indicator 
+that the build process has completed.
+
+> ℹ️ You can identify this moment easily by spotting two large IPFS file hashes being 
+> logged together — one for the secure keypad circuit and one for the display message circuit 
+> i.e one time code These hashes will later be used for visual challenge rendering and validation.
+
+Detailed example from `integritee_node-1` 
+```bash
+Requested started id=1059 method=POST uri=http://ipfs:5001/api/v0/add
+[fetch_from_remote_grpc_web] content_type: application/json
+[ocw-circuits] callback_new_skcd_signed sent number : 1
+[ocw-circuits] callback_new_display_circuits_package_signed: ("QmUx8mMo8GgGdUhcgFQVg2sexkVfyq1sViruZiBadUfs4d",2),("QmcwXyZNmLXnjeoA25YSzj41G1sr6ZsHgZZBQVWvcfe1qn",10) for d43593c715fdd31c61141abd04a99fd6822c8558854ccde39a5684e7a56da27d (5GrwvaEF...)
+```
+
+```
+[ocw-circuits] Hello from pallet-ocw-circuits.
+🛌 Idle (0 peers), best: #6 (...), finalized #3 (...), ⬇ 0 ⬆ 0
+```
+You can also verify the runtime is ready using [Polkadot.js](https://polkadot.js.org/apps/?rpc=ws://localhost:9944)
+
+:::info VCA System Layer
+
+While waiting for the stack to fully initialize, you can explore the architecture and rationale behind 
+the **[VCA System Layer](/developers/category/vca-system-layer)**. This layer is responsible for producing the `VCA Token`, 
+the core cryptographic artifact used by the Trusted Action Validation Protocol (`TAVP`).
+
+The token is generated through a hardware-secure pipeline starting from VHDL logic descriptions, synthesized into 
+Verilog and compiled using the`Yosis` and `abc` logic synthesis toolchain. The resulting master circuits define both the secure display and interaction logic — including the Secure Circuit Descriptor (`scd`) and its runtime variant, `skcd`, used for verifiable evaluation.
+
+Once built, these circuits are uploaded to IPFS and used to enable real-time, **privacy-preserving visual cryptographic** 
+**challenges**, ensuring each critical **user interaction** is verifiable and **resistant to malware, phishing, and adversarial AI**.
+
+:::
+
+
+## 3. Install the Android Demo App
+
+### Download the APK
+
+From the official [Interstellar GitHub Release](https://github.com/Interstellar-Network/containers/releases/tag/testnet-m4) (specific APKs preconfigured to connect to `localhost`):
+
+- `androidApp-arm64-release.apk` — for Android devices and Apple Silicon(M1/M2/M3/M4)
+- `androidApp-x86_64-release.apk` — for Android emulators running on x86_64 platforms (e.g., Windows PCs, Intel-based Mac)
+
+> **Latest version recommended**
+
+:::tip Recommended Test Setup – Hardware & Emulator Guidance
+
+While the app runs on Apple Silicon (M1–M4), emulator performance may vary due to ARM virtualization and GPU constraints. For accurate testing—especially for Rust-based rendering and cryptographic logic—choose the best available setup:
+
+| Recommended Option             | Notes                                                                 |
+|-------------------------------|-----------------------------------------------------------------------|
+| Mid-to-high-end ARM device     | **Preferred**. e.g., Pixel 5–Pixel 8. Avoid Android 16 (API 36) for now. |
+| x86_64 emulator (Intel)        | Reliable with mid-range or better GPU.                                |
+| Apple Silicon (M3/M4) emulator | Acceptable if GPU is sufficient. Better than M1/M2 for rendering.     |
+| Apple Silicon (M1/M2) emulator | Works, but may show degraded performance or rendering issues.         |
+
+:::
+
+:::warning App reinstall required
+
+If you already have an older version of the Interstellar Android app installed, **you must uninstall it before installing the M3 build**.
+
+The app uses local secure storage and cached configuration; keeping a previous version may lead to inconsistent behavior during transaction signing or validation.
+
+:::
+
+
+
+
+### Option 1: Physical Device
+
+1. Transfer the APK to your phone or download it directly from the device 
+2. Allow app installation from external sources
+3. Install the APK
+5. [Connect](https://developer.android.com/codelabs/basic-android-kotlin-compose-connect-device#2) your devices to Android Studio
+
+:::info if you need more details
+[How to install an APK on Android](https://www.lifewire.com/install-apk-on-android-4177185)
+:::
+:::warning
+Ensure that your device is configured for **english** language
+:::
+### Option 2: Emulator
+
+1. [Create](https://developer.android.com/studio/run/managing-avds#createavd)  a `Pixel 7` or equivalent emulator `API 31+` - `API 35` 
+2. Edit the emulator and select an API 31+ below the default API 36 (API 34 more stable)
+<img src="/img/API34.png" alt="API 34"  width="250"/>
+
+3. Launch the emulator
+4. Drag and drop the APK onto the emulator window to install
+
+:::info Compatibility Issue with API 36
+Our app currently crashes on Android API 36. The issue is **not caused by the new 16KB memory 
+page model**, as it runs correctly on API 35 with 16KB pages. 
+API 36 is a **very recent release** and may introduce subtle runtime or platform-level changes 
+that affect low-level Rust code (e.g., garbled circuit evaluator or frame renderer). 
+Until further investigation, **we recommend using API 34 (more stable on emulator) or earlier for testing.**
+:::
+
+:::note Software Rendering Required on Apple Silicon (M1/M2)
+
+On Apple Silicon (M1–M4), emulators may fail to render or execute low-level native code correctly unless software rendering is enabled.
+
+To enable it:
+
+> **Device Manager → Edit → Advanced Settings → Emulated Performance → Graphics → Software**
+
+<img src="/img/emul_software.png" alt="Software rendering setting in Device Manager" width="400"/>
+
+- **Mandatory for M1/M2**: hardware acceleration is not supported and cause crashes.
+- **Not tested on M3/M4**: may support hardware acceleration, but software mode is safer for compatibility.
+
+Enabling this setting ensures more reliable emulator behavior, especially for native Rust or cryptographic rendering, at the cost of some performance.
+
+:::
+
+
+
+
+---
+
+## 2. Link App to your local Interstellar stack:
+
+The Android app is preconfigured to connect to `localhost`
+To allow the Android app to connect to your local blockchain and IPFS stack:
+
+### Step 1: `adb reverse` Setup
+> **On** the **Desktop** connected to the **Device** or running the **Emulator** 
+(Windows, Mac OS, Linux)
+
+If Android Studio is already installed, you can enable adb in your terminal 
+by adding it to your PATH with the following command (adjust the path if needed):
+
+**Add `adb` PATH:** 
+
+Linux:
+```bash
+export PATH=$PATH:$HOME/Android/Sdk/platform-tools
+```
+Mac OS:
+```bash
+export PATH="$HOME/Library/Android/sdk/platform-tools:$PATH"
+```
+Windows powershell:
+```powershell
+$env:Path += ";$env:LOCALAPPDATA\Android\Sdk\platform-tools"
+```
+
+```bash
+adb reverse tcp:9944 tcp:9944   # Substrate WS
+adb reverse tcp:2090 tcp:2090   # Integritee node port
+adb reverse tcp:5001 tcp:5001   # IPFS
+
+```
+:::warning Troubleshooting
+Make sure `adb` is properly configured and the emulator or device is detected
+ with `adb devices`
+
+ 
+ You can also check the reverse setup with `adb reverse --list`
+:::
+
+> This works for both emulators and real devices connected via USB
+
+### Step 2 (optional): `ssh` Port Forwarding 
+> **On** the **System** or **VM** running the **Blockchain stack** (WSL2, Remote VM)
+
+If the emulator is running (or the device is connected) on a different network interface than the backend 
+(e.g., the backend runs in WSL2 and the Android emulator or device is connected 
+via USB to Windows), 
+you may need to configure port forwarding between the desktop and the blockchain.
+
+**WSL2 -> Windows example:**
+```bash
+export WSL_HOST_IP=$(ip route | awk '/default/ {print $3}')
+```
+```bash
+ssh -N -R 9944:localhost:9944 -R 5001:localhost:5001 -R 2090:localhost:2090 [windows_user_name]@$WSL_HOST_IP
+```
+
+:::warning Troubleshooting: Firewall potential issue
+
+To avoid issues with `ssh` or `adb reverse` during this local test, you can temporarily disable the Firewall:
+
+**Example on Windows with PowerShell (as Administrator):**
+```powershell
+Set-NetFirewallProfile -Profile Domain,Private,Public -Enabled False
+```
+**You can re-enable it later with:**
+```powershell
+Set-NetFirewallProfile -Profile Domain,Private,Public -Enabled True
+```
+:::
+
+:::info Milestone 4 Scope Clarification  
+During **Milestone 5**, our primary objective is to demonstrate the interoperability of some of core Interstelar's smart account features  with Wallet Connect protocol and its core features.
+Validate the connection to different Dapp through through QR code URI, as well as the signing and execution of transactions generated by the Dapps across differents chains.
+
+
+At this stage, the focus is on ensuring correctness and robustness of the transaction pipeline at the infrastructure level. User-facing aspects such as **application UI/UX**, **visual polish**, or **cosmetic design** are not yet part of the milestone scope. Especially because our focus is the delivery of a mobile SDK. 
+
+In addition, while the backend successfully submits transactions, we have not yet integrated **state tracking from the backend** (e.g., monitoring transaction inclusion and confirmation events). This will be addressed in subsequent milestones, once the foundational backend logic is fully validated.  
+:::  
+
+---
+
+
+## WalletConnect — Tutorial
+
+This guide explains how to:
+
+1. connect the wallet app to a Dapp through WalletConnect,
+2. verify that balances are fetched correctly after connection,
+3. test Solana Devnet transaction signing,
+4. observe when PoHI / VCA is triggered through the Action Confirmation Screen.
+
+## Scope of this tutorial
+
+For the current M5 delivery, the Reown test Dapp is used as a practical simulator for WalletConnect flows.
+
+The currently validated test scope is:
+
+- **Solana Devnet**: connection + transaction signing + transaction approval through VCA / Action Confirmation Screen.
+- **Ethereum Sepolia**: connection + transaction signing without approval flow in the Reown test page currently used.
+- **Bitcoin**: connection can be tested, but transaction execution is not covered in this tutorial because the Reown test Dapp uses **Bitcoin Testnet3**, while the wallet currently uses **Bitcoin Testnet4**.
+
+:::info Important
+For milestone validation, the **reference end-to-end flow is Solana Devnet**, because it is the only flow in the current Reown lab setup that allows testing both:
+- WalletConnect session establishment, and
+- transaction approval through the Interstellar PoHI / VCA flow.
+:::
+
+---
+
+## Prerequisites
+
+Before starting, make sure:
+
+- the wallet app is installed and running,
+- the WalletConnect integration build for M5 is used,
+- internet access is available,
+- you have access to the Reown test Dapp:
+  [https://lab.reown.com/](https://lab.reown.com/)
+
+For the transaction test on Solana Devnet, you will also need:
+- a wallet account already created in the app,
+- Devnet SOL in that account.
+
+---
+
+## 1 — Connect to a Dapp
+
+Reown provides a public Dapp simulator that is convenient for testing WalletConnect integration.
+
+Open:
+
+[Lab Reown Dapp simulation](https://lab.reown.com/)
+
+### Step 1.1 — Configure the `Connect Wallet` button
+
+On the Reown page:
+
+1. Select **Multichain**
+2. Open the network selector
+3. Choose **Solana Devnet**
+
+<div style={{ display: "flex", gap: "20px", justifyContent: "center" }}>
+  <figure style={{ textAlign: "center" }}>
+    <img src="/img/choose_multichain.png" alt="multichain" width="200"/>
+    <figcaption>Click on Multichain</figcaption>
+  </figure>
+  <figure style={{ textAlign: "center" }}>
+    <img src="/img/connect_buttons.png" alt="connect buttons" width="200"/>
+    <figcaption>Click on Network Button</figcaption>
+  </figure>
+</div>
+
+<div style={{ display: "flex", gap: "20px", justifyContent: "center" }}>
+  <figure style={{ textAlign: "center" }}>
+    <img src="/img/choose_network.png" alt="network" width="200"/>
+    <figcaption>Select Solana Devnet</figcaption>
+  </figure>
+  <figure style={{ textAlign: "center" }}>
+    <img src="/img/button_configured.png" alt="network configured" width="200"/>
+    <figcaption>The WC button is configured for Solana Devnet</figcaption>
+  </figure>
+</div>
+
+### Step 1.2 — Get the WalletConnect URI
+
+Once the button is configured for Solana Devnet:
+
+1. click the Solana connect button,
+2. choose the **WalletConnect QR / link** option,
+3. copy the WalletConnect URI.
+
+<div style={{ display: "flex", gap: "20px", justifyContent: "center" }}>
+  <figure style={{ textAlign: "center" }}>
+    <img src="/img/select_wc_qr_code.png" alt="select QR code" width="200"/>
+    <figcaption>Select the WC QR/link option</figcaption>
+  </figure>
+  <figure style={{ textAlign: "center" }}>
+    <img src="/img/copy_link.png" alt="copy link" width="200"/>
+    <figcaption>Copy the link/URI</figcaption>
+  </figure>
+</div>
+
+### Step 1.3 — Paste the URI in the wallet app and connect
+
+In the wallet app:
+
+1. go to the **Send** screen,
+2. click on the blank space on top of `CONNECT TO DAPP` button,
+3. paste the WalletConnect URI,
+4. click **CONNECT TO DAPP**.
+
+<div style={{ display: "flex", gap: "20px", justifyContent: "center" }}>
+  <figure style={{ textAlign: "center" }}>
+    <img src="/img/send_tab_connect.png" alt="send connect" width="200"/>
+    <figcaption>Click on top of CONNECT DAPP</figcaption>
+  </figure>
+  <figure style={{ textAlign: "center" }}>
+    <img src="/img/send_tab_uri.png" alt="URI" width="200"/>
+    <figcaption>The URI field appears</figcaption>
+  </figure>
+</div>
+
+<div style={{ display: "flex", gap: "20px", justifyContent: "center" }}>
+  <figure style={{ textAlign: "center" }}>
+    <img src="/img/send_tab_uri_fill.png" alt="URI Filled" width="200"/>
+    <figcaption>Click on `CONNECT..` button</figcaption>
+  </figure>
+  <figure style={{ textAlign: "center" }}>
+    <img src="/img/balance_0.png" alt="balance 0" width="200"/>
+    <figcaption>Check the wallet accounts balances</figcaption>
+  </figure>
+</div>
+
+### Expected result
+
+The Dapp session is established and the wallet refreshes account data. In the current implementation, the wallet fetches balances for the supported chains linked to the account view.
+
+:::info Tip for reviewers
+After the WalletConnect session is established, the wallet may initially display a **zero balance** for Solana if the account has not yet been funded. This is expected and can be confirmed in logs.
+:::
+
+---
+
+## 2 — Dapp transaction signing and approval
+
+## 2.1 — Fund the Solana Devnet account
+
+To test transaction approval, first fund the Solana Devnet account.
+
+You can use the existing guide here:
+
+[Fund your wallet](https://interstellar-docs-tech.pages.dev/developers/Milestones/M3/local-demo-with-docker/#step-2-fund-your-wallet)
+
+Once the wallet receives funds, the displayed balance changes accordingly.
+
+<div style={{ display: "flex", gap: "20px", justifyContent: "center" }}>
+  <figure style={{ textAlign: "center" }}>
+    <img src="/img/fund_solana.png" alt="funded solana account" width="200"/>
+    <figcaption>Fund the Solana Devnet account</figcaption>
+  </figure>
+  <figure style={{ textAlign: "center" }}>
+    <img src="/img/balance_0-5.png" alt="balance updated" width="200"/>
+    <figcaption>The balance updates after funding</figcaption>
+  </figure>
+</div>
+
+:::info
+In the captured validation example for this tutorial, the account is funded with **0.5 SOL** on Solana Devnet.
+:::
+
+## 2.2 — Test transaction approval and signing on Solana Devnet
+
+At the moment, the Solana flow exposed by the Reown lab is the one that allows testing the approval flow through Interstellar’s VCA / Action Confirmation Screen.
+
+Go to the **SIGN AND SEND TRANSACTION** section in the Solana test Dapp.
+
+<div style={{ display: "flex", gap: "20px", justifyContent: "center" }}>
+  <figure style={{ textAlign: "center" }}>
+    <img src="/img/sign_send_tx.png" alt="sign send" width="450" height="100"/>
+    <figcaption>Open the SIGN AND SEND TRANSACTION section</figcaption>
+  </figure>
+  <figure style={{ textAlign: "center" }}>
+    <img src="/img/sign_send_tx_fill.png" alt="fill tx" width="450" height="80"/>
+    <figcaption>Enter an amount above the threshold to trigger VCA / approval</figcaption>
+  </figure>
+</div>
+
+### Threshold behavior
+
+For this test environment, a conditional validation threshold is configured.
+
+- a transaction **below** the threshold can be signed without VCA,
+- a transaction **above** the threshold triggers:
+  - transaction preparation,
+  - secure message generation,
+  - VCA challenge generation,
+  - Action Confirmation Screen,
+  - final confirmation before broadcast.
+
+:::info Conditional validation
+Use an amount **greater than 0.025 SOL** to trigger the VCA / approval flow.
+[Conditional Transaction Validation Threshold](/developers/Milestones/M3/local-demo-with-docker#step-2-test-transactions-with-conditional-validations)
+:::
+
+:::
+
+### Example validated flow
+
+The logs included below correspond to a successful Solana Devnet transfer with:
+
+- funded account balance: **0.5 SOL**
+- transfer amount: **0.4 SOL**
+- fee type: **Normal**
+- computed fee: **5000 lamports**
+- VCA triggered because the transaction is above threshold
+
+### Expected functional result
+
+The wallet:
+
+1. prepares the Solana transaction,
+2. checks available balance,
+3. computes the fee,
+4. signs the transaction,
+5. pauses because the transaction is above threshold,
+6. generates and stores the VCA commitment,
+7. waits for user confirmation on the Action Confirmation Screen,
+8. validates the user input,
+9. simulates the transaction,
+10. broadcasts the transaction successfully.
+
+---
+
+## 2.3 — Ethereum Sepolia test
+
+Ethereum Sepolia can be used to validate WalletConnect connectivity and transaction signing.
+
+However, in the current Reown lab flow used for M5 validation, the ETH transaction test is limited:
+- it targets a predefined destination,
+- it does not provide the same adjustable approval scenario as the Solana test,
+- it is therefore **not the reference flow** for VCA validation in this milestone.
+
+---
+
+## 2.4 — Bitcoin connection test
+
+Bitcoin can be used to validate WalletConnect connection only.
+
+A transaction flow is not covered here because:
+- the Reown test Dapp currently uses **Bitcoin Testnet3**,
+- the wallet implementation used for M5 is configured for **Bitcoin Testnet4**.
+
+This mismatch prevents an end-to-end transaction validation through the public Reown test page in the current setup.
+
+---
+
+## 🛠️ Interpreting Logs
+
+This section explains the logs that reviewers should expect for the two main validated scenarios covered by this tutorial:
+
+1. **WalletConnect session established and balances fetched**
+2. **Solana Devnet transaction above threshold, requiring VCA, then successfully broadcast**
+
+---
+
+## A — Logs after connecting to the Dapp
+
+After the WalletConnect URI is pasted and the connection is established, the wallet refreshes chain-specific account data.
+
+### What to look for
+
+#### 1. Signature verification and account resolution
+
+These lines show that the request is authenticated and the account context is being resolved:
+
+````bash
+[DEBUG interstellar_extended_signature] ExtendedSignature::Secp256r1 START
+[DEBUG interstellar_extended_signature] ExtendedSignature::verify_secp256r1_signature START
+[DEBUG interstellar_extended_signature] ExtendedSignature: sig parsed OK
+[DEBUG interstellar_extended_signature] ExtendedSignature: verifying_key parsed OK
+````
+#### 2. Solana address fetch and balance lookup
+
+These lines show that the wallet resolves the Solana address and queries the Devnet balance:
+```bash
+[INFO  sol_client::client] [get_sol_address]: START
+[INFO  sol_client::client] [get_balance_account_str] Fetching balance for account: HAcrhnmhzccnfRWUKafVziDXamytTGiC1xC3xLxL416t
+[DEBUG sol_client::rpc] [send_request] Sending RPC request for method: getBalance
+```
+When the wallet has not yet been funded, the returned balance is zero:
+```bash
+[DEBUG sol_client::rpc] [send_request] Received response for method getBalance: ... "value":0 ...
+[INFO  sol_client::client] [get_balance_account_str] Balance fetched for account HAcrhnmhzccnfRWUKafVziDXamytTGiC1xC3xLxL416t: 0
+```
+After the wallet receives 0.5 SOL, the balance query returns:
+```bash
+[DEBUG sol_client::rpc] [send_request] Received response for method getBalance: ... "value":500000000 ...
+```
+
+This corresponds to:
+
+500000000 lamports
+0.5 SOL
+#### 3. Other supported balances may also be queried
+
+The current wallet view also fetches other chain balances linked to the account state. For example:
+
+DOT / Substrate-style account query
+```bash
+[INFO  dot_client::client] [get_account] Fetching account address for:
+[DEBUG dot_client::client] [get_balance_internal] Querying account:
+[DEBUG dot_client::client] [get_balance_internal] Result is null, returning default account info
+```
+Bitcoin balance query
+```bash
+[DEBUG btc_client::client] get_balance: START
+[INFO  btc_client::client] parse_utxos_from_response: SUCCESS: parsed 0 UTXOs, total_value=0 sats
+```
+
+Ethereum balance query
+```bash
+[DEBUG eth_client::client] fetch_balance: START
+[DEBUG eth_client::client] fetch_balance: RPC response = RpcResponse { result: Some("0x0"), error: None }
+```
+#### Reviewer interpretation
+
+If you see:
+
+- successful Secp256r1 verification logs,
+- a Solana address lookup,
+- a getBalance RPC call,
+and a returned value of 0 or later 500000000,
+
+then the WalletConnect session is active and the wallet is correctly refreshing the connected account state for Solana Devnet.
+
+#### Expected non-blocking warnings
+
+The following warnings appear in the logs and are expected in this environment:
+```bash
+[WARN  sp_io::storage] storage::start_transaction unimplemented
+[WARN  sp_io::storage] storage::commit_transaction unimplemented
+```
+They do not indicate failure of the WalletConnect flow or of the Solana transaction flow shown in this tutorial.
+
+
+## B — Logs for the successful Solana Devnet transaction with VCA
+
+This is the reference end-to-end flow for M5 milestone validation.
+
+The validated example corresponds to:
+
+- balance: 0.5 SOL
+- transfer: 0.4 SOL
+- threshold exceeded
+- VCA required
+- successful simulation
+- successful broadcast
+
+#### 1. Transaction preparation starts
+
+The transaction manager starts preparing the Solana transaction:
+```bash
+[INFO  pallet_tx_manager::pallet] [prepare_transaction] START - account=, chain=SOL, amount=Fixed(400000000), fee_type=Normal
+```
+
+Interpretation:
+
+- `400000000` lamports = 0.4 SOL
+
+#### 2. Balance is fetched and validated
+
+The wallet checks the balance before preparing the transfer:
+```bash
+[INFO  sol_client::client] [get_balance_account_str] Balance fetched for account HAcrhnmhzccnfRWUKafVziDXamytTGiC1xC3xLxL416t: 500000000
+[INFO  pallet_tx_manager::pallet] [prepare_transaction] balance = 500000000
+```
+Then the balance sufficiency check passes:
+```bash
+[DEBUG sol_client::client] [validate_sufficient_balance] ✓ balance check passed: have=500000000, need=401005000
+```
+Interpretation:
+
+- available balance = `500000000` lamports
+- required = `401005000` lamports
+- the transaction can proceed
+
+#### 3. Fee computation is performed
+
+The wallet queries recent prioritization fees:
+```bash
+[DEBUG sol_client::fee] [sol-fee] fetching recent prioritization fees
+[DEBUG sol_client::fee] [sol-fee] fetched 150 recent priority fees
+[DEBUG sol_client::fee] [sol-fee] Normal: selected 0 micro-lamports/CU from 150 samples
+```
+Then it computes the final fee:
+```bash
+[INFO  sol_client::fee] [sol-fee] Normal: base=5000 + priority=0 (0µL/CU * 200000 CU) = 5000 lamports
+[INFO  sol_client::client] SOL prepare_transaction: amount=400000000 lamports, fee_type=Normal, fee=5000 lamports, cu_price=0 micro-lamports/CU
+```
+Interpretation:
+
+- base fee = `5000` lamports
+- no priority fee was selected in this observed case
+- total fee = `5000` lamports
+
+#### 4. Transaction is built and signed
+
+The latest blockhash is fetched:
+```bash
+[DEBUG sol_client::rpc] [send_request] Sending RPC request for method: getLatestBlockhash
+[INFO  sol_client::rpc] [send_request] RPC request for method getLatestBlockhash succeeded
+```
+The signing step completes successfully:
+```bash
+[DEBUG pallet_key_manager::pallet] [do_sign] Seed unsealed successfully, proceeding with signing
+[DEBUG pallet_key_manager::pallet] [do_sign] Seed zeroed after signing
+[DEBUG sol_client::client] [build_and_sign_transaction] transaction built and signed: 191 bytes
+```
+#### 5. VCA is triggered because the transaction is above threshold
+
+The transaction manager explicitly indicates that approval is required:
+```bash
+[INFO  pallet_tx_manager::pallet] [prepare_transaction] Above threshold, requiring VCA confirmation
+```
+This is the key log line proving that the conditional approval logic was triggered.
+
+#### 6. The human-readable transaction message is generated
+
+The wallet generates the transaction message used in the confirmation flow:
+```bash
+[DEBUG pallet_tx_manager::pallet] [generate_tx_message] Generated message: Transfer 0.4 SOL to HAcrh...L416t
+```
+This is the action summary the user is effectively asked to validate through the PoHI / VCA flow.
+
+#### 7. The VCA commitment is created and stored
+
+The system generates the garbled content and stores the associated metadata:
+```bash
+[INFO  pallet_tx_validation::pallet] [tx-validation] store_metadata_aux: who = , message_pgarbled_cid = "QmZRh7D7MxdDq8MxhFfDEnWQYYm2XCrdRrogMVaqUHQHRY", message_digits = [6, 9], pinpad_digits = [1, 2, 8, 5, 7, 6, 0, 9, 4, 3]
+[INFO  pallet_tx_manager::pallet] [SOL-client]-[tx-manager]- Commitment stored with cid="QmZRh7D7MxdDq8MxhFfDEnWQYYm2XCrdRrogMVaqUHQHRY" digits=BoundedVec([6, 9], 4) pinpad_digits=BoundedVec([1, 2, 8, 5, 7, 6, 0, 9, 4, 3], 10)
+```
+
+Interpretation:
+
+- the VCA payload is prepared,
+- the randomized challenge is stored,
+- the signed transaction is held as pending until user confirmation.
+
+#### 8. User input is checked and the VCA passes
+
+When the user completes the Action Confirmation Screen, the validation step checks the input:
+```bash
+[INFO  pallet_tx_validation::pallet] [tx-validation] check_input: who = , ipfs_cid = "QmZRh7D7MxdDq8MxhFfDEnWQYYm2XCrdRrogMVaqUHQHRY", input_digits = [5, 7]
+[INFO  pallet_tx_validation::pallet] [tx-validation] check_input: computed_inputs_from_permutation = [6, 9], message_digits = BoundedVec([6, 9], 10)
+[INFO  pallet_tx_validation::pallet] [tx-validation] TxPass
+[DEBUG pallet_tx_manager::pallet] VCA validation successful
+```
+
+This is the decisive proof that:
+
+- the user completed the challenge,
+- the input matched the expected garbled confirmation flow,
+- the transaction is allowed to continue.
+
+#### 9. The transaction is simulated
+
+Before broadcasting, the wallet simulates the signed transaction:
+```bash
+[INFO  sol_client::client] [simulate_transaction] Simulating transaction
+[INFO  sol_client::client] [simulate_transaction] Transaction simulation successful
+```
+
+Interpretation:
+
+- the transaction is valid,
+- the fee is consistent with the computed estimate,
+- simulation succeeded before broadcast.
+
+#### 10. The transaction is broadcast successfully
+
+Finally, the signed transaction is sent to Solana Devnet:
+```bash
+[DEBUG sol_client::rpc] [send_request] Sending RPC request for method: sendTransaction
+[INFO  sol_client::client] [broadcast_transaction] Transaction sent with signature: qJo1EBoUzXw9eDGgmXv5Bt8cnGydgrjPFD68XyULsMHQi3sUgR6hZihYmjCyMrcQLrwApPjaEoZZR4hWsouDCoh
+[INFO  pallet_tx_manager::pallet] Transaction broadcast successful: qJo1EBoUzXw9eDGgmXv5Bt8cnGydgrjPFD68XyULsMHQi3sUgR6hZihYmjCyMrcQLrwApPjaEoZZR4hWsouDCoh
+```
+
+
+
+
+
+## Optional: Front-End Access
+
+You can inspect chain state and transactions via:
+
+- [Polkadot.js Apps](https://polkadot.js.org/apps/?rpc=ws://localhost:9944)
+- Or your preferred Substrate front-end UI
+
+## Notes
+
+- All services run in Docker containers and use local ports `9944`, `2090`, and `5001`
+- This setup replicates the same runtime environment used in hosted testnets but fully self-contained
+- Ideal for offline testing, developer evaluation, or deeper inspection of runtime logs
+
+
+
+
+
+
+
+
+
+
+
+---
+:::note Technical Preview – Foundation for Secure Mobile SDKs  
+This Android application is provided as a technical demonstration of Interstellar’s secure Web3 account infrastructure. It serves as a foundation for the forthcoming Android and iOS SDKs, which are still under active development.  
+
+Please note that the current user interface and experience are not representative of the final product. Both UI and UX will be significantly refined to align with Interstellar’s core mission: delivering the highest levels of simplicity and security in mobile self-custody.  
+:::
+
+
+:::info Follow-Up – Selective Docs Exploration
+
+If you've jumped straight into the evaluation, we recommend consulting the **[Milestone 1 documentation](/Milestones/M1/Summary.md)** for key context. It outlines the core architecture, backend logic, and trusted execution flows implemented in this milestone.
+
+The documentation is modular—feel free to explore only the sections most relevant to your review or interest.  
+You can also use the **search bar** (top right corner) to locate specific topics quickly. Helpful keywords include:
+
+- `VHDL`, `circuits`, `garbled`, `TEE`, `integritee`,`SE attestation`  
+- `NFC`, `VCA`,`recovery`, `threshold`, `trusted UX`  
+- `comparison`, `passkey`, `ledger`, `authentication`, `compliance`, `security`, `ATT&CK`
+
+:::
