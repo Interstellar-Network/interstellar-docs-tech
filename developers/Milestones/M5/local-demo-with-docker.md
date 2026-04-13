@@ -457,7 +457,7 @@ In addition to Reown Lab, WalletConnect connectivity can also be sanity-checked 
     <figcaption>Copy Uniswap Link</figcaption>
   </figure>
   <figure style={{ textAlign: "center" }}>
-    <img src="/img/uniswap.png" alt="URI" width="200"/>
+    <img src="/img/uniswap.png" alt="URI" width="600"/>
     <figcaption>Uniswap Dapp</figcaption>
   </figure>
 </div>
@@ -465,10 +465,10 @@ In addition to Reown Lab, WalletConnect connectivity can also be sanity-checked 
 <div style={{ display: "flex", gap: "20px", justifyContent: "center" }}>
   <figure style={{ textAlign: "center" }}>
     <img src="/img/wc_aave.png" alt="URI Filled" width="200"/>
-    <figcaption>Copy AaveLink</figcaption>
+    <figcaption>Copy Aave Link</figcaption>
   </figure>
   <figure style={{ textAlign: "center" }}>
-    <img src="/img/aave.png" alt="balance 0" width="200"/>
+    <img src="/img/aave.png" alt="balance 0" width="600"/>
     <figcaption>Aave Dapp</figcaption>
   </figure>
 </div>
@@ -510,11 +510,11 @@ Go to the **SIGN AND SEND TRANSACTION** section in the Solana test Dapp.
 
 <div style={{ display: "flex", gap: "20px", justifyContent: "center" }}>
   <figure style={{ textAlign: "center" }}>
-    <img src="/img/sign_send_tx.png" alt="sign send" width="450" height="100"/>
-    <figcaption>Open the SIGN AND SEND TRANSACTION section</figcaption>
+    <img src="/img/sign_send_tx.png" alt="sign send" width="400"/>
+    <figcaption>SIGN AND SEND TRANSACTION</figcaption>
   </figure>
   <figure style={{ textAlign: "center" }}>
-    <img src="/img/sign_send_tx_fill.png" alt="fill tx" width="450" height="80"/>
+    <img src="/img/sign_send_tx_fill.png" alt="fill tx" width="600" />
     <figcaption>Enter an amount above the threshold to trigger VCA / approval</figcaption>
   </figure>
 </div>
@@ -584,7 +584,7 @@ At the moment, the Ethereum flow exposed by the Reown lab is the one that allows
     <figcaption>Network Button- Select Sepolia</figcaption>
   </figure>
   <figure style={{ textAlign: "center" }}>
-    <img src="/img/send_vitalik.png" alt="fill tx" width="200"/>
+    <img src="/img/send_vitalik.png" alt="fill tx" width="600"/>
     <figcaption>Go to Send Transaction to Vitalik</figcaption>
   </figure>
 </div>
