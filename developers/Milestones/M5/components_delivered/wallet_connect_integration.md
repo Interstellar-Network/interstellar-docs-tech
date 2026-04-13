@@ -93,6 +93,13 @@ The current validation scope of this component is based on the public Reown / Wa
   </TableBody>
 </Table>
 
+
+:::info Limitation
+The public Reown Lab environment currently does not expose a Polkadot Dapp flow suitable for testing both WalletConnect connectivity and transaction execution.
+
+For this reason, Polkadot is not included in the practical validation scope of this milestone tutorial.
+:::
+
 ## Reference validation flow
 
 For this milestone, the main end-to-end validation scenario is the **Solana Devnet flow**.
