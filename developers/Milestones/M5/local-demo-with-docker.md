@@ -929,7 +929,10 @@ This is the expected behavior for this Ethereum Sepolia test flow.
 #### 7. The signed transaction is broadcast successfully
 
 The signed raw transaction is then sent to the Ethereum Sepolia network:
-
+```bash
+[DEBUG eth_client::client] send_raw_transaction: START
+[INFO  pallet_tx_manager::pallet] [prepare_transaction] Auto-approved transaction broadcast successful: 0xd682f2be4703224500124ec5fe4d69467796cadb100e7e2f0b4cdc800630f17a
+```
 
 ## Optional: Front-End Access
 
