@@ -60,7 +60,7 @@ chmod +x docker-ipfs-init.sh
 ```bash
 # Step 3: Place the .env file we send in this directory
 ```
-> specific for M5 delivery - previous .env should not be reused
+> specific for current Milestone delivery - previous .env should not be reused
 ```bash
 # Step 4: Start Docker (if needed)
 sudo service docker start  # (for most Linux distros)
