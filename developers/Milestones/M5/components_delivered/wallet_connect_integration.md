@@ -74,14 +74,14 @@ The current validation scope of this component is based on the public Reown / Wa
       <TableCell>Yes</TableCell>
       <TableCell>Yes</TableCell>
       <TableCell>Yes</TableCell>
-      <TableCell>Reference end-to-end validation flow for this milestone</TableCell>
+      <TableCell> This flow does not require message signing</TableCell>
     </TableRow>
     <TableRow>
       <TableCell>Ethereum Sepolia</TableCell>
       <TableCell>Yes</TableCell>
       <TableCell>Yes</TableCell>
-      <TableCell>No</TableCell>
-      <TableCell>The current Reown test flow allows transaction signing, but not the same adjustable approval scenario as Solana</TableCell>
+      <TableCell>Yes</TableCell>
+      <TableCell>The flow allows transaction signing with approval only when message signing enables establishement of the connection with EVM modal</TableCell>
     </TableRow>
     <TableRow>
       <TableCell>Bitcoin</TableCell>
@@ -138,7 +138,7 @@ This milestone validates the integration against currently accessible public tes
 As a result:
 
 - **Solana Devnet** is the primary reference flow for end-to-end validation,
-- **Ethereum Sepolia** demonstrates connection and signing interoperability, but not the same approval scenario,
+- **Ethereum Sepolia** demonstrates connection and signing interoperability, but the approval scenario required message signing for EVM modal connection establishement,
 - **Bitcoin** currently demonstrates connection only in this public test setup due to network mismatch between the Reown test Dapp and the wallet configuration.
 
 These limitations come from the currently available public test environment and do not change the core result of the milestone, which is the successful integration of WalletConnect and the demonstration of interoperability with Dapps using its standard connection and request model.
