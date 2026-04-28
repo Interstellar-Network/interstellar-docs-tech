@@ -48,7 +48,9 @@ BITCOIN_TESTNET_API_KEY=<API_KEY_WE_SEND>
 ```bash
 # Step 1: Create a working directory for the current milestones[x]
 mkdir interstellar_m[x]_demo && cd interstellar_m[x]_demo
+```
 
+```bash
 # Step 2: Download the stack config with the specific curl link of the current milestones [x]
 curl -L -o docker-compose.yml https://raw.githubusercontent.com/Interstellar-Network/containers/refs/tags/testnet-m[x]/docker-compose.yml
 curl -L -o docker-ipfs-init.sh https://raw.githubusercontent.com/Interstellar-Network/containers/refs/tags/testnet-m[x]/docker-ipfs-init.sh
