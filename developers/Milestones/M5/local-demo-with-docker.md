@@ -25,8 +25,7 @@ Together, these PRs demonstrate that M5 covers the full WalletConnect/Reown path
 Although the system is **not yet production-ready**, it provides a robust foundation. 
 Broader edge case coverage, interoperability, and resilience guarantees will be the focus 
 of the upcoming SDK and future milestones. 
-Reviewers are enco
-uraged to **focus on the functional flow and experience** of the key features in this milestone.
+Reviewers are encouraged to **focus on the functional flow and experience** of the key features in this milestone.
 :::
 
 The following guide explains how to run the full Interstellar stack **locally** using Docker or Podman. You will be able to launch the Substrate node, Integritee TEE worker, and IPFS service, then interact with the system using the **Interstellar Android demo app**.
@@ -110,7 +109,7 @@ Before starting, make sure:
 
 For the transaction tests on Solana Devnet and Ethreum Sepolia, you will also need:
 - a wallet account already funded with Solana Devnet,
-- a wallet account already funded with Ethreum Sepolia
+- a wallet account already funded with Ethereum Sepolia
 
 ---
 
@@ -175,27 +174,44 @@ Once the button is configured for Solana Devnet:
 
 In the wallet app:
 
-1. go to the **Send** screen,
-2. click on the blank space on top of `CONNECT TO DAPP` button,
-3. paste the WalletConnect URI,
-4. click **CONNECT TO DAPP**.
+1. go to the **Portfolio** or **Send** screen,
+2. click on the **QR code** icon on the top left of the screen
+3. click on the **Enter URI manually** button
+4. click on the blank space on top of `Connect` button,
+5. paste the WalletConnect URI,
+6. click **Connect**.
 
 <div style={{ display: "flex", gap: "20px", justifyContent: "center" }}>
   <figure style={{ textAlign: "center" }}>
-    <img src="/img/send_tab_connect.png" alt="send connect" width="200"/>
-    <figcaption>Click on top of CONNECT DAPP</figcaption>
+    <img src="/img/portfolio_QR.png" alt="portfolio QR" width="200"/>
+    <figcaption>Click on top left icon</figcaption>
   </figure>
   <figure style={{ textAlign: "center" }}>
-    <img src="/img/send_tab_uri.png" alt="URI" width="200"/>
-    <figcaption>The URI field appears</figcaption>
+    <img src="/img/send_QR.png" alt="send QR" width="200"/>
+    <figcaption>Click on top left icon</figcaption>
   </figure>
 </div>
 
 <div style={{ display: "flex", gap: "20px", justifyContent: "center" }}>
   <figure style={{ textAlign: "center" }}>
-    <img src="/img/send_tab_uri_fill.png" alt="URI Filled" width="200"/>
-    <figcaption>Click on `CONNECT..` button</figcaption>
+    <img src="/img/enter_uri.png" alt="URI Filled" width="200"/>
+    <figcaption>Click on `Enter URI` button</figcaption>
   </figure>
+</div>
+
+
+<div style={{ display: "flex", gap: "20px", justifyContent: "center" }}>
+  <figure style={{ textAlign: "center" }}>
+    <img src="/img/connect_URI.png" alt="connect URI" width="200"/>
+    <figcaption>Click on top of Connect and paste URI</figcaption>
+  </figure>
+  <figure style={{ textAlign: "center" }}>
+    <img src="/img/connect_uri_ex.png" alt="URI example" width="200"/>
+    <figcaption>Click on `Connect`</figcaption>
+  </figure>
+</div>
+
+<div style={{ display: "flex", gap: "20px", justifyContent: "center" }}>
   <figure style={{ textAlign: "center" }}>
     <img src="/img/balance_0.png" alt="balance 0" width="200"/>
     <figcaption>Check the wallet accounts balances</figcaption>
@@ -269,7 +285,7 @@ In the captured validation example for this tutorial, the account is funded with
 
 At the moment, the Solana flow exposed by the Reown lab is the one that allows testing the approval flow through Interstellar’s VCA / Action Confirmation Screen.
 
-Go to the **SIGN AND SEND TRANSACTION** section in the Solana test Dapp.
+Scroll down to the **SIGN AND SEND TRANSACTION** section in the Solana test Dapp.
 
 <div style={{ display: "flex", gap: "20px", justifyContent: "center" }}>
   <figure style={{ textAlign: "center" }}>
@@ -347,7 +363,7 @@ This Ethereum flow exposed by the Reown lab is the basic one that allows testing
   </figure>
   <figure style={{ textAlign: "center" }}>
     <img src="/img/send_vitalik.png" alt="fill tx" width="600"/>
-    <figcaption>Go to Send Transaction to Vitalik</figcaption>
+    <figcaption>Scroll down to `Send Transaction to Vitalik`</figcaption>
   </figure>
 </div>
 
@@ -364,7 +380,7 @@ Connect to the Dapp
 
 <div style={{ display: "flex", gap: "20px", justifyContent: "center" }}>
   <figure style={{ textAlign: "center" }}>
-    <img src="/img/open_evm_modal.png" alt="sign send" width="200"/>
+    <img src="/img/open_evm_modal.png" alt="sign send" width="400" height ="350"/>
     <figcaption>Open EVM Modal</figcaption>
   </figure>
   <figure style={{ textAlign: "center" }}>
@@ -373,8 +389,13 @@ Connect to the Dapp
   </figure>
 </div>
 
-Copy paste WC URI in the wallet app and click on `CONNECT TO DAPP`
+Copy paste the WalletConnect URI in the wallet app and click on `Connect`
 [Same flow as previously explained](/developers/Milestones/M5/local-demo-with-docker#step-13--paste-the-uri-in-the-wallet-app-and-connect)
+
+::::info BE CAREFULL
+It is recomended to use `Disconnect All` or `Disconnect EVM` after each test transaction to avoid potential synchronization issues due to cookies and cache with the Dapp
+::::
+
 
 
 Dapp required a signed message (not a transaction) to enable connection
