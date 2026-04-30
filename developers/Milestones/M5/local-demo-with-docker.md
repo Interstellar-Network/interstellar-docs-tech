@@ -254,7 +254,7 @@ In addition to Reown Lab, WalletConnect connectivity can also be sanity-checked 
 
 ::::info
 
-Those Dapps does not handle Ethereum Sepolia so they won't appear in the balence.
+Those Dapps does not handle Ethereum Sepolia so they won't appear in the balance.
 In addition, it is not in the scope of this milestone to extensively test the interactivity with such Dapps even in the case you would fund the Ethereum account with mainnet ETH.
 ::::
 
