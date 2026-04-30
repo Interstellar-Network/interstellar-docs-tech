@@ -119,21 +119,16 @@ Reown provides a public Dapp simulator that is convenient for testing WalletConn
 
 Open:
 
-[Lab Reown Dapp simulation](https://lab.reown.com/)
+[Lab Reown Dapp Multichain](https://lab.reown.com/appkit/?name=multichain-all)
 
 ### Step 1.1 — Configure the `Connect Wallet` button
 
 On the Reown page:
 
-1. Select **Multichain**
-2. Open the network selector
-3. Choose **Solana Devnet**
+1. Open the network selector
+2. Choose **Solana Devnet**
 
 <div style={{ display: "flex", gap: "20px", justifyContent: "center" }}>
-  <figure style={{ textAlign: "center" }}>
-    <img src="/img/choose_multichain.png" alt="multichain" width="200"/>
-    <figcaption>Click on Multichain</figcaption>
-  </figure>
   <figure style={{ textAlign: "center" }}>
     <img src="/img/connect_buttons.png" alt="connect buttons" width="200"/>
     <figcaption>Click on Network Button</figcaption>
@@ -225,41 +220,6 @@ The Dapp session is established and the wallet refreshes account data. In the cu
 :::info Tip for reviewers
 After the WalletConnect session is established, the wallet may initially display a **zero balance** for SOL,ETH, BTC if the account has not yet been funded. This is expected and can be confirmed in logs.
 :::
-
-
-In addition to Reown Lab, WalletConnect connectivity can also be sanity-checked against public production Dapps such as [Aave Pro](https://pro.aave.com/) and [Uniswap](https://app.uniswap.org/), by using their standard **Connect Wallet** flow. This is useful to confirm interoperability of the WalletConnect session layer with real Dapp frontends beyond the dedicated test environment.
-
-
-<div style={{ display: "flex", gap: "20px", justifyContent: "center" }}>
-  <figure style={{ textAlign: "center" }}>
-    <img src="/img/wc_uni.png" alt="send connect" width="200"/>
-    <figcaption>Copy Uniswap Link</figcaption>
-  </figure>
-  <figure style={{ textAlign: "center" }}>
-    <img src="/img/uniswap.png" alt="URI" width="600"/>
-    <figcaption>Uniswap Dapp</figcaption>
-  </figure>
-</div>
-
-<div style={{ display: "flex", gap: "20px", justifyContent: "center" }}>
-  <figure style={{ textAlign: "center" }}>
-    <img src="/img/wc_aave.png" alt="URI Filled" width="200"/>
-    <figcaption>Copy Aave Link</figcaption>
-  </figure>
-  <figure style={{ textAlign: "center" }}>
-    <img src="/img/aave.png" alt="balance 0" width="600"/>
-    <figcaption>Aave Dapp</figcaption>
-  </figure>
-</div>
-
-::::info
-
-Those Dapps does not handle Ethereum Sepolia so they won't appear in the balance.
-In addition, it is not in the scope of this milestone to extensively test the interactivity with such Dapps even in the case you would fund the Ethereum account with mainnet ETH.
-::::
-
-
-
 
 ---
 
@@ -463,7 +423,6 @@ Then copy past your ETH wallet address and click on `Preview Send` then `Send` t
   </figure>
 </div>
 
-
 ## 2.5 — Bitcoin connection test
 
 Bitcoin can be used to validate WalletConnect connection only.
@@ -473,6 +432,48 @@ A transaction flow is not covered here because:
 - the wallet implementation used for M5 is configured for **Bitcoin Testnet4**.
 
 This mismatch prevents an end-to-end transaction validation through the public Reown test page in the current setup.
+
+## 2.6 Test WalletConnect connectivity with production Dapps
+
+In addition to Reown Lab, WalletConnect connectivity can also be sanity-checked against public production Dapps such as [Aave Pro](https://pro.aave.com/) and [Uniswap](https://app.uniswap.org/), by using their standard **Connect Wallet** flow. This is useful to confirm interoperability of the WalletConnect session layer with real Dapp frontends beyond the dedicated test environment.
+
+
+<div style={{ display: "flex", gap: "20px", justifyContent: "center" }}>
+  <figure style={{ textAlign: "center" }}>
+    <img src="/img/wc_uni.png" alt="send connect" width="200"/>
+    <figcaption>Copy Uniswap Link</figcaption>
+  </figure>
+  <figure style={{ textAlign: "center" }}>
+    <img src="/img/uniswap.png" alt="URI" width="600"/>
+    <figcaption>Uniswap Dapp</figcaption>
+  </figure>
+</div>
+
+<div style={{ display: "flex", gap: "20px", justifyContent: "center" }}>
+  <figure style={{ textAlign: "center" }}>
+    <img src="/img/wc_aave.png" alt="URI Filled" width="200"/>
+    <figcaption>Copy Aave Link</figcaption>
+  </figure>
+  <figure style={{ textAlign: "center" }}>
+    <img src="/img/aave.png" alt="balance 0" width="600"/>
+    <figcaption>Aave Dapp</figcaption>
+  </figure>
+</div>
+
+::::info
+
+Those Dapps does not handle Ethereum Sepolia so they won't appear in the balance.
+In addition, it is not in the scope of this milestone to extensively test the interactivity with such Dapps even in the case you would fund the Ethereum account with mainnet ETH.
+::::
+
+
+
+
+
+
+
+
+
 
 ---
 
