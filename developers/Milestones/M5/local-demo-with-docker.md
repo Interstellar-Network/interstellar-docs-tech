@@ -435,7 +435,7 @@ Then copy past your ETH wallet address and click on `Preview Send` then `Send` t
 
 
 
-## 3 Test WalletConnect connectivity with production Dapps
+## 3 — Test WalletConnect connectivity with production Dapps
 
 In addition to Reown Lab, WalletConnect connectivity can also be sanity-checked against public production Dapps such as [Aave Pro](https://pro.aave.com/) and [Uniswap](https://app.uniswap.org/), by using their standard **Connect Wallet** flow. This is useful to confirm interoperability of the WalletConnect session layer with real Dapp frontends beyond the dedicated test environment.
 
