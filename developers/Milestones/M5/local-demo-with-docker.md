@@ -433,9 +433,17 @@ Then copy past your ETH wallet address and click on `Preview Send` then `Send` t
   </figure>
 </div>
 
+## 3 — Other reown lab Dapps (not Mandatory for the tests)
+
+Feel free to try other Dapps; but not all of these have been tested, and some require capabilities that are not part of Interstellar SDK supported use cases.
+
+In addition even on working Dapps, not all buttons work eg. `extractSolTransaction` works only with `Sign and Send Transaction` (Dapp) but NOT with `Sign and Send Transaction` (Wallet).
+
+If you want to explore other reown Dapps:
+[Go to the main reown Dapp page](https://lab.reown.com)
 
 
-## 3 — Test WalletConnect connectivity with production Dapps
+## 4 — Test WalletConnect connectivity with production Dapps
 
 In addition to Reown Lab, WalletConnect connectivity can also be sanity-checked against public production Dapps such as [Aave Pro](https://pro.aave.com/) and [Uniswap](https://app.uniswap.org/), by using their standard **Connect Wallet** flow. This is useful to confirm interoperability of the WalletConnect session layer with real Dapp frontends beyond the dedicated test environment.
 

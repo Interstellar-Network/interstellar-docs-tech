@@ -37,12 +37,8 @@ The BTC worker connects to a **Bitcoin Testnet RPC endpoint** using a hosted pro
 For simplicity, we provide curators with a ready-to-use `.env` file.  
 
 Place the file in the **same directory** as `docker-compose.yml`.  
-It contains a single variable:  
 
-```bash
-BITCOIN_TESTNET_API_KEY=<API_KEY_WE_SEND>
-```
-⚠️ If you prefer to use your own provider, simply replace the value of BITCOIN_TESTNET_API_KEY in .env.
+⚠️ Ask us directly for an updated `.env` file.
 :::
 
 ```bash
