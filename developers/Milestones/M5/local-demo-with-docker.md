@@ -840,7 +840,8 @@ This confirms that the ETH account used in the WalletConnect flow is resolved co
 
 The next key step is the WalletConnect sign-message request. The signed payload clearly shows that the request comes from lab.reown.com and asks the wallet to sign in with the Ethereum account.
 
-Relevant except from the verified message payload:
+Relevant excerpt from the verified message payload:
+```bash
 lab.reown.com wants you to sign in with your Ethereum account:
 0x62a43b07a2a0287622550dddb144b7df193bf6eb
 
@@ -851,6 +852,7 @@ Version: 1
 Chain ID: 11155111
 ...
 Issued At: 2026-04-30T15:58:19.304Z
+```
 
 The corresponding logs show:
 ```bash
