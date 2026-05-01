@@ -218,14 +218,25 @@ In the wallet app:
 The Dapp session is established and the wallet refreshes account data. In the current implementation, the wallet fetches balances for the supported chains linked to the account view.
 
 :::info Tip for reviewers
-After the WalletConnect session is established, the wallet may initially display a **zero balance** for SOL,ETH, BTC if the account has not yet been funded. This is expected and can be confirmed in logs.
+After the WalletConnect session is established, the wallet may initially display a **zero balance** for SOL, ETH, BTC if the account has not yet been funded. This is expected and can be confirmed in logs.
 :::
 
+
+::::note Bitcoin test
+
+Bitcoin can be used to validate WalletConnect connection only.
+
+A transaction flow is not covered here because:
+- the Reown test Dapp currently uses **Bitcoin Testnet3**,
+- the wallet implementation used for M5 is configured for **Bitcoin Testnet4**.
+
+This mismatch prevents an end-to-end transaction validation through the public Reown test page in the current setup.
+::::
 ---
 
 ## 2 — Dapp transaction signing and approval
 
-## 2.1 — Fund the Solana Devnet account
+### 2.1 — Fund the Solana Devnet account
 
 To test transaction approval, first fund the Solana Devnet account.
 
@@ -250,7 +261,7 @@ Once the wallet receives funds, the displayed balance changes accordingly.
 In the captured validation example for this tutorial, the account is funded with **0.5 SOL** on Solana Devnet.
 :::
 
-## 2.2 — Test transaction approval and signing on Solana Devnet
+### 2.2 — Test transaction approval and signing on Solana Devnet
 
 At the moment, the Solana flow exposed by the Reown lab is the one that allows testing the approval flow through Interstellar’s VCA / Action Confirmation Screen.
 
@@ -284,7 +295,6 @@ Use an amount **greater than 0.025 SOL** to trigger the VCA / approval flow.
 [Conditional Transaction Validation Threshold](/developers/Milestones/M3/local-demo-with-docker#step-2-test-transactions-with-conditional-validations)
 :::
 
-:::
 
 ### Example validated flow
 
@@ -423,17 +433,9 @@ Then copy past your ETH wallet address and click on `Preview Send` then `Send` t
   </figure>
 </div>
 
-## 2.5 — Bitcoin connection test
 
-Bitcoin can be used to validate WalletConnect connection only.
 
-A transaction flow is not covered here because:
-- the Reown test Dapp currently uses **Bitcoin Testnet3**,
-- the wallet implementation used for M5 is configured for **Bitcoin Testnet4**.
-
-This mismatch prevents an end-to-end transaction validation through the public Reown test page in the current setup.
-
-## 2.6 Test WalletConnect connectivity with production Dapps
+## 3 Test WalletConnect connectivity with production Dapps
 
 In addition to Reown Lab, WalletConnect connectivity can also be sanity-checked against public production Dapps such as [Aave Pro](https://pro.aave.com/) and [Uniswap](https://app.uniswap.org/), by using their standard **Connect Wallet** flow. This is useful to confirm interoperability of the WalletConnect session layer with real Dapp frontends beyond the dedicated test environment.
 
@@ -470,11 +472,6 @@ In addition, it is not in the scope of this milestone to extensively test the in
 
 
 
-
-
-
-
-
 ---
 
 ## 🛠️ Interpreting Logs
@@ -486,11 +483,11 @@ This section explains the logs that reviewers should expect for the two main val
 
 ---
 
-## A — Logs after connecting to the Dapp
+### A — Logs after connecting to the Dapp
 
 After the WalletConnect URI is pasted and the connection is established, the wallet refreshes chain-specific account data.
 
-### What to look for
+
 
 #### 1. Signature verification and account resolution
 
@@ -566,7 +563,7 @@ The following warnings appear in the logs and are expected in this environment:
 They do not indicate failure of the WalletConnect flow or of the Solana transaction flow shown in this tutorial.
 
 
-## B — Logs for the successful Solana Devnet transaction with VCA
+### B — Logs for the successful Solana Devnet transaction with VCA
 
 This is the reference end-to-end flow for M5 milestone validation.
 
@@ -586,7 +583,7 @@ The transaction manager starts preparing the Solana transaction:
 [INFO  pallet_tx_manager::pallet] [prepare_transaction] START - account=, chain=SOL, amount=Fixed(400000000), fee_type=Normal
 ```
 
-Interpretation:
+**Interpretation:**
 
 - `400000000` lamports = 0.4 SOL
 
@@ -601,7 +598,7 @@ Then the balance sufficiency check passes:
 ```bash
 [DEBUG sol_client::client] [validate_sufficient_balance] ✓ balance check passed: have=500000000, need=401005000
 ```
-Interpretation:
+**Interpretation:**
 
 - available balance = `500000000` lamports
 - required = `401005000` lamports
@@ -620,7 +617,7 @@ Then it computes the final fee:
 [INFO  sol_client::fee] [sol-fee] Normal: base=5000 + priority=0 (0µL/CU * 200000 CU) = 5000 lamports
 [INFO  sol_client::client] SOL prepare_transaction: amount=400000000 lamports, fee_type=Normal, fee=5000 lamports, cu_price=0 micro-lamports/CU
 ```
-Interpretation:
+**Interpretation:**
 
 - base fee = `5000` lamports
 - no priority fee was selected in this observed case
@@ -663,7 +660,7 @@ The system generates the garbled content and stores the associated metadata:
 [INFO  pallet_tx_manager::pallet] [SOL-client]-[tx-manager]- Commitment stored with cid="QmZRh7D7MxdDq8MxhFfDEnWQYYm2XCrdRrogMVaqUHQHRY" digits=BoundedVec([6, 9], 4) pinpad_digits=BoundedVec([1, 2, 8, 5, 7, 6, 0, 9, 4, 3], 10)
 ```
 
-Interpretation:
+**Interpretation:**
 
 - the VCA payload is prepared,
 - the randomized challenge is stored,
@@ -693,7 +690,7 @@ Before broadcasting, the wallet simulates the signed transaction:
 [INFO  sol_client::client] [simulate_transaction] Transaction simulation successful
 ```
 
-Interpretation:
+**Interpretation:**
 
 - the transaction is valid,
 - the fee is consistent with the computed estimate,
@@ -708,7 +705,7 @@ Finally, the signed transaction is sent to Solana Devnet:
 [INFO  pallet_tx_manager::pallet] Transaction broadcast successful: qJo1EBoUzXw9eDGgmXv5Bt8cnGydgrjPFD68XyULsMHQi3sUgR6hZihYmjCyMrcQLrwApPjaEoZZR4hWsouDCoh
 ```
 
-## C — Logs for the Ethereum Sepolia transaction signing flow without VCA
+### C — Logs for the Ethereum Sepolia transaction signing flow without VCA
 
 This flow corresponds to the Ethereum Sepolia transaction generated by the Reown test Dapp, using its predefined destination address (the current test flow targets Vitalik’s address).
 
@@ -720,9 +717,9 @@ Unlike the Solana Devnet approval flow, this Ethereum Sepolia example demonstrat
 - therefore **auto-approved**, without triggering PoHI / VCA,
 - and then broadcast successfully.
 
-### What to look for
 
-### 1. Signature verification and request authentication
+
+#### 1. Signature verification and request authentication
 
 The request first goes through the usual signature verification flow:
 
@@ -806,6 +803,232 @@ The signed raw transaction is then sent to the Ethereum Sepolia network:
 [INFO  pallet_tx_manager::pallet] [prepare_transaction] Auto-approved transaction broadcast successful: 0xd682f2be4703224500124ec5fe4d69467796cadb100e7e2f0b4cdc800630f17a
 ```
 ---
+
+### D — Logs for the Ethereum Sepolia transaction flow with VCA
+
+This flow corresponds to an Ethereum Sepolia interaction in which the Dapp first requests a **message signature** through WalletConnect, and then initiates an ETH transaction that is classified as **above the configured validation threshold**.
+
+In this captured sequence, the flow demonstrates:
+
+- WalletConnect session activity with an ETH account,
+- a Dapp message-signing request handled by Interstellar,
+- a transaction request routed into the ETH transaction pipeline,
+- threshold evaluation resulting in **VCA being required**,
+- VCA challenge generation and storage,
+- user validation through the Action Confirmation Screen,
+- and successful transaction broadcast.
+
+---
+
+#### 1. Initial ETH account activity and balance lookup
+
+Before the signing flow, the wallet is already able to resolve and query the ETH account:
+
+```bash
+[DEBUG eth_client::client] fetch_balance: formated address = "0x62a43b07a2a0287622550dddb144b7df193bf6eb"
+[DEBUG eth_client::client] fetch_balance: RPC response = RpcResponse { result: Some("0x16bcc41e90000"), error: None }
+```
+This corresponds to:
+
+0x16bcc41e90000 wei
+`400000000000000` wei
+`0.0004` ETH
+
+This confirms that the ETH account used in the WalletConnect flow is resolved correctly and has a non-zero Sepolia balance.
+
+#### 2. WalletConnect sign-message request is received
+
+The next key step is the WalletConnect sign-message request. The signed payload clearly shows that the request comes from lab.reown.com and asks the wallet to sign in with the Ethereum account.
+
+Relevant except from the verified message payload:
+lab.reown.com wants you to sign in with your Ethereum account:
+0x62a43b07a2a0287622550dddb144b7df193bf6eb
+
+Please sign with your account
+
+URI: https://lab.reown.com
+Version: 1
+Chain ID: 11155111
+...
+Issued At: 2026-04-30T15:58:19.304Z
+
+The corresponding logs show:
+```bash
+[DEBUG pallet_tx_manager::pallet] request_sign_message: START - account=, chain=ETH
+[DEBUG pallet_key_manager::pallet] [unseal_seed] Delegating to crypto_ops::unseal_seed
+[DEBUG pallet_key_manager::pallet] [do_sign_prehashed] Seed unsealed successfully, proceeding with signing
+[DEBUG pallet_key_manager::pallet] [do_sign_prehashed] Seed zeroed after signing
+[INFO  pallet_tx_manager::pallet] Successfully signed message and stored signature for account
+```
+**Interpretation:**
+
+This proves that the wallet can:
+
+- receive a WalletConnect message-signing request,
+- sign the payload with the ETH account,
+- and return a valid signature to the Dapp.
+
+This is an important interoperability point because it demonstrates WalletConnect compatibility not only for transactions, but also for standard Dapp message-signing flows.
+
+#### 3. Ethereum transaction preparation starts
+
+After the sign-message step, the Dapp initiates an ETH transaction request.
+
+The transaction manager starts processing it here:
+```bash
+[INFO  pallet_tx_manager::pallet] [prepare_transaction] START - account=, chain=ETH, amount=Fixed(350000000000000), fee_type=Normal
+```
+**Interpretation:**
+
+- `350000000000000` wei
+- `0.00035` ETH
+
+So this is an ETH Sepolia transfer of `0.00035` ETH.
+
+#### 4. ETH balance is fetched and checked
+
+The wallet fetches the sender balance again:
+```bash
+[DEBUG eth_client::client] fetch_balance: formated address = "0x62a43b07a2a0287622550dddb144b7df193bf6eb"
+[DEBUG eth_client::client] fetch_balance: RPC response = RpcResponse { result: Some("0x16bcc41e90000"), error: None }
+[INFO  pallet_tx_manager::pallet] [prepare_transaction] balance = 400000000000000
+```
+**Interpretation:**
+
+- available balance = 0.0004 ETH
+- requested transfer = 0.00035 ETH
+
+So the account balance is sufficient for the transfer plus fees.
+
+#### 5. EIP-1559 fee calculation is performed
+
+The ETH client then computes the fee parameters:
+```bash
+[DEBUG eth_client::client] fetch_latest_base_fee: got: 1551035
+[DEBUG eth_client::client] fetch_max_priority_fee: got: 1000000
+[DEBUG eth_client::fee] [eth-fee] fee_type=Normal, base_fee=1551035, priority_fee=1000000 -> max_fee=4102070, max_priority=1000000
+[INFO  eth_client::client] ETH prepare_transaction: fee_type=Normal, base_fee=1551035, max_fee=4102070, priority=1000000
+``` 
+This confirms that the transaction is prepared as an EIP-1559 ETH transaction, with:
+
+- base fee fetched from Sepolia,
+- priority fee fetched,
+- and max fee computed before signing.
+#### 6. The ETH transaction is signed successfully
+
+The transaction is then signed by the wallet:
+```bash
+[DEBUG pallet_key_manager::pallet] [unseal_seed] Delegating to crypto_ops::unseal_seed
+[DEBUG pallet_key_manager::pallet] [do_sign_prehashed] Seed unsealed successfully, proceeding with signing
+[DEBUG pallet_key_manager::pallet] [do_sign_prehashed] Seed zeroed after signing
+[DEBUG eth_client::client] create_eip1559_signed_rlp: START
+```
+This confirms successful transaction signing and serialization into signed EIP-1559 format.
+
+#### 7. Threshold evaluation triggers VCA
+
+The decisive line for this flow is:
+```bash
+[INFO  pallet_tx_manager::pallet] [prepare_transaction] Above threshold, requiring VCA confirmation
+```
+This shows that:
+
+- the ETH transaction has been evaluated against Interstellar’s transaction policy,
+- it is classified as above threshold,
+- and therefore cannot be broadcast immediately.
+
+Instead, it must go through the PoHI / VCA approval flow.
+
+#### 8. A human-readable transaction message is generated
+
+The transaction manager generates the action summary that will be tied to the confirmation flow:
+```bash
+[DEBUG pallet_tx_manager::pallet] [generate_tx_message] Generated message: Transfer 0.00035 ETH to 0xb4ba1...e0a79
+```
+This is the human-readable transaction message associated with the VCA validation.
+
+It confirms that the approval challenge is tied to a specific action, namely:
+
+- asset: ETH
+- amount: 0.00035 ETH
+- destination: 0xb4ba1...e0a79
+
+#### 9. The VCA commitment is created and stored
+
+The VCA challenge metadata is then generated and stored:
+```bash
+[INFO  pallet_tx_validation::pallet] [tx-validation] store_metadata_aux: who = , message_pgarbled_cid = "Qme6V7oajevdv7cmjgcycMrAos614hvFFLzZb1QfYRRtSB", message_digits = [9, 4], pinpad_digits = [9, 8, 3, 4, 0, 6, 2, 1, 7, 5]
+[INFO  pallet_tx_validation::pallet] [tx-validation] store_metadata_aux: done!
+[INFO  pallet_tx_manager::pallet] [ETH-client]-[tx-manager]- Commitment stored with cid="Qme6V7oajevdv7cmjgcycMrAos614hvFFLzZb1QfYRRtSB" digits=BoundedVec([9, 4], 4) pinpad_digits=BoundedVec([9, 8, 3, 4, 0, 6, 2, 1, 7, 5], 10)
+[DEBUG pallet_tx_manager::pallet] store_pending_transaction: START - account=, pending_tx=PendingTransaction { ipfs_cid: <wasm:stripped>, signed_tx: <wasm:stripped>, chain: ETH }
+[DEBUG pallet_tx_manager::pallet] store_pending_transaction: SUCCESS
+```
+**Interpretation;**
+
+This shows that:
+
+- the garbled confirmation payload is generated,
+- the randomized confirmation metadata is stored,
+- the signed ETH transaction is kept pending,
+- and final broadcast is blocked until the user completes the VCA step.
+
+#### 10. User input is checked and VCA passes
+
+When the user completes the Action Confirmation Screen, the validation engine checks the submitted digits:
+```bash
+[INFO  pallet_tx_validation::pallet] [tx-validation] check_input: who = , ipfs_cid = "Qme6V7oajevdv7cmjgcycMrAos614hvFFLzZb1QfYRRtSB", input_digits = [0, 3]
+[INFO  pallet_tx_validation::pallet] [tx-validation] check_input: input_digits_str = "\0\u{3}", input_digits_int = [0, 3], pinpad_permutation = BoundedVec([9, 8, 3, 4, 0, 6, 2, 1, 7, 5], 10)
+[INFO  pallet_tx_validation::pallet] [tx-validation] check_input: computed_inputs_from_permutation = [9, 4], message_digits = BoundedVec([9, 4], 10)
+[INFO  pallet_tx_validation::pallet] [tx-validation] TxPass
+[DEBUG pallet_tx_manager::pallet] VCA validation successful
+```
+**Interpretation:**
+
+This is the proof that:
+
+- the user completed the VCA challenge,
+- the randomized input matched the expected message digits,
+- and the transaction was authorized to continue.
+
+#### 11. The transaction is broadcast successfully
+
+Once VCA passes, the signed ETH transaction is sent to Sepolia:
+```bash
+[DEBUG eth_client::client] send_raw_transaction: START
+[INFO  pallet_tx_manager::pallet] Transaction broadcast successful: 0xbf035a807356f5972f7768f92f57c29d6830db0f4c70a97a9eae12a5f601e32a
+```
+This confirms that the ETH transaction was:
+
+- prepared,
+- signed,
+- held pending,
+- validated through VCA,
+- and finally broadcast successfully.
+
+**Reviewer conclusion**
+
+If the logs show, in order:
+
+1. ETH account balance fetch,
+2. WalletConnect sign-message request from lab.reown.com,
+3. successful message signing,
+4. prepare_transaction ... chain=ETH,
+5. ETH balance and fee calculation,
+6. Above threshold, requiring VCA confirmation,
+7. generated message Transfer 0.00035 ETH ...,
+8. commitment stored with CID and randomized digits,
+9. TxPass,
+10. Transaction broadcast successful
+
+then the Ethereum Sepolia WalletConnect flow has been validated successfully for:
+
+- WalletConnect message-signing interoperability,
+- ETH transaction preparation and signing,
+- threshold-based escalation to VCA,
+- PoHI / Action Confirmation Screen validation,
+- and final broadcast after successful human confirmation.
+
+
 
 
 ## Optional: Front-End Access
