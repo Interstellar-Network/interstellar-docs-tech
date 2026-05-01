@@ -387,7 +387,7 @@ Copy paste the WalletConnect URI in the wallet app and click on `Connect`
   </figure>
 </div>
 
-#### Step 2.4.2 — test transaction
+#### Step 2.4.2 — test transactions
 Once connection is established with the Dapp, set-up the transaction parameters
 
 <div style={{ display: "flex", gap: "20px", justifyContent: "center" }}>
