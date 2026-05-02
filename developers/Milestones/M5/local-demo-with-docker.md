@@ -198,7 +198,7 @@ In the wallet app:
 <div style={{ display: "flex", gap: "20px", justifyContent: "center" }}>
   <figure style={{ textAlign: "center" }}>
     <img src="/img/connect_URI.png" alt="connect URI" width="200"/>
-    <figcaption>Click on top of Connect and paste URI</figcaption>
+    <figcaption>Click on top of Connect</figcaption>
   </figure>
   <figure style={{ textAlign: "center" }}>
     <img src="/img/connect_uri_ex.png" alt="URI example" width="200"/>
@@ -356,7 +356,7 @@ This Ethereum flow exposed by the Reown lab is the basic one that allows testing
 
 <div style={{ display: "flex", gap: "20px", justifyContent: "center" }}>
   <figure style={{ textAlign: "center" }}>
-    <img src="/img/open_evm_modal.png" alt="sign send" width="400" height ="350"/>
+    <img src="/img/open_evm_modal.png" alt="sign send" width="400"/>
     <figcaption>Open EVM Modal</figcaption>
   </figure>
   <figure style={{ textAlign: "center" }}>
@@ -435,7 +435,7 @@ Then copy past your ETH wallet address and click on `Preview Send` then `Send` t
 
 Feel free to try other Dapps; but not all of these have been tested, and some require capabilities that are not part of Interstellar SDK supported use cases.
 
-In addition even on working Dapps, not all buttons work eg. `extractSolTransaction` works only with `Sign and Send Transaction` (Dapp) but NOT with `Sign and Send Transaction` (Wallet).
+In addition even on working Dapps, not all buttons work eg. `Sign and Send Transaction` (Dapp) works but some NOT with `Sign and Send Transaction` (Wallet)".
 
 If you want to explore other reown Dapps:
 [Go to the main reown Dapp page](https://lab.reown.com)
