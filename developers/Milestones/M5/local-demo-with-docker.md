@@ -478,10 +478,7 @@ In addition, it is not in the scope of this milestone to extensively test the in
 
 ## 🛠️ Interpreting Logs
 
-This section explains the logs that reviewers should expect for the two main validated scenarios covered by this tutorial:
-
-1. **WalletConnect session established and balances fetched**
-2. **Solana Devnet transaction above threshold, requiring VCA, then successfully broadcast**
+This section explains the logs that reviewers should expect for the main validated scenarios covered by this tutorial:
 
 ---
 
