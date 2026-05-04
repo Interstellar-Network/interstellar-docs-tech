@@ -123,7 +123,7 @@ Open:
 
 
 ::::info BE CAREFULL
-It is recomended to use `Disconnect All`, `Disconnect EVM` `Disconnect Solana` etc.after either a website reload, switching Dapp, app restart or background/foreground;  to avoid potential synchronization issues due to cookies and cache with the Dapp
+It is recomended to use `Disconnect All`, `Disconnect EVM` or `Disconnect Solana` etc.after either a website reload, switching Dapp, app restart or background/foreground;  to avoid potential synchronization issues due to cookies and cache with the Dapp
 ::::
 
 ### Step 1.1 — Configure the `Connect Wallet` button
