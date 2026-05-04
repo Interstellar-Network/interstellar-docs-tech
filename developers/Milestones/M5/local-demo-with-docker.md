@@ -121,6 +121,11 @@ Open:
 
 [Lab Reown Dapp Multichain](https://lab.reown.com/appkit/?name=multichain-all)
 
+
+::::info BE CAREFULL
+It is recomended to use `Disconnect All`, `Disconnect EVM` `Disconnect Solana` etc.after either a website reload, switching Dapp, app restart or background/foreground;  to avoid potential synchronization issues due to cookies and cache with the Dapp
+::::
+
 ### Step 1.1 — Configure the `Connect Wallet` button
 
 On the Reown page:
@@ -365,9 +370,7 @@ This Ethereum flow exposed by the Reown lab is the basic one that allows testing
   </figure>
 </div>
 
-::::info BE CAREFULL
-It is recomended to use `Disconnect All` or `Disconnect EVM` after either a website reload, switching Dapp, app restart or background/foreground;  to avoid potential synchronization issues due to cookies and cache with the Dapp
-::::
+
 
 
 Copy paste the WalletConnect URI in the wallet app and click on `Connect`
