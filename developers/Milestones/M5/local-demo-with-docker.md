@@ -272,7 +272,7 @@ However, in the current Reown basic Dapp lab flow, this Solana transaction test 
 - it targets a predefined destination,
 - it does not provide the same adjustable approval scenario as the following `2.4` Ethereum tests,
 
-This Solana flow exposed by the Reown lab is the only one that allows testing signing transaction but whithout the approval flow as the ammount is hardcoded.
+This Solana flow exposed by the Reown lab allows testing signing transaction but whithout the approval flow as the ammount is hardcoded.
 
 
 Scroll down to the **SIGN AND SEND TRANSACTION (WALLET)** section **NOT (DAPP) one** in the Solana test page.
