@@ -292,11 +292,11 @@ Scroll down to the **SIGN AND SEND TRANSACTION (WALLET)** section **NOT (DAPP) o
 
 Ethereum Sepolia can be used to validate WalletConnect connectivity and transaction signing.
 
-However, in the current Reown basic Dapp lab flow, this ETH transaction test is limited:
+However, in this basic  Reown basic Dapp lab flow, this ETH transaction test is limited:
 - it targets a predefined destination,
-- it does not provide the same adjustable approval scenario as the Solana test,
+- it does not provide the same adjustable approval scenario as `2.4` Ethereum test,
 
-This Ethereum flow exposed by the Reown lab is the basic one that allows testing signing transaction whithout the approval flow.
+This Ethereum flow exposed by the Reown lab is the basic one that allows testing signing transaction whithout the approval flow but also whithout message signing.
 
 <div style={{ display: "flex", gap: "20px", justifyContent: "center" }}>
   <figure style={{ textAlign: "center" }}>
