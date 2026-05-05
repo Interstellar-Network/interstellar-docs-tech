@@ -88,7 +88,7 @@ The currently validated test scope is:
 - **Bitcoin**: connection can be tested, but transaction execution is not covered in this tutorial because the Reown test Dapp uses **Bitcoin Testnet3**, while the wallet currently uses **Bitcoin Testnet4**.
 
 :::info Important
-For milestone validation, the **reference end-to-end flow is Ethereum Sepolia**, because it is the only flows in the current Reown lab setup that allows the testing of:
+For milestone validation, the **reference end-to-end flow is Ethereum Sepolia**, because it is the only flow in the current Reown lab setup that allows the testing of:
 - WalletConnect session establishment,
 - message signing, 
 - transaction signing, and
