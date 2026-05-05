@@ -313,7 +313,7 @@ This Ethereum flow exposed by the Reown lab is the basic one that allows testing
 ### 2.4 — Test connectivity and transaction signing with approval on Sepolia network
 
 ::::info
-At the moment, the Ethereum flow exposed by the Reown lab is the only one that allows testing the approval flow through Interstellar’s VCA / Action Confirmation Screen.
+At the moment, this Ethereum flow exposed by the Reown lab is the only one that allows testing the approval flow through Interstellar’s VCA / Action Confirmation Screen.
 ::::
 
 [Go to this specific reown page](https://lab.reown.com/appkit/?name=ethers-all)
