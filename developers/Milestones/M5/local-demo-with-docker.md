@@ -280,7 +280,7 @@ Scroll down to the **SIGN AND SEND TRANSACTION (WALLET)** section **NOT (DAPP) o
 <div style={{ display: "flex", gap: "20px", justifyContent: "center" }}>
   <figure style={{ textAlign: "center" }}>
     <img src="/img/sign_send_sol_wallet.png" alt="sign send" width="400"/>
-    <figcaption>SIGN AND SEND TRANSACTION WALLET</figcaption>
+    <figcaption>Click SIGN AND SEND TRANSACTION</figcaption>
   </figure>
 </div>
 
@@ -447,7 +447,7 @@ If you want to explore other reown Dapps:
 
 ## 4 — Test WalletConnect connectivity with production Dapps
 
-In addition to Reown Lab, WalletConnect connectivity can also be sanity-checked against public production Dapps such as [Aave Pro](https://pro.aave.com/) and [Uniswap](https://app.uniswap.org/), by using their standard **Connect Wallet** flow. This is useful to confirm interoperability of the WalletConnect session layer with real Dapp frontends beyond the dedicated test environment.
+In addition to Reown Lab, WalletConnect connectivity can also be sanity-checked against public production Dapps such as [Aave Pro](https://pro.aave.com/), [Uniswap](https://app.uniswap.org/) on Ethereum and [Jupiter](https://jup.ag/) on Solana by using their standard **Connect Wallet** flow. This is useful to confirm interoperability of the WalletConnect session layer with real Dapp frontends beyond the dedicated test environment.
 
 
 <div style={{ display: "flex", gap: "20px", justifyContent: "center" }}>
@@ -472,10 +472,27 @@ In addition to Reown Lab, WalletConnect connectivity can also be sanity-checked 
   </figure>
 </div>
 
+
+<div style={{ display: "flex", gap: "20px", justifyContent: "center" }}>
+  <figure style={{ textAlign: "center" }}>
+    <img src="/img/wc_jupiter.png" alt="URI Filled" width="200"/>
+    <figcaption>Copy Jupiter Link</figcaption>
+  </figure>
+  <figure style={{ textAlign: "center" }}>
+    <img src="/img/jupiter.png" alt="balance 0" width="600"/>
+    <figcaption>Jupiter Dapp</figcaption>
+  </figure>
+</div>
+
+
+
+
+
+
 ::::info
 
-Those Dapps do not handle Ethereum Sepolia so they won't appear in the balance.
-In addition, it is not in the scope of this milestone to extensively test the interactivity with such Dapps even in the case you would fund the Ethereum account with mainnet ETH.
+Those Dapps do not handle Ethereum Sepolia or Solana Devnet so they won't appear in the balance.
+In addition, it is not in the scope of this milestone to extensively test the interactivity with such Dapps even in the case you would fund the Ethereum or Solana account with mainnet ETH or SOL.
 ::::
 
 ---
