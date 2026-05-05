@@ -268,16 +268,21 @@ In the captured validation example for this tutorial, the account is funded with
 
 ### 2.2 — Test transaction  signing on Solana Devnet
 
+However, in the current Reown basic Dapp lab flow, this Solana transaction test is limited:
+- it targets a predefined destination,
+- it does not provide the same adjustable approval scenario as the following `2.4` Ethereum tests,
 
-Scroll down to the **SIGN AND SEND TRANSACTION (WALLET)** section in the Solana test Dapp.
+This Solana flow exposed by the Reown lab is the only one that allows testing signing transaction but whithout the approval flow as the ammount is hardcoded.
+
+
+Scroll down to the **SIGN AND SEND TRANSACTION (WALLET)** section **NOT (DAPP) one** in the Solana test page.
 
 <div style={{ display: "flex", gap: "20px", justifyContent: "center" }}>
   <figure style={{ textAlign: "center" }}>
-    <img src="/img/sign_send_tx.png" alt="sign send" width="400"/>
-    <figcaption>SIGN AND SEND TRANSACTION</figcaption>
+    <img src="/img/sign_send_sol_wallet.png" alt="sign send" width="400"/>
+    <figcaption>SIGN AND SEND TRANSACTION WALLET</figcaption>
   </figure>
 </div>
-
 
 
 ---
