@@ -120,7 +120,7 @@ https://lab.reown.com/appkit/?name=ethers-all
       <TableCell>Yes</TableCell>
       <TableCell>Yes</TableCell>
       <TableCell>No</TableCell>
-      <TableCell>This flow provides only transaction signing with hardcoded value below threshold - it does not require message signing before transaction execution.</TableCell>
+      <TableCell>This flow provides only transaction signing with hardcoded values below threshold - it does not require message signing before transaction execution.</TableCell>
     </TableRow>
     <TableRow>
       <TableCell>Ethereum Sepolia</TableCell>
@@ -185,7 +185,7 @@ This milestone validates the integration against currently accessible public tes
 
 As a result:
 
-- **Solana Devnet** is the primary reference flow for end-to-end validation.
+- **Solana Devnet** demomstrate connection without message signing but not transaction with approval.
 - **Ethereum Sepolia** demonstrates connection and signing interoperability, with the approval scenario depending on message signing for EVM modal connection establishment.
 - **Bitcoin** currently demonstrates connection only in this public test setup because of the network mismatch between the Reown test Dapp and the wallet configuration.
 - **Polkadot** is not included in the practical validation scope because the public Reown Lab environment does not currently provide a Polkadot Dapp flow suitable for testing both connectivity and transaction execution.
