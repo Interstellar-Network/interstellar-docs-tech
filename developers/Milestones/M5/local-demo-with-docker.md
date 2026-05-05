@@ -263,7 +263,7 @@ Once the wallet receives funds, the displayed balance changes accordingly.
 </div>
 
 :::info
-In the captured example for this tutorial, the account is funded with **0.5 SOL** on Solana Devnet (A-Logs)
+In the captured example for this tutorial, the account is funded with **0.5 SOL** on Solana Devnet
 :::
 
 ### 2.2 — Test transaction  signing on Solana Devnet
