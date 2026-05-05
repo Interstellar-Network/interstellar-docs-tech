@@ -263,7 +263,7 @@ Once the wallet receives funds, the displayed balance changes accordingly.
 </div>
 
 :::info
-In the captured validation example for this tutorial, the account is funded with **0.5 SOL** on Solana Devnet.
+In the captured example for this tutorial, the account is funded with **0.5 SOL** on Solana Devnet (A-Logs)
 :::
 
 ### 2.2 — Test transaction  signing on Solana Devnet
@@ -273,7 +273,7 @@ However, in the current Reown basic Dapp lab flow, this Solana transaction test 
 - it does not provide the same adjustable approval scenario as the following `2.4` Ethereum tests,
 
 This Solana flow exposed by the Reown lab allows testing signing transaction but whithout the approval flow as the ammount is hardcoded.
-
+>In this scenario, the transaction is signed by the wallet returned to the Dapp, and the Dapp will send the transaction to the network.
 
 Scroll down to the **SIGN AND SEND TRANSACTION (WALLET)** section **NOT (DAPP) one** in the Solana test page.
 
