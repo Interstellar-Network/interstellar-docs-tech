@@ -83,12 +83,12 @@ For the current M5 delivery, the Reown test Dapp is used as a practical simulato
 
 The currently validated test scope is:
 
-- **Solana Devnet**: connection + transaction signing + transaction approval through VCA / Action Confirmation Screen.
-- **Ethereum Sepolia**: connection + transaction signing without and with approval flow in the Reown test pages.
+- **Solana Devnet**: connection + transaction signing whithout transaction approval.
+- **Ethereum Sepolia**: connection + transaction signing without and with approval flow through VCA / Action Confirmation Screen.
 - **Bitcoin**: connection can be tested, but transaction execution is not covered in this tutorial because the Reown test Dapp uses **Bitcoin Testnet3**, while the wallet currently uses **Bitcoin Testnet4**.
 
 :::info Important
-For milestone validation, the **reference end-to-end flows are Solana Devnet and Ethereum Sepolia**, because they are the only flows in the current Reown lab setup that allows the testing of:
+For milestone validation, the **reference end-to-end flow is Ethereum Sepolia**, because it is the only flows in the current Reown lab setup that allows the testing of:
 - WalletConnect session establishment,
 - message signing, 
 - transaction signing, and
@@ -239,11 +239,11 @@ This mismatch prevents an end-to-end transaction validation through the public R
 ::::
 ---
 
-## 2 — Dapp transaction signing and approval
+## 2 — Dapp transactions signing without approval
 
-### 2.1 — Fund the Solana Devnet account
+### 2.1 — Fund the Solana Devnet and Ethreum Sepolia account
 
-To test transaction approval, first fund the Solana Devnet account.
+To test transactions, first fund the Solana Devnet account.
 
 You can use the existing guide here:
 
@@ -266,65 +266,19 @@ Once the wallet receives funds, the displayed balance changes accordingly.
 In the captured validation example for this tutorial, the account is funded with **0.5 SOL** on Solana Devnet.
 :::
 
-### 2.2 — Test transaction approval and signing on Solana Devnet
+### 2.2 — Test transaction  signing on Solana Devnet
 
-At the moment, the Solana flow exposed by the Reown lab is the one that allows testing the approval flow through Interstellar’s VCA / Action Confirmation Screen.
 
-Scroll down to the **SIGN AND SEND TRANSACTION** section in the Solana test Dapp.
+Scroll down to the **SIGN AND SEND TRANSACTION (WALLET)** section in the Solana test Dapp.
 
 <div style={{ display: "flex", gap: "20px", justifyContent: "center" }}>
   <figure style={{ textAlign: "center" }}>
     <img src="/img/sign_send_tx.png" alt="sign send" width="400"/>
     <figcaption>SIGN AND SEND TRANSACTION</figcaption>
   </figure>
-  <figure style={{ textAlign: "center" }}>
-    <img src="/img/sign_send_tx_fill.png" alt="fill tx" width="600" />
-    <figcaption>Enter an amount above the threshold to trigger VCA / approval</figcaption>
-  </figure>
 </div>
 
-### Threshold behavior
 
-For this test environment, a conditional validation threshold is configured.
-
-- a transaction **below** the threshold can be signed without VCA,
-- a transaction **above** the threshold triggers:
-  - transaction preparation,
-  - secure message generation,
-  - VCA challenge generation,
-  - Action Confirmation Screen,
-  - final confirmation before broadcast.
-
-:::info Conditional validation
-Use an amount **greater than 0.025 SOL** to trigger the VCA / approval flow.
-[Conditional Transaction Validation Threshold](/developers/Milestones/M3/local-demo-with-docker#step-2-test-transactions-with-conditional-validations)
-:::
-
-
-### Example validated flow
-
-The logs included below correspond to a successful Solana Devnet transfer with:
-
-- funded account balance: **0.5 SOL**
-- transfer amount: **0.4 SOL**
-- fee type: **Normal**
-- computed fee: **5000 lamports**
-- VCA triggered because the transaction is above threshold
-
-### Expected functional result
-
-The wallet:
-
-1. prepares the Solana transaction,
-2. checks available balance,
-3. computes the fee,
-4. signs the transaction,
-5. pauses because the transaction is above threshold,
-6. generates and stores the VCA commitment,
-7. waits for user confirmation on the Action Confirmation Screen,
-8. validates the user input,
-9. simulates the transaction,
-10. broadcasts the transaction successfully.
 
 ---
 
@@ -353,6 +307,9 @@ This Ethereum flow exposed by the Reown lab is the basic one that allows testing
 ---
 ### 2.4 — Test connectivity and transaction signing with approval on Sepolia network
 
+::::info
+At the moment, the Ethereum flow exposed by the Reown lab is the only one that allows testing the approval flow through Interstellar’s VCA / Action Confirmation Screen.
+::::
 
 [Go to this specific reown page](https://lab.reown.com/appkit/?name=ethers-all)
 
@@ -403,6 +360,18 @@ Once connection is established with the Dapp, set-up the transaction parameters
     <figcaption>Select sepolia token</figcaption>
   </figure>
 </div>
+### Threshold behavior
+
+For this test environment, a conditional validation threshold is configured.
+
+- a transaction **below** the threshold can be signed without VCA,
+- a transaction **above** the threshold triggers:
+  - transaction preparation,
+  - secure message generation,
+  - VCA challenge generation,
+  - Action Confirmation Screen,
+  - final confirmation before broadcast.
+
 
 :::info Conditional validation
 Use an amount **greater than 0.00030 ETH** to trigger the VCA / approval flow.
@@ -433,6 +402,33 @@ Then copy past your ETH wallet address and click on `Preview Send` then `Send` t
     <figcaption>You can copy the tx hash</figcaption>
   </figure>
 </div>
+
+
+### Example validated flow
+
+The C-Logs included below correspond to a successful Ethereum Sepolia transfer with:
+
+- funded account balance: **0.0004 ETH**
+- transfer amount: **0.00035 ETH**
+- fee type: **Normal**
+- VCA triggered because the transaction is above threshold
+
+### Expected functional result
+
+The wallet:
+
+1. prepares the Ehereum transaction,
+2. checks available balance,
+3. computes the fee,
+4. signs the transaction,
+5. pauses because the transaction is above threshold,
+6. generates and stores the VCA commitment,
+7. waits for user confirmation on the Action Confirmation Screen,
+8. validates the user input,
+9. broadcasts the transaction successfully.
+
+
+
 
 ## 3 — Other reown lab Dapps (not Mandatory for the tests)
 
@@ -565,149 +561,9 @@ The following warnings appear in the logs and are expected in this environment:
 They do not indicate failure of the WalletConnect flow or of the Solana transaction flow shown in this tutorial.
 
 
-### B — Logs for the successful Solana Devnet transaction with VCA
 
-This is the reference end-to-end flow for M5 milestone validation.
 
-The validated example corresponds to:
-
-- balance: 0.5 SOL
-- transfer: 0.4 SOL
-- threshold exceeded
-- VCA required
-- successful simulation
-- successful broadcast
-
-#### 1. Transaction preparation starts
-
-The transaction manager starts preparing the Solana transaction:
-```bash
-[INFO  pallet_tx_manager::pallet] [prepare_transaction] START - account=, chain=SOL, amount=Fixed(400000000), fee_type=Normal
-```
-
-**Interpretation:**
-
-- `400000000` lamports = 0.4 SOL
-
-#### 2. Balance is fetched and validated
-
-The wallet checks the balance before preparing the transfer:
-```bash
-[INFO  sol_client::client] [get_balance_account_str] Balance fetched for account HAcrhnmhzccnfRWUKafVziDXamytTGiC1xC3xLxL416t: 500000000
-[INFO  pallet_tx_manager::pallet] [prepare_transaction] balance = 500000000
-```
-Then the balance sufficiency check passes:
-```bash
-[DEBUG sol_client::client] [validate_sufficient_balance] ✓ balance check passed: have=500000000, need=401005000
-```
-**Interpretation:**
-
-- available balance = `500000000` lamports
-- required = `401005000` lamports
-- the transaction can proceed
-
-#### 3. Fee computation is performed
-
-The wallet queries recent prioritization fees:
-```bash
-[DEBUG sol_client::fee] [sol-fee] fetching recent prioritization fees
-[DEBUG sol_client::fee] [sol-fee] fetched 150 recent priority fees
-[DEBUG sol_client::fee] [sol-fee] Normal: selected 0 micro-lamports/CU from 150 samples
-```
-Then it computes the final fee:
-```bash
-[INFO  sol_client::fee] [sol-fee] Normal: base=5000 + priority=0 (0µL/CU * 200000 CU) = 5000 lamports
-[INFO  sol_client::client] SOL prepare_transaction: amount=400000000 lamports, fee_type=Normal, fee=5000 lamports, cu_price=0 micro-lamports/CU
-```
-**Interpretation:**
-
-- base fee = `5000` lamports
-- no priority fee was selected in this observed case
-- total fee = `5000` lamports
-
-#### 4. Transaction is built and signed
-
-The latest blockhash is fetched:
-```bash
-[DEBUG sol_client::rpc] [send_request] Sending RPC request for method: getLatestBlockhash
-[INFO  sol_client::rpc] [send_request] RPC request for method getLatestBlockhash succeeded
-```
-The signing step completes successfully:
-```bash
-[DEBUG pallet_key_manager::pallet] [do_sign] Seed unsealed successfully, proceeding with signing
-[DEBUG pallet_key_manager::pallet] [do_sign] Seed zeroed after signing
-[DEBUG sol_client::client] [build_and_sign_transaction] transaction built and signed: 191 bytes
-```
-#### 5. VCA is triggered because the transaction is above threshold
-
-The transaction manager explicitly indicates that approval is required:
-```bash
-[INFO  pallet_tx_manager::pallet] [prepare_transaction] Above threshold, requiring VCA confirmation
-```
-This is the key log line proving that the conditional approval logic was triggered.
-
-#### 6. The human-readable transaction message is generated
-
-The wallet generates the transaction message used in the confirmation flow:
-```bash
-[DEBUG pallet_tx_manager::pallet] [generate_tx_message] Generated message: Transfer 0.4 SOL to HAcrh...L416t
-```
-This is the action summary the user is effectively asked to validate through the PoHI / VCA flow.
-
-#### 7. The VCA commitment is created and stored
-
-The system generates the garbled content and stores the associated metadata:
-```bash
-[INFO  pallet_tx_validation::pallet] [tx-validation] store_metadata_aux: who = , message_pgarbled_cid = "QmZRh7D7MxdDq8MxhFfDEnWQYYm2XCrdRrogMVaqUHQHRY", message_digits = [6, 9], pinpad_digits = [1, 2, 8, 5, 7, 6, 0, 9, 4, 3]
-[INFO  pallet_tx_manager::pallet] [SOL-client]-[tx-manager]- Commitment stored with cid="QmZRh7D7MxdDq8MxhFfDEnWQYYm2XCrdRrogMVaqUHQHRY" digits=BoundedVec([6, 9], 4) pinpad_digits=BoundedVec([1, 2, 8, 5, 7, 6, 0, 9, 4, 3], 10)
-```
-
-**Interpretation:**
-
-- the VCA payload is prepared,
-- the randomized challenge is stored,
-- the signed transaction is held as pending until user confirmation.
-
-#### 8. User input is checked and the VCA passes
-
-When the user completes the Action Confirmation Screen, the validation step checks the input:
-```bash
-[INFO  pallet_tx_validation::pallet] [tx-validation] check_input: who = , ipfs_cid = "QmZRh7D7MxdDq8MxhFfDEnWQYYm2XCrdRrogMVaqUHQHRY", input_digits = [5, 7]
-[INFO  pallet_tx_validation::pallet] [tx-validation] check_input: computed_inputs_from_permutation = [6, 9], message_digits = BoundedVec([6, 9], 10)
-[INFO  pallet_tx_validation::pallet] [tx-validation] TxPass
-[DEBUG pallet_tx_manager::pallet] VCA validation successful
-```
-
-This is the decisive proof that:
-
-- the user completed the challenge,
-- the input matched the expected garbled confirmation flow,
-- the transaction is allowed to continue.
-
-#### 9. The transaction is simulated
-
-Before broadcasting, the wallet simulates the signed transaction:
-```bash
-[INFO  sol_client::client] [simulate_transaction] Simulating transaction
-[INFO  sol_client::client] [simulate_transaction] Transaction simulation successful
-```
-
-**Interpretation:**
-
-- the transaction is valid,
-- the fee is consistent with the computed estimate,
-- simulation succeeded before broadcast.
-
-#### 10. The transaction is broadcast successfully
-
-Finally, the signed transaction is sent to Solana Devnet:
-```bash
-[DEBUG sol_client::rpc] [send_request] Sending RPC request for method: sendTransaction
-[INFO  sol_client::client] [broadcast_transaction] Transaction sent with signature: qJo1EBoUzXw9eDGgmXv5Bt8cnGydgrjPFD68XyULsMHQi3sUgR6hZihYmjCyMrcQLrwApPjaEoZZR4hWsouDCoh
-[INFO  pallet_tx_manager::pallet] Transaction broadcast successful: qJo1EBoUzXw9eDGgmXv5Bt8cnGydgrjPFD68XyULsMHQi3sUgR6hZihYmjCyMrcQLrwApPjaEoZZR4hWsouDCoh
-```
-
-### C — Logs for the Ethereum Sepolia transaction signing flow without VCA
+### B — Logs for the Ethereum Sepolia transaction signing flow without VCA
 
 This flow corresponds to the Ethereum Sepolia transaction generated by the Reown test Dapp, using its predefined destination address (the current test flow targets Vitalik’s address).
 
@@ -806,7 +662,7 @@ The signed raw transaction is then sent to the Ethereum Sepolia network:
 ```
 ---
 
-### D — Logs for the Ethereum Sepolia transaction flow with VCA
+### C — Logs for the Ethereum Sepolia transaction flow with VCA
 
 This flow corresponds to an Ethereum Sepolia interaction in which the Dapp first requests a **message signature** through WalletConnect, and then initiates an ETH transaction that is classified as **above the configured validation threshold**.
 
@@ -832,9 +688,9 @@ Before the signing flow, the wallet is already able to resolve and query the ETH
 ```
 This corresponds to:
 
-0x16bcc41e90000 wei
-`400000000000000` wei
-`0.0004` ETH
+- 0x16bcc41e90000 wei
+- `400000000000000` wei
+- `0.0004` ETH
 
 This confirms that the ETH account used in the WalletConnect flow is resolved correctly and has a non-zero Sepolia balance.
 
