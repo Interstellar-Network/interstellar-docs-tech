@@ -119,8 +119,8 @@ https://lab.reown.com/appkit/?name=ethers-all
       <TableCell>Solana Devnet</TableCell>
       <TableCell>Yes</TableCell>
       <TableCell>Yes</TableCell>
-      <TableCell>Yes</TableCell>
-      <TableCell>This flow provides the clearest end-to-end validation path and does not require message signing before transaction execution.</TableCell>
+      <TableCell>No</TableCell>
+      <TableCell>This flow provides only transaction signing with hardcoded value below threshold - it does not require message signing before transaction execution.</TableCell>
     </TableRow>
     <TableRow>
       <TableCell>Ethereum Sepolia</TableCell>
