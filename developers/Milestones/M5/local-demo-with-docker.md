@@ -280,7 +280,7 @@ Scroll down to the **SIGN AND SEND TRANSACTION (WALLET)** section **NOT (DAPP) o
 <div style={{ display: "flex", gap: "20px", justifyContent: "center" }}>
   <figure style={{ textAlign: "center" }}>
     <img src="/img/sign_send_sol_wallet.png" alt="sign send" width="400"/>
-    <figcaption>Click SIGN AND SEND TRANSACTION</figcaption>
+    <figcaption>Click `Sign and Send Transaction`</figcaption>
   </figure>
 </div>
 
