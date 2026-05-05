@@ -185,7 +185,7 @@ This milestone validates the integration against currently accessible public tes
 
 As a result:
 
-- **Solana Devnet** demomstrate connection without message signing but not transaction with approval.
+- **Solana Devnet** demomstrates connection without message signing but only transaction signing without approval.
 - **Ethereum Sepolia** demonstrates connection and signing interoperability, with the approval scenario depending on message signing for EVM modal connection establishment.
 - **Bitcoin** currently demonstrates connection only in this public test setup because of the network mismatch between the Reown test Dapp and the wallet configuration.
 - **Polkadot** is not included in the practical validation scope because the public Reown Lab environment does not currently provide a Polkadot Dapp flow suitable for testing both connectivity and transaction execution.
