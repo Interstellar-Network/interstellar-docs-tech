@@ -37,23 +37,35 @@ This setup enables full offline testing without relying on a hosted VPS.
 
 ## 1. Launch the Interstellar Stack 
 
-### Step 2: Download the stack config (specific link for M5)
+### Step 2: Download the stack config (link for M5 v2)
 ```bash
-curl -L -o docker-compose.yml https://raw.githubusercontent.com/Interstellar-Network/containers/refs/tags/testnet-m5/docker-compose.yml
+curl -L -o docker-compose.yml https://raw.githubusercontent.com/Interstellar-Network/containers/refs/tags/testnet-m5-v2/docker-compose.yml
 curl -L -o docker-ipfs-init.sh https://raw.githubusercontent.com/Interstellar-Network/containers/refs/tags/testnet-m5/docker-ipfs-init.sh
 chmod +x docker-ipfs-init.sh
 ```
 
 ## 2. Install the Android Demo App
 
-### Download the APK (link for M5)
+### Download the APK (link for M5 v2)
 
-From the official [Interstellar GitHub Release](https://github.com/Interstellar-Network/containers/releases/tag/testnet-m5) (specific APKs preconfigured to connect to `localhost`):
+From the official [Interstellar GitHub Release](https://github.com/Interstellar-Network/containers/releases/tag/testnet-m5-v2) (specific APKs preconfigured to connect to `localhost`):
 
 - `androidApp-arm64-release.apk` — for Android devices and Apple Silicon(M1/M2/M3/M4)
 - `androidApp-x86_64-release.apk` — for Android emulators running on x86_64 platforms (e.g., Windows PCs, Intel-based Mac)
 
 > **Latest version recommended**
+
+::::note
+Those links match the **v2 release** that fix the critical issues identified in the M5 review: **C1, C2, C3, and C4** with a couple of additional fixes/improvements: **H2** and **M7** referred in [Review follow-up](/developers/Milestones/M5/m5-walletconnect-reown-review-follow-up.md):
+
+**Initial release** links are still avalaible for transparency:
+
+**Docker compose file:**
+```bash
+curl -L -o docker-compose.yml https://raw.githubusercontent.com/Interstellar-Network/containers/refs/tags/testnet-m5/docker-compose.yml
+```
+**Previous app download:** https://github.com/Interstellar-Network/containers/releases/tag/testnet-m5
+::::
 
 
 :::info Milestone 5 Scope Clarification
@@ -286,9 +298,25 @@ Scroll down to the **SIGN AND SEND TRANSACTION (WALLET)** section **NOT (DAPP) o
 
 
 ---
+### 2.3 — Test `message signing` on Solana Devnet
 
 
-### 2.3 — Test connectivity and transaction signing (without approval) on Sepolia network
+[Go to solana Dapp](https://lab.reown.com/appkit/?name=solana)
+
+- Connect or reconnect
+
+- Scroll to `Solana Test Interactions -> Sign Message`
+
+<div style={{ display: "flex", gap: "20px", justifyContent: "center" }}>
+  <figure style={{ textAlign: "center" }}>
+    <img src="/img/solana_sig_message.png" alt="sign send" width="400"/>
+    <figcaption>Click `Sign Message`</figcaption>
+  </figure>
+</div>
+
+
+
+### 2.4 — Test connectivity and transaction signing (without approval) on Sepolia network
 
 Ethereum Sepolia can be used to validate WalletConnect connectivity and transaction signing.
 
@@ -310,7 +338,7 @@ This Ethereum flow exposed by the Reown lab is the basic one that allows testing
 </div>
 
 ---
-### 2.4 — Test connectivity and transaction signing with approval on Sepolia network
+### 2.5 — Test connectivity and transaction signing with approval on Sepolia network
 
 ::::info
 At the moment, this Ethereum flow exposed by the Reown lab is the only one that allows testing the approval flow through Interstellar’s VCA / Action Confirmation Screen.
@@ -443,6 +471,9 @@ In addition even on working Dapps, not all buttons work eg. `Sign and Send Trans
 
 If you want to explore other reown Dapps:
 [Go to the main reown Dapp page](https://lab.reown.com)
+
+
+
 
 
 ## 4 — Test WalletConnect connectivity with production Dapps
