@@ -8,7 +8,7 @@ sidebar_position: 0
 The Android SDK is the Gradle module **`:shared`** (package **`gg.interstellar.wallet`**), a Kotlin library that bundles:
 
 - the public `InterstellarSdk` API (this document),
-- the **Rust core** compiled for Android (JNI), including the garbled-circuit renderer,
+- the **Rust core** compiled for Android (`.so` libraries): `substrate-client` behind the **uniffi-generated Kotlin bindings** (JNA, thin `RustWrapper` adapter) + the garbled-circuit **renderer** (the only hand-written JNI seam — it must hold the Android `Surface` object),
 - the **`TxPinpadView`** Android view for the VCA confirmation pad ([dedicated page](./pinpad.md)),
 - the currency math helpers (`CurrencyMath`, `WalletBalances`).
 

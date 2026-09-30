@@ -7,8 +7,8 @@ sidebar_position: 0
 
 The iOS SDK is the **`InterstellarSdk`** Swift layer (`InterstellarSdk.swift` and friends in the reference app), which binds together:
 
-- **`import shared`** — the Kotlin Multiplatform `shared` framework (currency math, shared enums),
-- **uniffi-generated Swift bindings** (`Generated/substrate_client.swift`) to the **Rust core** (static libraries `libsubstrate_client.a`, `librenderer.a`),
+- **`import shared`** — the Kotlin Multiplatform `shared` framework (shared enums/DTOs — `CoinType` etc. from the common source set),
+- **uniffi-generated Swift bindings** (`Generated/substrate_client.swift`) to the **Rust core** (static libraries `libsubstrate_client.a`, `librenderer.a`) — the **same uniffi FFI surface** Android uses (via its uniffi-Kotlin bindings); only the renderer surface is wired per-platform (extern `"C"` + bridging header),
 - **`MobileKeychainSigner`** — device key as a **P-256 (secp256r1) ECDSA** key in the **iOS Keychain**.
 
 ## Requirements

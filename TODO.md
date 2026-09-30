@@ -70,7 +70,11 @@ command; `~/.cache` lives on a read-only mount is NOT an issue — Docusaurus ca
   - double-check the KMP `shared` framework's actual role on iOS (what `import shared` provides:
     CoinType/enums from commonMain; iOS has its own CurrencyMath.swift — Android uses
     androidMain CurrencyMath) and document it accurately
-- status: **NOT STARTED**
+- status: **FIXED** → `intro.md` architecture rewritten (same uniffi FFI on both + renderer-seam
+  note + updated mermaid: RustWrapper adapter, per-platform glue dashed); `android/index.md`
+  ".so/uniffi-Kotlin/JNA vs renderer-JNI" fixed; `ios/index.md` `import shared` role fixed;
+  `ios/api-reference.md` CurrencyMath provenance fixed (SDK's own CurrencyMath.swift, not KMP);
+  `M6/components_delivered/interstellar_sdk.md` deliverable #1 reworded. Production build passes.
 
 ### [5] M6 local-demo-with-docker: deduplicate vs M5 — link instead of copy
 - problem: `developers/Milestones/M6/local-demo-with-docker.md` is ~99% a copy-paste of the M5

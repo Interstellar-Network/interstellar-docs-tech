@@ -31,7 +31,7 @@ Complete reference of the **public** iOS SDK surface. All members live on `Inter
 ### Value objects
 
 - **`SdkCoinBalance(coinIdx: Int32, rawBalance: Int64, usdBalance: Double, address: String?)`** — `Identifiable` by `coinIdx`. `SdkCoinBalance.supportedCoins` holds the coin table: DOT (10 decimals, $3.79), SOL (9, $177.9), BTC (8, $113796), ETH (18, $4192).
-- **Coin indexing** — coins are addressed by `Int32` index matching `CoinType`: `0=DOT`, `1=SOL`, `2=BTC`, `3=ETH`. The KMP `shared` framework also exports the `CoinType` enum + `CurrencyMath` for conversions (`convertToUsd` uses it internally).
+- **Coin indexing** — coins are addressed by `Int32` index matching `CoinType`: `0=DOT`, `1=SOL`, `2=BTC`, `3=ETH`. The `CoinType` enum comes from the KMP `shared` framework (common source set); currency math lives in the SDK's own **`CurrencyMath.swift`** (mirroring Android's `CurrencyMath.kt`) — that's what `convertToUsd` uses internally.
 - **`TxAmount`** (uniffi) — amount spec: `.fixed(amountInAtomicUnits: UInt64)` **in atomic units**, or `.drainAccount()`.
 - **`PendingTxResult`** (uniffi) — result of `_getterClientGetPendingTx()`: `.requiresVca(circuits: CircuitsPackage)` or `.autoSent(txHash: String)`.
 - **`CircuitsPackage(circuitsPackage: Data, txId: Data, nbMessageDigits: UInt32)`** (uniffi) — opaque VCA package; render via `TxPinpadScreen`, never inspect.

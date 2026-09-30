@@ -19,26 +19,33 @@ The **Interstellar SDK** is the (semi) public component of the Interstellar stac
 
 ## Architecture at a glance
 
-The heavy lifting (cryptography, garbled circuits, chain access) is implemented in **Rust**, shared by both platforms:
+The heavy lifting (cryptography, garbled circuits, chain access) is implemented in **Rust**, shared by both platforms. Both platform SDKs speak **the same uniffi FFI surface** to that Rust core (`substrate-client`):
 
 ```mermaid
 flowchart TD
     subgraph Android
         A["Your Android app"] --> A1["InterstellarSdk.kt (Kotlin)"]
-        A1 -->|"JNI"| R["Rust core (substrate-client + renderer)"]
+        A1 --> A2["RustWrapper adapter"]
+        A2 -->|"uniffi Kotlin bindings (JNA)"| R["Rust core (substrate-client)"]
+        A1 -.->|"JNI glue (renderer only)"| REN["Rust renderer (pinpad surface)"]
     end
     subgraph iOS
         B["Your iOS app (Swift)"] --> B1["InterstellarSdk.swift"]
-        B1 -->|"uniffi FFI"| R
-        B1 -.->|import shared| K["KMP shared framework"]
+        B1 -->|"uniffi Swift bindings"| R
+        B1 -.->|import shared| K["KMP shared framework (shared enums/DTOs)"]
+        B1 -.->|"extern C glue (renderer only)"| REN
     end
     R --> W[("Integritee worker (L2)")]
     R --> N[("Integritee node (L1)")]
     R --> I[("IPFS (circuits)")]
 ```
 
-- **Android**: the SDK ships as the Gradle module `:shared` (package `gg.interstellar.wallet`) — Kotlin + the Rust `.so` libraries, integrated with the Android Keystore (P-256 ECDSA).
-- **iOS**: the SDK is the `InterstellarSdk.swift` layer (Keychain-backed P-256 signer) on top of the **Kotlin Multiplatform `shared` framework** and **uniffi-generated Swift bindings** to the same Rust core.
+- **Android**: the SDK ships as the Gradle module `:shared` (package `gg.interstellar.wallet`) — the Kotlin SDK (public API + a thin `RustWrapper` adapter over the **committed uniffi-generated Kotlin bindings**, JNA) plus the Rust core compiled as Android `.so` libraries; the device key lives in the **Android Keystore** (P-256 ECDSA).
+- **iOS**: the SDK is the `InterstellarSdk.swift` layer (Keychain-backed P-256 signer) over the **committed uniffi-generated Swift bindings** to the **same Rust core**, plus the Kotlin Multiplatform `shared` framework for the shared enums/DTOs (`CoinType`, …).
+
+:::note One per-platform seam: the renderer surface
+The only hand-written FFI glue is the pinpad **renderer** surface binding — Android wires it through JNI (`external fun initSurface`, it must hold the Android `Surface` object), iOS through extern `"C"` functions (`init_surface_with_view`, CAMetalLayer). Both wrap the same Rust `renderer` crate; platform surface objects simply cannot cross uniffi.
+:::
 
 Because the two platform APIs are *independent codebases* (Kotlin vs Swift), they are **documented separately** — the signatures are intentionally close but not identical (e.g. `getterRootAccount()` on Android vs `getRootAccount()` on iOS). Where a behavior is exactly shared (pinpad orchestration, server-reset semantics, VCA flows) both references say the same thing.
 

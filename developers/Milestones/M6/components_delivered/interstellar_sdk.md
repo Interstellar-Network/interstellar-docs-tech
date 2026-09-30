@@ -13,7 +13,7 @@ Milestone 6 delivers the **first version of the (semi) public Interstellar SDK**
 
 This delivery covers three inseparable parts:
 
-1. **The SDK itself** — the `InterstellarSdk` public API on Android (Kotlin, `gg.interstellar.wallet`) and iOS (Swift, `InterstellarSdk.swift` over the KMP `shared` framework + uniffi bindings to the shared Rust core).
+1. **The SDK itself** — the `InterstellarSdk` public API on Android (Kotlin, `gg.interstellar.wallet`) and iOS (Swift, `InterstellarSdk.swift`), both speaking the **same uniffi FFI surface** to the shared Rust core (Android via committed uniffi-Kotlin bindings; iOS via uniffi-Swift bindings + the KMP `shared` framework for the shared enums/DTOs).
 2. **The documentation** — a complete public API reference (every public member documented) plus per-platform pinpad/VCA integration guides.
 3. **The integration guide** — per-platform getting-started walkthroughs that start from a fresh app in Android Studio / Xcode and end with a screen displaying the **root account ID**.
 
