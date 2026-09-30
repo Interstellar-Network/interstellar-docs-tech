@@ -46,6 +46,64 @@ command; `~/.cache` lives on a read-only mount is NOT an issue — Docusaurus ca
 
 ## Tasks
 
+### [4] SDK intro: Android/iOS architecture is the SAME (uniffi on both) — fix intro.md
+- user quote (current `developers/SDK/intro.md` architecture section, which is WRONG/misleading):
+  > "Android: the SDK ships as the Gradle module :shared (package gg.interstellar.wallet) — Kotlin +
+  > the Rust .so libraries, integrated with the Android Keystore (P-256 ECDSA). iOS: the SDK is the
+  > InterstellarSdk.swift layer (Keychain-backed P-256 signer) on top of the Kotlin Multiplatform
+  > shared framework and uniffi-generated Swift bindings to the same Rust core."
+- CONFIRMED (user asked YES/NO): **YES — same architecture.** The `substrate-client` FFI is
+  **uniffi on BOTH platforms**:
+  - Android: committed uniffi-Kotlin bindings (`shared/src/androidMain/kotlin/uniffi/uniffi/
+    substrate_client/substrate_client.kt`, JNA) + thin adapter `RustWrapper.kt` (imports
+    `uniffi.substrate_client.*` for every call) + `System.loadLibrary("substrate_client")`
+  - iOS: committed uniffi-Swift bindings (`iosApp/InterstellarSdk/Generated/substrate_client.swift`)
+    + `InterstellarSdk.swift` calling the same Rust `substrate-client` crate
+  - ONLY exception = the pinpad **renderer** seam: Android hand-written JNI
+    (`external fun initSurface`, needs the Android `Surface` object) vs iOS extern "C"
+    (`init_surface_with_view` via bridging header, CAMetalLayer) — same Rust `renderer` crate,
+    per-platform glue by nature (platform surface objects don't cross uniffi)
+- TODO when picked up:
+  - rewrite `intro.md` architecture text + mermaid diagram (uniffi on both, renderer exception)
+  - sweep the platform pages for the same claim (android/index, ios/index, getting-starteds,
+    M6 components_delivered/interstellar_sdk.md mention "KMP shared framework + uniffi" for iOS only)
+  - double-check the KMP `shared` framework's actual role on iOS (what `import shared` provides:
+    CoinType/enums from commonMain; iOS has its own CurrencyMath.swift — Android uses
+    androidMain CurrencyMath) and document it accurately
+- status: **NOT STARTED**
+
+### [5] M6 local-demo-with-docker: deduplicate vs M5 — link instead of copy
+- problem: `developers/Milestones/M6/local-demo-with-docker.md` is ~99% a copy-paste of the M5
+  tutorial (incl. the whole "WalletConnect — Tutorial" walkthrough + logs) = waste of time/space
+- TODO when picked up:
+  - reduce M6 local-demo to what CHANGED vs M5 (release tag testnet-m6, M6 scope note, new #305
+    items: API-keys box, MoonPay sandbox, SOL TTL) and **link** to
+    `developers/Milestones/M5/local-demo-with-docker` for everything shared — the user suggests
+    the whole `#walletconnect--tutorial` section (and likely the logs section) should just be a
+    link to the M5 equivalent
+  - keep the M6-only content: stack config download (testnet-m6), APK links, scope note, the
+    issue#305-derived warnings, reviewer follow-up links
+  - watch the anchor links (M6 pages cross-referencing sections that moved to M5)
+- status: **NOT STARTED**
+
+### [6] SDK access story: reviewer-facing "getting started" must make SDK access work & be documented
+- context: http://127.0.0.1:3456/developers/SDK/intro#status--scope-please-read — "The SDK will not
+  be public at this time" must be **clearer** (who can get it, how, what they may do with it)
+- facts: the reviewer **WILL have access to the `wallet-app-internal` repo** → at the very least
+  plain `git clone` works; ideally document a proper distribution (maven/gradle coordinate or
+  similar) — placeholder if that doesn't exist yet
+- TODO when picked up:
+  - clarify the "Status & scope" box in `developers/SDK/intro.md`: access = private repo access
+    (git), public release later; no mystery "contact us" without an actionable path
+  - in BOTH getting-started guides (`developers/SDK/android/getting-started.md`,
+    `developers/SDK/ios/getting-started.md`) the "Prerequisites → SDK access" row + "Bring in the
+    SDK" step must be made to actually WORK for a reviewer with repo access: exact clone command,
+    where the files come from, what to copy — git-level instructions verified end-to-end
+  - document the ideal distribution (published artifact / maven coordinate / SPM) — **USE A
+    PLACEHOLDER** (clearly marked "TBD/coming") if no artifact publication exists yet
+  - make sure the intro.md warning box links to that access documentation
+- status: **NOT STARTED**
+
 ### [1] First version of the (semi) public "Interstellar Android/iOS SDK" docs
 - split iOS vs Android at the "root" unless signatures are exactly identical
 - document the public part of `InterstellarSdk` — every part/API explained
