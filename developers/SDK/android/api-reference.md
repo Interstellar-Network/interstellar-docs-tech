@@ -1,6 +1,6 @@
 ---
 sidebar_label: 'API Reference'
-sidebar_position: 1
+sidebar_position: 2
 ---
 
 # Android API Reference

@@ -86,10 +86,26 @@ command; `~/.cache` lives on a read-only mount is NOT an issue — Docusaurus ca
 
 ### [3] "Getting started" per platform (Android AND iOS)
 - fresh new app in Android Studio / Xcode → integrate SDK the most basic way
-- end with a screen showing the root account ID (`getterRootAccount`) and stop there
-- placeholders for screenshots → listed below
-- status: **NOT STARTED**
+- end with a screen showing the root account ID (`getterRootAccount` / `getRootAccount`) and stop there
+- status: **FIXED** → `developers/SDK/android/getting-started.md` + `developers/SDK/ios/getting-started.md`
+  (sidebar positions reshuffled: getting-started=1, api-reference=2, pinpad=3; index "Next steps",
+  M6 quick-start and interstellar_sdk.md table now link to them)
+- integration recipes verified against wallet-app-internal: Android = copy `shared/` + the Rust
+  workspace files (Cargo.toml, Cargo.lock, rust-toolchain.toml, .cargo/config.toml) because the
+  module's cargo build runs at the Gradle rootDir; iOS = sibling wallet-app-internal checkout +
+  Run Script phase `:shared:embedAndSignAppleFrameworkForXcode` + reference-app build settings
+  (FRAMEWORK/LIBRARY_SEARCH_PATHS, OTHER_LDFLAGS, bridging header, Generated/)
 
 ## Screenshot placeholders (to be replaced with real captures)
 
-- (none yet)
+All placeholders are visible blockquotes in the pages (`📷 [SCREENSHOT PLACEHOLDER] — …`):
+
+- [ ] `developers/SDK/android/getting-started.md`:
+  1. Android Studio "New Project" dialog (Empty Views Activity selected)
+  2. Project view showing `app/` + `shared/` + copied Rust workspace files
+  3. Running app (emulator/device) showing "Root account ID:" + 64-char hex
+- [ ] `developers/SDK/ios/getting-started.md`:
+  1. Xcode "Choose a template" dialog (iOS App selected)
+  2. Workspace layout: Xcode project + sibling `wallet-app-internal` checkout
+  3. Xcode Build Settings pane (FRAMEWORK/LIBRARY_SEARCH_PATHS, OTHER_LDFLAGS)
+  4. iOS Simulator running the app showing "Root account ID:" + 64-char hex

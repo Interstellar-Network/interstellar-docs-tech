@@ -79,5 +79,6 @@ await sdk.resetKeyPairAndRegister()
 
 Next steps:
 
+- [**Getting Started**](./getting-started.md) — fresh app in Xcode → root account ID on screen.
 - [**API Reference**](./api-reference.md) — every public API, documented.
 - [**VCA Pinpad Integration**](./pinpad.md) — `TxPinpadScreen` and result semantics.

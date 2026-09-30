@@ -58,8 +58,12 @@ The wallet application shipped for this milestone is the **reference integration
       <TableCell><a href="/developers/SDK/ios/pinpad">iOS — VCA Pinpad Integration</a></TableCell>
     </TableRow>
     <TableRow>
-      <TableCell>Getting started (fresh app → root account ID screen)</TableCell>
-      <TableCell>Android &amp; iOS getting-started guides (see the SDK section)</TableCell>
+      <TableCell>Getting started — Android (fresh app → root account ID screen)</TableCell>
+      <TableCell><a href="/developers/SDK/android/getting-started">Android — Getting Started</a></TableCell>
+    </TableRow>
+    <TableRow>
+      <TableCell>Getting started — iOS (fresh app → root account ID screen)</TableCell>
+      <TableCell><a href="/developers/SDK/ios/getting-started">iOS — Getting Started</a></TableCell>
     </TableRow>
   </TableBody>
 </Table>
