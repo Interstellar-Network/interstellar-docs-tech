@@ -22,7 +22,7 @@ One Activity, one `TextView`, one `InterstellarSdk.create(...)` call. No Compose
 | Rust | **nightly** toolchain (the workspace `rust-toolchain.toml` pins the exact version once copied) |
 | Rust targets | `rustup target add aarch64-linux-android x86_64-linux-android` |
 | Interstellar stack | the local Docker stack from the [M6 tutorial](../../Milestones/M6/local-demo-with-docker.md) must be running (the SDK's default endpoints are `wss://127.0.0.1:2090` / `ws://127.0.0.1:9944` / IPFS `5001`) |
-| SDK access | `wallet-app-internal` is currently private — **contact us** to get access to the SDK sources/checkout used below |
+| SDK access | read access to the private [`wallet-app-internal`](https://github.com/Interstellar-Network/wallet-app-internal) repo (granted to reviewers/integrators — plain `git clone`, see [SDK access](../intro.md#status--scope-please-read)) |
 
 ## Step 1 — Create a fresh project
 
@@ -34,7 +34,14 @@ One Activity, one `TextView`, one `InterstellarSdk.create(...)` call. No Compose
 
 ## Step 2 — Bring in the SDK
 
-Request access to the `wallet-app-internal` repository, then copy these items **from its root into your project root**:
+Clone the SDK repository (you have read access as a reviewer/integrator — see [SDK access](../intro.md#status--scope-please-read)) and copy these items **from its root into your project root**:
+
+```bash
+git clone ssh://git@github.com/Interstellar-Network/wallet-app-internal.git
+cd wallet-app-internal
+# then copy into YOUR project root:
+#   shared/  Cargo.toml  Cargo.lock  rust-toolchain.toml  .cargo/config.toml
+```
 
 | What | Why |
 | --- | --- |
@@ -62,6 +69,10 @@ MyFirstInterstellarApp/
 
 :::info Why these files
 The SDK module compiles its **Rust core** (garbled circuits, chain clients) with `cargo` during the Gradle build — the workspace must live at your **project root** (the module's build scripts use the Gradle `rootDir` as the cargo workspace).
+:::
+
+:::note Artifact publication — TBD (placeholder)
+The SDK is **not yet published** to a package registry (no Maven coordinate / published AAR yet) — today the only distribution channel is the **git repository** cloned above. A published artifact is planned; ask us for the current status.
 :::
 
 ## Step 3 — Wire up Gradle

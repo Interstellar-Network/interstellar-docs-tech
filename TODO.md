@@ -112,7 +112,12 @@ command; `~/.cache` lives on a read-only mount is NOT an issue — Docusaurus ca
   - document the ideal distribution (published artifact / maven coordinate / SPM) — **USE A
     PLACEHOLDER** (clearly marked "TBD/coming") if no artifact publication exists yet
   - make sure the intro.md warning box links to that access documentation
-- status: **NOT STARTED**
+- status: **FIXED** → `intro.md` "Status & scope" box rewritten: "not public (yet)" is explicit;
+  reviewer/integrator access = read access to `wallet-app-internal` with the exact `git clone`
+  command (linked from both getting-started guides); artifact publication (Maven coordinate /
+  SPM package) documented as a clearly-marked **"TBD (placeholder)"** note in the scope box AND
+  both getting-started guides; M6 interstellar_sdk.md scope note aligned. Anchor
+  `#status--scope-please-read` verified in built HTML; production build passes.
 
 ### [1] First version of the (semi) public "Interstellar Android/iOS SDK" docs
 - split iOS vs Android at the "root" unless signatures are exactly identical

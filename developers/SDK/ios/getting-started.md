@@ -22,7 +22,7 @@ One SwiftUI `View`, one `InterstellarSdk.create(...)` call. No pinpad, no balanc
 | Rust targets | `rustup target add aarch64-apple-ios aarch64-apple-ios-sim` |
 | Xcode `PATH` | Xcode build phases use a minimal `PATH`: `sudo ln -sfn ~/.cargo/bin/cargo /usr/local/bin/cargo && sudo ln -sfn ~/.cargo/bin/rustc /usr/local/bin/rustc` |
 | Interstellar stack | the local Docker stack from the [M6 tutorial](../../Milestones/M6/local-demo-with-docker.md) (defaults: `wss://127.0.0.1:2090` / `ws://127.0.0.1:9944` / IPFS `5001`) |
-| SDK access | `wallet-app-internal` is currently private — **contact us** to get access to the SDK sources/checkout used below |
+| SDK access | read access to the private [`wallet-app-internal`](https://github.com/Interstellar-Network/wallet-app-internal) repo (granted to reviewers/integrators — plain `git clone`, see [SDK access](../intro.md#status--scope-please-read)) |
 
 ## Step 1 — Create a fresh project
 
@@ -41,7 +41,7 @@ workspace/
 ├── MyFirstInterstellarApp/          ← your Xcode project
 │   ├── MyFirstInterstellarApp.xcodeproj
 │   └── MyFirstInterstellarApp/      ← sources (ContentView.swift …)
-└── wallet-app-internal/             ← cloned from the private repo (contact us)
+└── wallet-app-internal/             ← cloned from the private repo (git, see [SDK access](../intro.md#status--scope-please-read))
     ├── shared/                      ← KMP module + Rust sources (built by Gradle)
     ├── iosApp/InterstellarSdk/      ← the iOS SDK Swift sources (copied in step 3)
     ├── Cargo.toml                   ← Rust workspace (built for iOS by the Gradle task)
@@ -54,6 +54,10 @@ Clone it once:
 cd workspace
 git clone ssh://git@github.com/Interstellar-Network/wallet-app-internal.git
 ```
+
+:::note Artifact publication — TBD (placeholder)
+The SDK is **not yet published** to a package registry (no SPM package / CocoaPods pod yet) — today the only distribution channel is the **git repository** cloned above. A published artifact is planned; ask us for the current status.
+:::
 
 > 📷 **[SCREENSHOT PLACEHOLDER]** — *Finder/Xcode showing your project and the sibling `wallet-app-internal` checkout (to be captured)*
 

@@ -83,7 +83,7 @@ The pinpad/VCA orchestration is **SDK-owned**: the host app only renders the pro
 ## Scope & status
 
 :::note
-The SDK is delivered as a **technical preview** on top of the private `wallet-app-internal` repository, pending the final-testnet open-sourcing. Public API surface may still evolve; test endpoints and SDK artifacts are provided on request. See the [SDK overview](/developers/SDK/intro) for the complete scope statement.
+The SDK is delivered as a **technical preview** on top of the private `wallet-app-internal` repository, pending the final-testnet open-sourcing. It is **not public at this time**: reviewers/integrators work from **read access to that repository** (plain `git clone` — see the [getting-started guides](/developers/SDK/android/getting-started)); a published artifact (Maven/SPM) is TBD. Public API surface may still evolve; shared testnet endpoints and test keys are provided on request. See the [SDK overview](/developers/SDK/intro) for the complete scope statement.
 :::
 
 The WalletConnect/Reown interoperability delivered in **M5** remains testable through the same app and flows — see the [M5 documentation](/developers/Milestones/M5/local-demo-with-docker) and the running tutorial in [Android App with Local Nodes](../local-demo-with-docker.md).

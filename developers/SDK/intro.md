@@ -64,14 +64,24 @@ Because the two platform APIs are *independent codebases* (Kotlin vs Swift), the
 
 ## Status & scope (please read)
 
-:::warning Semi-public / testnet SDK
-The SDK is currently **delivered and documented from the private `wallet-app-internal` repository**. It is **not yet audited and not yet open-sourced** — access and test endpoints are granted on request (see the [Introduction](/developers/intro)). Until the final testnet release:
+:::warning Not public (yet) — access is granted via the private repo
+The SDK is **not public at this time**: no open-source release and no package-registry artifact yet. What you get instead:
+
+- **Repository access** — reviewers and integrators are granted (or already have) read access to the private **`wallet-app-internal`** repository, the SDK's source of truth. A plain clone is all the [Android](./android/getting-started.md) / [iOS](./ios/getting-started.md) getting-started guides need:
+
+  ```bash
+  git clone ssh://git@github.com/Interstellar-Network/wallet-app-internal.git
+  ```
+
+- **Endpoints & test keys** — the shared testnet endpoints (and MoonPay/Reown test keys, see the [M6 demo notes](/developers/Milestones/M6/local-demo-with-docker)) are provided by Interstellar on request.
+
+- **Artifact publication — TBD (placeholder)**: publishing the SDK as a proper dependency (e.g. a Maven coordinate for Android / an SPM package for iOS) is planned but **does not exist yet** — until it does, the git repository above is the only distribution channel. Ask us for the current status.
+
+Until the final testnet release:
 
 - Public API surface may change between milestone deliveries.
 - The default backend URLs point at the **local dev stack** (`wss://127.0.0.1:2090`, `ws://127.0.0.1:9944`, `/ip4/127.0.0.1/tcp/5001`) — production/testnet endpoints are provided by Interstellar.
 - USD prices used by the balance helpers are **hardcoded constants** meant for demo/dev flows.
-
-**Contact us** to get access to the SDK artifacts and to the shared testnet endpoints.
 :::
 
 The full wallet application (`wallet-app`) is the reference integration of this SDK — every feature described here is exercised by that app on both platforms.
