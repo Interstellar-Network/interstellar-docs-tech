@@ -98,7 +98,9 @@ command; `~/.cache` lives on a read-only mount is NOT an issue — Docusaurus ca
 
 ## Screenshot placeholders (to be replaced with real captures)
 
-All placeholders are visible blockquotes in the pages (`📷 [SCREENSHOT PLACEHOLDER] — …`):
+All placeholders are visible blockquotes in the pages (`📷 [SCREENSHOT PLACEHOLDER] — …`).
+**BLOCKED on the User** (cannot be captured from the dev jail — needs real Android Studio/Xcode
+GUI sessions; a local hello-world build is also possible but heavy, ask first):
 
 - [ ] `developers/SDK/android/getting-started.md`:
   1. Android Studio "New Project" dialog (Empty Views Activity selected)
