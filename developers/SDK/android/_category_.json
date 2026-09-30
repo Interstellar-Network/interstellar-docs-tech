@@ -1,0 +1,8 @@
+{
+    "label": "Android",
+    "position": 1,
+    "link": {
+      "type": "generated-index",
+      "description": "Interstellar SDK for Android — Kotlin, Android Keystore, Compose-friendly"
+    }
+  }
