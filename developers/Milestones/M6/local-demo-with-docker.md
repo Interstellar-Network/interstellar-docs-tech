@@ -1,0 +1,1001 @@
+---
+sidebar_label: 'Android App with Local Node'
+sidebar_position: 1
+---
+
+# Android App with Local Nodes
+
+:::note Milestone 6 Scope
+
+
+Milestone 6 turns the Interstellar wallet technology into an **integrable component**: it delivers the first version of the (semi) public **Interstellar Android/iOS SDK** together with its **documentation and integration guides**, plus refreshed **containers and wallet-app releases** for testing the whole stack locally.
+
+The WalletConnect/Reown integration delivered in [Milestone 5](../M5/local-demo-with-docker.md) remains fully testable through the same flows (session handling, signing, transaction broadcasting and transaction-hash feedback to the requesting dApp). Its scope and implementation references — the wallet-side Reown integration (wallet-app-internal PR #32), the pallet-side “Sign in with Reown” adaptations (pallets-internal PR #73) and the broadcasted-transaction-hash feedback (pallets-internal PR #72) — are documented in the [M5 tutorial](../M5/local-demo-with-docker.md) and reviewed in the [M5 Review follow-up](../M5/m5-walletconnect-reown-review-follow-up.md).
+
+What is **new in M6**:
+
+- the **`InterstellarSdk`** public API on Android and iOS, documented end-to-end in the [**Interstellar SDK section**](/developers/SDK/intro) (every public API explained, including the VCA/pinpad contract and server-reset semantics);
+- a **getting-started integration guide** per platform, showing how to embed the SDK into a fresh app from Android Studio / Xcode;
+- updated demo website, containers and wallet-app builds aligned with this SDK-first delivery.
+
+Although the system is **not yet production-ready**, it provides a robust foundation. Broader edge case coverage, interoperability and resilience guarantees remain the focus of upcoming milestones. Reviewers are encouraged to **focus on the functional flow and experience** of the key features in this milestone: running the stack locally, driving the wallet app, and integrating the SDK into their own app.
+:::
+
+The following guide explains how to run the full Interstellar stack **locally** using Docker or Podman. You will be able to launch the Substrate node, Integritee TEE worker, and IPFS service, then interact with the system using the **Interstellar Android demo app**.
+
+[Launch Interstellar Stack with android demo app setup](/developers/Milestones/android_app_local_node_launch.md)
+
+This setup enables full offline testing without relying on a hosted VPS.
+
+
+## 1. Launch the Interstellar Stack 
+
+### Step 2: Download the stack config (links for M6)
+```bash
+curl -L -o docker-compose.yml https://raw.githubusercontent.com/Interstellar-Network/containers/refs/tags/testnet-m6/docker-compose.yml
+curl -L -o docker-ipfs-init.sh https://raw.githubusercontent.com/Interstellar-Network/containers/refs/tags/testnet-m6/docker-ipfs-init.sh
+chmod +x docker-ipfs-init.sh
+```
+
+## 2. Install the Android Demo App
+
+### Download the APK (links for M6)
+
+From the official [Interstellar GitHub Release](https://github.com/Interstellar-Network/containers/releases/tag/testnet-m6) (specific APKs preconfigured to connect to `localhost`):
+
+- `androidApp-arm64-release.apk` — for Android devices and Apple Silicon(M1/M2/M3/M4)
+- `androidApp-x86_64-release.apk` — for Android emulators running on x86_64 platforms (e.g., Windows PCs, Intel-based Mac)
+
+> **Latest version recommended**
+
+::::note
+This M6 release includes the fixes from the **M5 external review** follow-up: the critical issues **C1, C2, C3 and C4** plus the additional fixes/improvements **H2** and **M7** — see the [M5 Review follow-up](/developers/Milestones/M5/m5-walletconnect-reown-review-follow-up.md) for the point-by-point remediation.
+
+For **M5 history** (initial release and v2 hotfix), the previous links are kept for transparency:
+
+**Docker compose file (M5 v2):**
+```bash
+curl -L -o docker-compose.yml https://raw.githubusercontent.com/Interstellar-Network/containers/refs/tags/testnet-m5-v2/docker-compose.yml
+```
+**Previous app download (M5 v2):** https://github.com/Interstellar-Network/containers/releases/tag/testnet-m5-v2
+::::
+
+::::warning Building the app from source? API keys
+The wallet app **builds fine with placeholder/blank API keys** for third-party services such as **MoonPay** and **Reown (WalletConnect)** — but those features **will fail at runtime** until real test keys are provided.
+
+- **Contact us** to get working **test keys** for the shared test environment, then add them to `local.properties` (Android: `moonpay.api.key`, `WALLET_CONNECT_PROJECT_ID`) and/or `Secrets.local.xcconfig` (iOS: `MOONPAY_API_KEY`).
+- Alternatively, get your own keys from the [MoonPay dashboard](https://dashboard.moonpay.com/developers) and [Reown](https://lab.reown.com/).
+- The prebuilt **M6 release APKs** above already embed working test keys — this note only matters when building from source.
+::::
+
+
+:::info Milestone 6 Scope Clarification
+
+During **Milestone 6**, the primary objective is to deliver the **Interstellar SDK** (Android/iOS) and its integration documentation on top of the M5-proven WalletConnect interoperability. The WalletConnect/Reown flows below are validated exactly as in M5 (not an exhaustive test of the full WalletConnect/Reown feature surface).
+
+Validate the connection to different Dapps through QR code URI, as well as the signing and execution of transactions generated by the Dapps across different chains.
+
+At this stage, the focus is on ensuring correctness and robustness of the transaction pipeline at the infrastructure level — now packaged as a reusable SDK. User-facing aspects such as **application UI/UX**, **visual polish**, or **cosmetic design** are not yet part of the milestone scope. Especially because our focus is the delivery of a mobile SDK.
+:::  
+
+---
+
+
+## WalletConnect — Tutorial
+
+This guide explains how to:
+
+1. connect the wallet app to a Dapp through WalletConnect,
+2. verify that balances are fetched correctly after connection,
+3. test Solana Devnet and Ethereum Sepolia transaction signing,
+4. observe when PoHI / VCA is triggered through the Action Confirmation Screen.
+
+## Scope of this tutorial
+
+For the current M6 delivery, the Reown test Dapp is used as a practical simulator for WalletConnect flows.
+
+The currently validated test scope is:
+
+- **Solana Devnet**: connection + transaction signing whithout transaction approval.
+- **Ethereum Sepolia**: connection + transaction signing without and with approval flow through VCA / Action Confirmation Screen.
+- **Bitcoin**: connection can be tested, but transaction execution is not covered in this tutorial because the Reown test Dapp uses **Bitcoin Testnet3**, while the wallet currently uses **Bitcoin Testnet4**.
+
+:::info Important
+For milestone validation, the **reference end-to-end flow is Ethereum Sepolia**, because it is the only flow in the current Reown lab setup that allows the testing of:
+- WalletConnect session establishment,
+- message signing, 
+- transaction signing, and
+- transaction approval through the Interstellar PoHI / VCA flow.
+:::
+
+---
+
+## Prerequisites
+
+Before starting, make sure:
+
+- the wallet app is installed and running,
+- the WalletConnect integration build for M6 is used,
+- internet access is available,
+- you have access to the Reown test Dapp:
+  [https://lab.reown.com/](https://lab.reown.com/)
+
+For the transaction tests on Solana Devnet and Ethreum Sepolia, you will also need:
+- a wallet account already funded with Solana Devnet,
+- a wallet account already funded with Ethereum Sepolia
+
+---
+
+## 1 — Connect to a Dapp
+
+Reown provides a public Dapp simulator that is convenient for testing WalletConnect integration.
+
+Open:
+
+[Lab Reown Dapp Multichain](https://lab.reown.com/appkit/?name=multichain-all)
+
+
+::::info BE CAREFULL
+It is recomended to use `Disconnect All`, `Disconnect EVM` or `Disconnect Solana` etc.after either a website reload, switching Dapp, app restart or background/foreground;  to avoid potential synchronization issues due to cookies and cache with the Dapp
+::::
+
+### Step 1.1 — Configure the `Connect Wallet` button
+
+On the Reown page:
+
+1. Open the network selector
+2. Choose **Solana Devnet**
+
+<div style={{ display: "flex", gap: "20px", justifyContent: "center" }}>
+  <figure style={{ textAlign: "center" }}>
+    <img src="/img/connect_buttons.png" alt="connect buttons" width="200"/>
+    <figcaption>Click on Network Button</figcaption>
+  </figure>
+</div>
+
+<div style={{ display: "flex", gap: "20px", justifyContent: "center" }}>
+  <figure style={{ textAlign: "center" }}>
+    <img src="/img/choose_network.png" alt="network" width="200"/>
+    <figcaption>Select Solana Devnet</figcaption>
+  </figure>
+  <figure style={{ textAlign: "center" }}>
+    <img src="/img/button_configured.png" alt="network configured" width="200"/>
+    <figcaption>The WC button is configured for Solana Devnet</figcaption>
+  </figure>
+</div>
+
+### Step 1.2 — Get the WalletConnect URI
+
+Once the button is configured for Solana Devnet:
+
+1. click the Solana connect button,
+2. choose the **WalletConnect QR / link** option,
+3. copy the WalletConnect URI.
+
+<div style={{ display: "flex", gap: "20px", justifyContent: "center" }}>
+  <figure style={{ textAlign: "center" }}>
+    <img src="/img/select_wc_qr_code.png" alt="select QR code" width="200"/>
+    <figcaption>Select the WC QR/link option</figcaption>
+  </figure>
+  <figure style={{ textAlign: "center" }}>
+    <img src="/img/copy_link.png" alt="copy link" width="200"/>
+    <figcaption>Copy the link/URI</figcaption>
+  </figure>
+</div>
+
+### Step 1.3 — Paste the URI in the wallet app and connect
+
+In the wallet app:
+
+1. go to the **Portfolio** or **Send** screen,
+2. click on the **QR code** icon on the top left of the screen
+3. click on the **Enter URI manually** button
+4. click on the blank space on top of `Connect` button,
+5. paste the WalletConnect URI,
+6. click **Connect**.
+
+<div style={{ display: "flex", gap: "20px", justifyContent: "center" }}>
+  <figure style={{ textAlign: "center" }}>
+    <img src="/img/portfolio_QR.png" alt="portfolio QR" width="200"/>
+    <figcaption>Click on top left icon</figcaption>
+  </figure>
+  <figure style={{ textAlign: "center" }}>
+    <img src="/img/send_QR.png" alt="send QR" width="200"/>
+    <figcaption>Click on top left icon</figcaption>
+  </figure>
+</div>
+
+<div style={{ display: "flex", gap: "20px", justifyContent: "center" }}>
+  <figure style={{ textAlign: "center" }}>
+    <img src="/img/enter_uri.png" alt="URI Filled" width="200"/>
+    <figcaption>Click on `Enter URI` button</figcaption>
+  </figure>
+</div>
+
+
+<div style={{ display: "flex", gap: "20px", justifyContent: "center" }}>
+  <figure style={{ textAlign: "center" }}>
+    <img src="/img/connect_URI.png" alt="connect URI" width="200"/>
+    <figcaption>Click on top of Connect</figcaption>
+  </figure>
+  <figure style={{ textAlign: "center" }}>
+    <img src="/img/connect_uri_ex.png" alt="URI example" width="200"/>
+    <figcaption>Click on `Connect`</figcaption>
+  </figure>
+</div>
+
+<div style={{ display: "flex", gap: "20px", justifyContent: "center" }}>
+  <figure style={{ textAlign: "center" }}>
+    <img src="/img/balance_0.png" alt="balance 0" width="200"/>
+    <figcaption>Check the wallet accounts balances</figcaption>
+  </figure>
+</div>
+
+### Expected result
+
+The Dapp session is established and the wallet refreshes account data. In the current implementation, the wallet fetches balances for the supported chains linked to the account view.
+
+:::info Tip for reviewers
+After the WalletConnect session is established, the wallet may initially display a **zero balance** for SOL, ETH, BTC if the account has not yet been funded. This is expected and can be confirmed in logs.
+:::
+
+
+::::note Bitcoin test
+
+Bitcoin can be used to validate WalletConnect connection only.
+
+A transaction flow is not covered here because:
+- the Reown test Dapp currently uses **Bitcoin Testnet3**,
+- the wallet implementation used for M6 is configured for **Bitcoin Testnet4**.
+
+This mismatch prevents an end-to-end transaction validation through the public Reown test page in the current setup.
+::::
+---
+
+## 2 — Dapp transactions signing without approval
+
+### 2.1 — Fund the Solana Devnet and Ethreum Sepolia account
+
+To test transactions, first fund the Solana Devnet account.
+
+You can use the existing guide here:
+
+[Fund your wallet](https://interstellar-docs-tech.pages.dev/developers/Milestones/M3/local-demo-with-docker/#step-2-fund-your-wallet)
+
+Once the wallet receives funds, the displayed balance changes accordingly.
+
+<div style={{ display: "flex", gap: "20px", justifyContent: "center" }}>
+  <figure style={{ textAlign: "center" }}>
+    <img src="/img/fund_solana.png" alt="funded solana account" width="200"/>
+    <figcaption>Fund the Solana Devnet account</figcaption>
+  </figure>
+  <figure style={{ textAlign: "center" }}>
+    <img src="/img/balance_0-5.png" alt="balance updated" width="200"/>
+    <figcaption>The balance updates after funding</figcaption>
+  </figure>
+</div>
+
+:::info
+In the captured example for this tutorial, the account is funded with **0.5 SOL** on Solana Devnet
+:::
+
+### 2.1 bis — Testing the MoonPay sandbox (fiat on/off-ramp)
+
+The wallet app integrates **MoonPay** for fiat on/off-ramp. In the sandbox you can “buy” testnet crypto with the play-money balance:
+
+- when using MoonPay in the sandbox, it is **good practice to return the funds** once you are done testing — see [MoonPay: Returning testnet tokens](https://moonpay.readme.io/docs/faq-sandbox-testing#returning-testnet-tokens);
+- note this return flow is **only applicable to ETH**, and the return address is **built into the wallet app** — you do not need to configure anything.
+
+### 2.2 — Test transaction  signing on Solana Devnet
+
+:::warning SOL: complete the pinpad quickly
+Some coins have a **short-lived “pending tx TTL”**: a prepared SOL transaction is only valid for a short window, so the pinpad should be completed **quickly** (e.g. **SOL < 30s** or so on devnet). If you take too long, the transaction fails — simply re-initiate it.
+:::
+
+However, in the current Reown basic Dapp lab flow, this Solana transaction test is limited:
+- it targets a predefined destination,
+- it does not provide the same adjustable approval scenario as the following `2.4` Ethereum tests,
+
+This Solana flow exposed by the Reown lab allows testing signing transaction but whithout the approval flow as the ammount is hardcoded.
+>In this scenario, the transaction is signed by the wallet returned to the Dapp, and the Dapp will send the transaction to the network.
+
+Scroll down to the **SIGN AND SEND TRANSACTION (WALLET)** section **NOT (DAPP) one** in the Solana test page.
+
+<div style={{ display: "flex", gap: "20px", justifyContent: "center" }}>
+  <figure style={{ textAlign: "center" }}>
+    <img src="/img/sign_send_sol_wallet.png" alt="sign send" width="400"/>
+    <figcaption>Click `Sign and Send Transaction`</figcaption>
+  </figure>
+</div>
+
+
+---
+### 2.3 — Test `message signing` on Solana Devnet
+
+
+[Go to solana Dapp](https://lab.reown.com/appkit/?name=solana)
+
+- Connect or reconnect
+
+- Scroll to `Solana Test Interactions -> Sign Message`
+
+<div style={{ display: "flex", gap: "20px", justifyContent: "center" }}>
+  <figure style={{ textAlign: "center" }}>
+    <img src="/img/solana_sig_message.png" alt="sign send" width="400"/>
+    <figcaption>Click `Sign Message`</figcaption>
+  </figure>
+</div>
+
+
+
+### 2.4 — Test connectivity and transaction signing (without approval) on Sepolia network
+
+Ethereum Sepolia can be used to validate WalletConnect connectivity and transaction signing.
+
+However, in this basic  Reown basic Dapp lab flow, this ETH transaction test is limited:
+- it targets a predefined destination,
+- it does not provide the same adjustable approval scenario as `2.4` Ethereum tests,
+
+This Ethereum flow exposed by the Reown lab is the basic one that allows testing signing transaction whithout the approval flow but also whithout message signing.
+
+<div style={{ display: "flex", gap: "20px", justifyContent: "center" }}>
+  <figure style={{ textAlign: "center" }}>
+    <img src="/img/choose_sepolia.png" alt="sign send" width="200"/>
+    <figcaption>Network Button- Select Sepolia</figcaption>
+  </figure>
+  <figure style={{ textAlign: "center" }}>
+    <img src="/img/send_vitalik.png" alt="fill tx" width="600"/>
+    <figcaption>Scroll down to `Send Transaction to Vitalik`</figcaption>
+  </figure>
+</div>
+
+---
+### 2.5 — Test connectivity and transaction signing with approval on Sepolia network
+
+::::info
+At the moment, this Ethereum flow exposed by the Reown lab is the only one that allows testing the approval flow through Interstellar’s VCA / Action Confirmation Screen.
+::::
+
+[Go to this specific reown page](https://lab.reown.com/appkit/?name=ethers-all)
+
+
+#### Step — 2.4.1 Connect to the Dapp
+
+<div style={{ display: "flex", gap: "20px", justifyContent: "center" }}>
+  <figure style={{ textAlign: "center" }}>
+    <img src="/img/open_evm_modal.png" alt="sign send" width="400"/>
+    <figcaption>Open EVM Modal</figcaption>
+  </figure>
+  <figure style={{ textAlign: "center" }}>
+    <img src="/img/select_wc_qr_code.png" alt="select wc qr code" width="200"/>
+    <figcaption>Select WC QR CODE</figcaption>
+  </figure>
+</div>
+
+
+
+
+Copy paste the WalletConnect URI in the wallet app and click on `Connect`
+[Same flow as previously explained](/developers/Milestones/M6/local-demo-with-docker#step-13--paste-the-uri-in-the-wallet-app-and-connect)
+
+
+**Dapp required a signed message (not a transaction) to enable connection**
+
+<div style={{ display: "flex", gap: "20px", justifyContent: "center" }}>
+  <figure style={{ textAlign: "center" }}>
+    <img src="/img/sign_message.png" alt="sign message" width="200"/>
+    <figcaption>Click on Sign</figcaption>
+  </figure>
+  <figure style={{ textAlign: "center" }}>
+    <img src="/img/message_signing.png" alt="signing spinout" width="200"/>
+    <figcaption>Signing spinout</figcaption>
+  </figure>
+</div>
+
+#### Step 2.4.2 — test transactions
+Once connection is established with the Dapp, set-up the transaction parameters
+
+<div style={{ display: "flex", gap: "20px", justifyContent: "center" }}>
+  <figure style={{ textAlign: "center" }}>
+    <img src="/img/send_sepolia.png" alt="send sepolia" width="200"/>
+    <figcaption>Click on Send</figcaption>
+  </figure>
+  <figure style={{ textAlign: "center" }}>
+    <img src="/img/select_sepolia.png" alt="select sepolia token" width="200"/>
+    <figcaption>Select sepolia token</figcaption>
+  </figure>
+</div>
+### Threshold behavior
+
+For this test environment, a conditional validation threshold is configured.
+
+- a transaction **below** the threshold can be signed without VCA,
+- a transaction **above** the threshold triggers:
+  - transaction preparation,
+  - secure message generation,
+  - VCA challenge generation,
+  - Action Confirmation Screen,
+  - final confirmation before broadcast.
+
+
+:::info Conditional validation
+Use an amount **greater than 0.00030 ETH** to trigger the VCA / approval flow.
+[Conditional Transaction Validation Threshold](/developers/Milestones/M3/local-demo-with-docker#step-2-test-transactions-with-conditional-validations)
+:::
+
+Then copy past your ETH wallet address and click on `Preview Send` then `Send` transaction.
+
+
+<div style={{ display: "flex", gap: "20px", justifyContent: "center" }}>
+  <figure style={{ textAlign: "center" }}>
+    <img src="/img/preview_send.png" alt="sign send" width="200"/>
+    <figcaption>Check the amount is above 0.00030 and click</figcaption>
+  </figure>
+  <figure style={{ textAlign: "center" }}>
+    <img src="/img/send_tx.png" alt="fill tx" width="300"/>
+    <figcaption>Click on Send</figcaption>
+  </figure>
+</div>
+
+- Then the VCA confirmation screen appears in the wallet app
+- If the transaction is validated, it is signed, brodcasted and a box displays the transaction hash.
+
+
+<div style={{ display: "flex", gap: "20px", justifyContent: "center" }}>
+  <figure style={{ textAlign: "center" }}>
+    <img src="/img/tx_hash_result.png" alt="tx hash" width="200"/>
+    <figcaption>You can copy the tx hash</figcaption>
+  </figure>
+</div>
+
+
+### Example validated flow
+
+The C-Logs included below correspond to a successful Ethereum Sepolia transfer with:
+
+- funded account balance: **0.0004 ETH**
+- transfer amount: **0.00035 ETH**
+- fee type: **Normal**
+- VCA triggered because the transaction is above threshold
+
+### Expected functional result
+
+The wallet:
+
+1. prepares the Ehereum transaction,
+2. checks available balance,
+3. computes the fee,
+4. signs the transaction,
+5. pauses because the transaction is above threshold,
+6. generates and stores the VCA commitment,
+7. waits for user confirmation on the Action Confirmation Screen,
+8. validates the user input,
+9. broadcasts the transaction successfully.
+
+
+
+
+## 3 — Other reown lab Dapps (not Mandatory for the tests)
+
+Feel free to try other Dapps; but not all of these have been tested, and some require capabilities that are not part of Interstellar SDK supported use cases.
+
+In addition even on working Dapps, not all buttons work eg. `Sign and Send Transaction` (Dapp) works but some NOT with `Sign and Send Transaction` (Wallet)".
+
+If you want to explore other reown Dapps:
+[Go to the main reown Dapp page](https://lab.reown.com)
+
+
+
+
+
+## 4 — Test WalletConnect connectivity with production Dapps
+
+In addition to Reown Lab, WalletConnect connectivity can also be sanity-checked against public production Dapps such as [Aave Pro](https://pro.aave.com/), [Uniswap](https://app.uniswap.org/) on Ethereum and [Jupiter](https://jup.ag/) on Solana by using their standard **Connect Wallet** flow. This is useful to confirm interoperability of the WalletConnect session layer with real Dapp frontends beyond the dedicated test environment.
+
+
+<div style={{ display: "flex", gap: "20px", justifyContent: "center" }}>
+  <figure style={{ textAlign: "center" }}>
+    <img src="/img/wc_uni.png" alt="send connect" width="200"/>
+    <figcaption>Copy Uniswap Link</figcaption>
+  </figure>
+  <figure style={{ textAlign: "center" }}>
+    <img src="/img/uniswap.png" alt="URI" width="600"/>
+    <figcaption>Uniswap Dapp</figcaption>
+  </figure>
+</div>
+
+<div style={{ display: "flex", gap: "20px", justifyContent: "center" }}>
+  <figure style={{ textAlign: "center" }}>
+    <img src="/img/wc_aave.png" alt="URI Filled" width="200"/>
+    <figcaption>Copy Aave Link</figcaption>
+  </figure>
+  <figure style={{ textAlign: "center" }}>
+    <img src="/img/aave.png" alt="balance 0" width="600"/>
+    <figcaption>Aave Dapp</figcaption>
+  </figure>
+</div>
+
+
+<div style={{ display: "flex", gap: "20px", justifyContent: "center" }}>
+  <figure style={{ textAlign: "center" }}>
+    <img src="/img/wc_jupiter.png" alt="URI Filled" width="200"/>
+    <figcaption>Copy Jupiter Link</figcaption>
+  </figure>
+  <figure style={{ textAlign: "center" }}>
+    <img src="/img/jupiter.png" alt="balance 0" width="600"/>
+    <figcaption>Jupiter Dapp</figcaption>
+  </figure>
+</div>
+
+
+
+
+
+
+::::info
+
+Those Dapps do not handle Ethereum Sepolia nor Solana Devnet so they won't appear in the balance.
+In addition, it is not in the scope of this milestone to extensively test the interactivity with such Dapps even in the case you would fund the Ethereum and Solana accounts with mainnet ETH and SOL.
+::::
+
+---
+
+## 🛠️ Interpreting Logs
+
+This section explains the logs that reviewers should expect for the main validated scenarios covered by this tutorial:
+
+---
+
+### A — Logs after connecting to the Dapp
+
+After the WalletConnect URI is pasted and the connection is established, the wallet refreshes chain-specific account data.
+
+
+
+#### 1. Signature verification and account resolution
+
+These lines show that the request is authenticated and the account context is being resolved:
+
+````bash
+[DEBUG interstellar_extended_signature] ExtendedSignature::Secp256r1 START
+[DEBUG interstellar_extended_signature] ExtendedSignature::verify_secp256r1_signature START
+[DEBUG interstellar_extended_signature] ExtendedSignature: sig parsed OK
+[DEBUG interstellar_extended_signature] ExtendedSignature: verifying_key parsed OK
+````
+#### 2. Solana address fetch and balance lookup
+
+These lines show that the wallet resolves the Solana address and queries the Devnet balance:
+```bash
+[INFO  sol_client::client] [get_sol_address]: START
+[INFO  sol_client::client] [get_balance_account_str] Fetching balance for account: HAcrhnmhzccnfRWUKafVziDXamytTGiC1xC3xLxL416t
+[DEBUG sol_client::rpc] [send_request] Sending RPC request for method: getBalance
+```
+When the wallet has not yet been funded, the returned balance is zero:
+```bash
+[DEBUG sol_client::rpc] [send_request] Received response for method getBalance: ... "value":0 ...
+[INFO  sol_client::client] [get_balance_account_str] Balance fetched for account HAcrhnmhzccnfRWUKafVziDXamytTGiC1xC3xLxL416t: 0
+```
+After the wallet receives 0.5 SOL, the balance query returns:
+```bash
+[DEBUG sol_client::rpc] [send_request] Received response for method getBalance: ... "value":500000000 ...
+```
+
+This corresponds to:
+
+500000000 lamports
+0.5 SOL
+#### 3. Other supported balances may also be queried
+
+The current wallet view also fetches other chain balances linked to the account state. For example:
+
+DOT / Substrate-style account query
+```bash
+[INFO  dot_client::client] [get_account] Fetching account address for:
+[DEBUG dot_client::client] [get_balance_internal] Querying account:
+[DEBUG dot_client::client] [get_balance_internal] Result is null, returning default account info
+```
+Bitcoin balance query
+```bash
+[DEBUG btc_client::client] get_balance: START
+[INFO  btc_client::client] parse_utxos_from_response: SUCCESS: parsed 0 UTXOs, total_value=0 sats
+```
+
+Ethereum balance query
+```bash
+[DEBUG eth_client::client] fetch_balance: START
+[DEBUG eth_client::client] fetch_balance: RPC response = RpcResponse { result: Some("0x0"), error: None }
+```
+#### Reviewer interpretation
+
+If you see:
+
+- successful Secp256r1 verification logs,
+- a Solana address lookup,
+- a getBalance RPC call,
+and a returned value of 0 or later 500000000,
+
+then the WalletConnect session is active and the wallet is correctly refreshing the connected account state for Solana Devnet.
+
+#### Expected non-blocking warnings
+
+The following warnings appear in the logs and are expected in this environment:
+```bash
+[WARN  sp_io::storage] storage::start_transaction unimplemented
+[WARN  sp_io::storage] storage::commit_transaction unimplemented
+```
+They do not indicate failure of the WalletConnect flow or of the Solana transaction flow shown in this tutorial.
+
+
+
+
+### B — Logs for the Ethereum Sepolia transaction signing flow without VCA
+
+This flow corresponds to the Ethereum Sepolia transaction generated by the Reown test Dapp, using its predefined destination address (the current test flow targets Vitalik’s address).
+
+Unlike the Solana Devnet approval flow, this Ethereum Sepolia example demonstrates a transaction that is:
+
+- received through the WalletConnect session,
+- prepared and signed by Interstellar’s transaction pipeline,
+- classified as **below the configured validation threshold**,
+- therefore **auto-approved**, without triggering PoHI / VCA,
+- and then broadcast successfully.
+
+
+
+#### 1. Signature verification and request authentication
+
+The request first goes through the usual signature verification flow:
+
+```bash
+[DEBUG interstellar_extended_signature] ExtendedSignature::Secp256r1 START
+[DEBUG interstellar_extended_signature] ExtendedSignature::verify_secp256r1_signature START
+[DEBUG interstellar_extended_signature] ExtendedSignature: sig parsed OK
+[DEBUG interstellar_extended_signature] ExtendedSignature: verifying_key parsed OK
+```
+This confirms that the trusted request is properly authenticated before transaction preparation starts.
+
+#### 2. Ethereum transaction preparation starts
+
+The transaction manager then starts preparing the ETH transaction:
+```bash
+[INFO  pallet_tx_manager::pallet] [prepare_transaction] START - account=, chain=ETH, amount=Fixed(1000000), fee_type=Normal
+```
+This confirms that the WalletConnect-originated request has been routed into the Ethereum transaction preparation flow.
+
+#### 3. Wallet balance is fetched successfully
+
+The wallet fetches the ETH Sepolia balance of the account:
+```bash
+[DEBUG eth_client::client] fetch_balance: formated address = "0xb9ecdf4662b99cee5fe443cde8da21a9e99b5ec8"
+[DEBUG eth_client::client] fetch_balance: RPC response = RpcResponse { result: Some("0xb1a2bc2ec50000"), error: None }
+[INFO  pallet_tx_manager::pallet] [prepare_transaction] balance = 50000000000000000
+```
+This corresponds to:
+
+- `50000000000000000` wei
+- `0.05` ETH
+
+So the wallet has sufficient balance to process the request.
+
+#### 4. EIP-1559 fee estimation is computed
+
+The Ethereum client then fetches the current fee data:
+```bash
+[DEBUG eth_client::client] fetch_latest_base_fee: got: 1998333656
+[DEBUG eth_client::client] fetch_max_priority_fee: got: 1000873
+[DEBUG eth_client::fee] [eth-fee] fee_type=Normal, base_fee=1998333656, priority_fee=1000873 -> max_fee=3997668185, max_priority=1000873
+[INFO  eth_client::client] ETH prepare_transaction: fee_type=Normal, base_fee=1998333656, max_fee=3997668185, priority=1000873
+```
+This shows that the transaction is prepared as an EIP-1559 transaction, with:
+
+a fetched base fee,
+a fetched max priority fee,
+and a computed max fee for broadcast.
+#### 5. The transaction is signed successfully
+
+The wallet then unseals the signing seed, signs the transaction, and zeroes the seed again:
+```bash
+[DEBUG pallet_key_manager::pallet] [unseal_seed] Delegating to crypto_ops::unseal_seed
+[DEBUG pallet_key_manager::pallet] [do_sign_prehashed] Seed unsealed successfully, proceeding with signing
+[DEBUG pallet_key_manager::pallet] [do_sign_prehashed] Seed zeroed after signing
+[DEBUG eth_client::client] create_eip1559_signed_rlp: START
+```
+
+This confirms that the Ethereum transaction has been signed successfully and serialized into signed EIP-1559 RLP format.
+
+#### 6. No VCA is triggered
+
+The key line for this flow is:
+
+```bash
+[INFO  pallet_tx_manager::pallet] [prepare_transaction] Below threshold, auto-approving transaction
+```
+This proves that:
+
+- the transaction policy check was applied,
+- the request was classified as below threshold,
+- and therefore no Action Confirmation Screen / PoHI / VCA step was required.
+
+This is the expected behavior for this Ethereum Sepolia test flow.
+
+#### 7. The signed transaction is broadcast successfully
+
+The signed raw transaction is then sent to the Ethereum Sepolia network:
+```bash
+[DEBUG eth_client::client] send_raw_transaction: START
+[INFO  pallet_tx_manager::pallet] [prepare_transaction] Auto-approved transaction broadcast successful: 0xd682f2be4703224500124ec5fe4d69467796cadb100e7e2f0b4cdc800630f17a
+```
+---
+
+### C — Logs for the Ethereum Sepolia transaction flow with VCA
+
+This flow corresponds to an Ethereum Sepolia interaction in which the Dapp first requests a **message signature** through WalletConnect, and then initiates an ETH transaction that is classified as **above the configured validation threshold**.
+
+In this captured sequence, the flow demonstrates:
+
+- WalletConnect session activity with an ETH account,
+- a Dapp message-signing request handled by Interstellar,
+- a transaction request routed into the ETH transaction pipeline,
+- threshold evaluation resulting in **VCA being required**,
+- VCA challenge generation and storage,
+- user validation through the Action Confirmation Screen,
+- and successful transaction broadcast.
+
+---
+
+#### 1. Initial ETH account activity and balance lookup
+
+Before the signing flow, the wallet is already able to resolve and query the ETH account:
+
+```bash
+[DEBUG eth_client::client] fetch_balance: formated address = "0x62a43b07a2a0287622550dddb144b7df193bf6eb"
+[DEBUG eth_client::client] fetch_balance: RPC response = RpcResponse { result: Some("0x16bcc41e90000"), error: None }
+```
+This corresponds to:
+
+- 0x16bcc41e90000 wei
+- `400000000000000` wei
+- `0.0004` ETH
+
+This confirms that the ETH account used in the WalletConnect flow is resolved correctly and has a non-zero Sepolia balance.
+
+#### 2. WalletConnect sign-message request is received
+
+The next key step is the WalletConnect sign-message request. The signed payload clearly shows that the request comes from lab.reown.com and asks the wallet to sign in with the Ethereum account.
+
+Relevant excerpt from the verified message payload:
+```bash
+lab.reown.com wants you to sign in with your Ethereum account:
+0x62a43b07a2a0287622550dddb144b7df193bf6eb
+
+Please sign with your account
+
+URI: https://lab.reown.com
+Version: 1
+Chain ID: 11155111
+...
+Issued At: 2026-04-30T15:58:19.304Z
+```
+
+The corresponding logs show:
+```bash
+[DEBUG pallet_tx_manager::pallet] request_sign_message: START - account=, chain=ETH
+[DEBUG pallet_key_manager::pallet] [unseal_seed] Delegating to crypto_ops::unseal_seed
+[DEBUG pallet_key_manager::pallet] [do_sign_prehashed] Seed unsealed successfully, proceeding with signing
+[DEBUG pallet_key_manager::pallet] [do_sign_prehashed] Seed zeroed after signing
+[INFO  pallet_tx_manager::pallet] Successfully signed message and stored signature for account
+```
+**Interpretation:**
+
+This proves that the wallet can:
+
+- receive a WalletConnect message-signing request,
+- sign the payload with the ETH account,
+- and return a valid signature to the Dapp.
+
+This is an important interoperability point because it demonstrates WalletConnect compatibility not only for transactions, but also for standard Dapp message-signing flows.
+
+#### 3. Ethereum transaction preparation starts
+
+After the sign-message step, the Dapp initiates an ETH transaction request.
+
+The transaction manager starts processing it here:
+```bash
+[INFO  pallet_tx_manager::pallet] [prepare_transaction] START - account=, chain=ETH, amount=Fixed(350000000000000), fee_type=Normal
+```
+**Interpretation:**
+
+- `350000000000000` wei
+- `0.00035` ETH
+
+So this is an ETH Sepolia transfer of `0.00035` ETH.
+
+#### 4. ETH balance is fetched and checked
+
+The wallet fetches the sender balance again:
+```bash
+[DEBUG eth_client::client] fetch_balance: formated address = "0x62a43b07a2a0287622550dddb144b7df193bf6eb"
+[DEBUG eth_client::client] fetch_balance: RPC response = RpcResponse { result: Some("0x16bcc41e90000"), error: None }
+[INFO  pallet_tx_manager::pallet] [prepare_transaction] balance = 400000000000000
+```
+**Interpretation:**
+
+- available balance = 0.0004 ETH
+- requested transfer = 0.00035 ETH
+
+So the account balance is sufficient for the transfer plus fees.
+
+#### 5. EIP-1559 fee calculation is performed
+
+The ETH client then computes the fee parameters:
+```bash
+[DEBUG eth_client::client] fetch_latest_base_fee: got: 1551035
+[DEBUG eth_client::client] fetch_max_priority_fee: got: 1000000
+[DEBUG eth_client::fee] [eth-fee] fee_type=Normal, base_fee=1551035, priority_fee=1000000 -> max_fee=4102070, max_priority=1000000
+[INFO  eth_client::client] ETH prepare_transaction: fee_type=Normal, base_fee=1551035, max_fee=4102070, priority=1000000
+``` 
+This confirms that the transaction is prepared as an EIP-1559 ETH transaction, with:
+
+- base fee fetched from Sepolia,
+- priority fee fetched,
+- and max fee computed before signing.
+#### 6. The ETH transaction is signed successfully
+
+The transaction is then signed by the wallet:
+```bash
+[DEBUG pallet_key_manager::pallet] [unseal_seed] Delegating to crypto_ops::unseal_seed
+[DEBUG pallet_key_manager::pallet] [do_sign_prehashed] Seed unsealed successfully, proceeding with signing
+[DEBUG pallet_key_manager::pallet] [do_sign_prehashed] Seed zeroed after signing
+[DEBUG eth_client::client] create_eip1559_signed_rlp: START
+```
+This confirms successful transaction signing and serialization into signed EIP-1559 format.
+
+#### 7. Threshold evaluation triggers VCA
+
+The decisive line for this flow is:
+```bash
+[INFO  pallet_tx_manager::pallet] [prepare_transaction] Above threshold, requiring VCA confirmation
+```
+This shows that:
+
+- the ETH transaction has been evaluated against Interstellar’s transaction policy,
+- it is classified as above threshold,
+- and therefore cannot be broadcast immediately.
+
+Instead, it must go through the PoHI / VCA approval flow.
+
+#### 8. A human-readable transaction message is generated
+
+The transaction manager generates the action summary that will be tied to the confirmation flow:
+```bash
+[DEBUG pallet_tx_manager::pallet] [generate_tx_message] Generated message: Transfer 0.00035 ETH to 0xb4ba1...e0a79
+```
+This is the human-readable transaction message associated with the VCA validation.
+
+It confirms that the approval challenge is tied to a specific action, namely:
+
+- asset: ETH
+- amount: 0.00035 ETH
+- destination: 0xb4ba1...e0a79
+
+#### 9. The VCA commitment is created and stored
+
+The VCA challenge metadata is then generated and stored:
+```bash
+[INFO  pallet_tx_validation::pallet] [tx-validation] store_metadata_aux: who = , message_pgarbled_cid = "Qme6V7oajevdv7cmjgcycMrAos614hvFFLzZb1QfYRRtSB", message_digits = [9, 4], pinpad_digits = [9, 8, 3, 4, 0, 6, 2, 1, 7, 5]
+[INFO  pallet_tx_validation::pallet] [tx-validation] store_metadata_aux: done!
+[INFO  pallet_tx_manager::pallet] [ETH-client]-[tx-manager]- Commitment stored with cid="Qme6V7oajevdv7cmjgcycMrAos614hvFFLzZb1QfYRRtSB" digits=BoundedVec([9, 4], 4) pinpad_digits=BoundedVec([9, 8, 3, 4, 0, 6, 2, 1, 7, 5], 10)
+[DEBUG pallet_tx_manager::pallet] store_pending_transaction: START - account=, pending_tx=PendingTransaction { ipfs_cid: <wasm:stripped>, signed_tx: <wasm:stripped>, chain: ETH }
+[DEBUG pallet_tx_manager::pallet] store_pending_transaction: SUCCESS
+```
+**Interpretation;**
+
+This shows that:
+
+- the garbled confirmation payload is generated,
+- the randomized confirmation metadata is stored,
+- the signed ETH transaction is kept pending,
+- and final broadcast is blocked until the user completes the VCA step.
+
+#### 10. User input is checked and VCA passes
+
+When the user completes the Action Confirmation Screen, the validation engine checks the submitted digits:
+```bash
+[INFO  pallet_tx_validation::pallet] [tx-validation] check_input: who = , ipfs_cid = "Qme6V7oajevdv7cmjgcycMrAos614hvFFLzZb1QfYRRtSB", input_digits = [0, 3]
+[INFO  pallet_tx_validation::pallet] [tx-validation] check_input: input_digits_str = "\0\u{3}", input_digits_int = [0, 3], pinpad_permutation = BoundedVec([9, 8, 3, 4, 0, 6, 2, 1, 7, 5], 10)
+[INFO  pallet_tx_validation::pallet] [tx-validation] check_input: computed_inputs_from_permutation = [9, 4], message_digits = BoundedVec([9, 4], 10)
+[INFO  pallet_tx_validation::pallet] [tx-validation] TxPass
+[DEBUG pallet_tx_manager::pallet] VCA validation successful
+```
+**Interpretation:**
+
+This is the proof that:
+
+- the user completed the VCA challenge,
+- the randomized input matched the expected message digits,
+- and the transaction was authorized to continue.
+
+#### 11. The transaction is broadcast successfully
+
+Once VCA passes, the signed ETH transaction is sent to Sepolia:
+```bash
+[DEBUG eth_client::client] send_raw_transaction: START
+[INFO  pallet_tx_manager::pallet] Transaction broadcast successful: 0xbf035a807356f5972f7768f92f57c29d6830db0f4c70a97a9eae12a5f601e32a
+```
+This confirms that the ETH transaction was:
+
+- prepared,
+- signed,
+- held pending,
+- validated through VCA,
+- and finally broadcast successfully.
+
+**Reviewer conclusion**
+
+If the logs show, in order:
+
+1. ETH account balance fetch,
+2. WalletConnect sign-message request from lab.reown.com,
+3. successful message signing,
+4. prepare_transaction ... chain=ETH,
+5. ETH balance and fee calculation,
+6. Above threshold, requiring VCA confirmation,
+7. generated message Transfer 0.00035 ETH ...,
+8. commitment stored with CID and randomized digits,
+9. TxPass,
+10. Transaction broadcast successful
+
+then the Ethereum Sepolia WalletConnect flow has been validated successfully for:
+
+- WalletConnect message-signing interoperability,
+- ETH transaction preparation and signing,
+- threshold-based escalation to VCA,
+- PoHI / Action Confirmation Screen validation,
+- and final broadcast after successful human confirmation.
+
+
+
+
+## Optional: Front-End Access
+
+You can inspect chain state and transactions via:
+
+- [Polkadot.js Apps](https://polkadot.js.org/apps/?rpc=ws://localhost:9944)
+- Or your preferred Substrate front-end UI
+
+## Notes
+
+- All services run in Docker containers and use local ports `9944`, `2090`, and `5001`
+- This setup replicates the same runtime environment used in hosted testnets but fully self-contained
+- Ideal for offline testing, developer evaluation, or deeper inspection of runtime logs
+
+
+
+
+
+
+
+
+
+
+
+---
+:::note Technical Preview – Foundation for Secure Mobile SDKs  
+This Android application is provided as a technical demonstration of Interstellar’s secure Web3 account infrastructure. It serves as a foundation for the forthcoming Android and iOS SDKs, which are still under active development.  
+
+Please note that the current user interface and experience are not representative of the final product. Both UI and UX will be significantly refined to align with Interstellar’s core mission: delivering the highest levels of simplicity and security in mobile self-custody.  
+:::
+
+
+:::info Follow-Up – Selective Docs Exploration
+
+If you've jumped straight into the evaluation, we recommend consulting the **[Milestone 1 documentation](/Milestones/M1/Summary.md)** for key context. It outlines the core architecture, backend logic, and trusted execution flows implemented in this milestone.
+
+The documentation is modular—feel free to explore only the sections most relevant to your review or interest.  
+You can also use the **search bar** (top right corner) to locate specific topics quickly. Helpful keywords include:
+
+- `VHDL`, `circuits`, `garbled`, `TEE`, `integritee`,`SE attestation`  
+- `NFC`, `VCA`,`recovery`, `threshold`, `trusted UX`  
+- `comparison`, `passkey`, `ledger`, `authentication`, `compliance`, `security`, `ATT&CK`
+
+:::

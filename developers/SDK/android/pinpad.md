@@ -12,6 +12,10 @@ The **pinpad** is how the user authorizes policy-gated actions (coin transfers a
 
 This page documents the Android view, **`TxPinpadView`** (class `gg.interstellar.wallet.TxPinpadView`, a `FrameLayout`).
 
+:::warning SOL & other coins: complete the pad quickly
+Some coins have a **short-lived “pending tx TTL”**: a prepared transaction is only valid for a short window, so the pinpad should be completed **quickly** (e.g. **SOL < 30s** or so on devnet). If you take too long the transaction fails — simply re-initiate it.
+:::
+
 ## The contract in 4 rules
 
 1. **Show an overlay when `navigateToPinpad == true`** — the SDK sets it the moment a VCA flow is armed (`prepareCoinTransfer`, `prepareAirdropRegistration`, `prepareAirdropClaim`, recovery-vouch). It is a *transient* flag, not a navigation destination.

@@ -63,7 +63,26 @@ command; `~/.cache` lives on a read-only mount is NOT an issue — Docusaurus ca
 - start from what matches https://interstellar-docs-tech.pages.dev/developers/category/milestones-5
   and replace M5/Milestone 5 → M6/Milestone 6 EVERYWHERE (commands, text, links…)
 - then go item by item through https://github.com/Interstellar-Network/roadmap/issues/305
-- status: **NOT STARTED**
+- status: **FIXED** → `developers/Milestones/M6/` (local-demo-with-docker, quick-start-evaluator,
+  components_delivered/interstellar_sdk) + `developers/intro.md` shortcut now points at M6
+- #305 walk-down mapping:
+  - "update demo website for M6" → M6 section (clone of M5 with renames: testnet-m6 tags,
+    links, prose; M5-specific scope/PR refs rewritten to M6 scope, M5 history preserved + linked)
+  - "add integration guide for the SDK" → SDK section (task [1]) + getting-started (task [3])
+  - deliverable "doc of the public part of InterstellarSdk" → task [1] (done)
+  - deliverable "testing guide: hello-world getterRootAccount" → task [3] (next)
+  - "iOS keystore NOT reset on uninstall" → documented in `developers/SDK/ios/index.md`
+    (Keystore persistence info box)
+  - "builds with placeholder/blank API keys but fails at runtime; contact us for test keys;
+    or get your own (MoonPay dashboard / Reown lab)" → warning box in M6 local-demo
+    (Install the app section)
+  - "MoonPay sandbox: good practice to return the funds (ETH only, address built-in)" →
+    new section 2.1 bis in M6 local-demo
+  - "SOL tx / pending tx TTL < 30s: complete the pinpad quickly" → warning in M6 local-demo
+    (2.2) + both SDK pinpad guides (android/ios)
+  - "publish new containers" / "publish new wallet-app" → NOT a docs task: these are the
+    release/CI deliverables that accompany this docs update; docs point at the accompanying
+    `testnet-m6` tag in Interstellar-Network/containers (release to be published with this issue)
 
 ### [3] "Getting started" per platform (Android AND iOS)
 - fresh new app in Android Studio / Xcode → integrate SDK the most basic way

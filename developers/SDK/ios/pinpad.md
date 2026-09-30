@@ -9,6 +9,10 @@ The **pinpad** is how the user authorizes policy-gated actions (coin transfers a
 
 On iOS the pinpad ships as **`TxPinpadScreen`** (SwiftUI) + **`CircuitSurfaceView`** (Metal/WGPU-backed `UIViewRepresentable`), the mirror of Android's `TxPinpadView`.
 
+:::warning SOL & other coins: complete the pad quickly
+Some coins have a **short-lived “pending tx TTL”**: a prepared transaction is only valid for a short window, so the pinpad should be completed **quickly** (e.g. **SOL < 30s** or so on devnet). If you take too long the transaction fails — simply re-initiate it.
+:::
+
 ## The contract in 4 rules
 
 1. **Show an overlay when `sdk.navigateToPinpad == true`** — set by `prepareCoinTransfer`, `prepareAirdropRegistration`, `prepareAirdropClaim` or `prepareRecoveryVcaVouch`.
