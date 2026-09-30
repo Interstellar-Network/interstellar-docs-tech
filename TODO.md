@@ -88,7 +88,13 @@ command; `~/.cache` lives on a read-only mount is NOT an issue — Docusaurus ca
   - keep the M6-only content: stack config download (testnet-m6), APK links, scope note, the
     issue#305-derived warnings, reviewer follow-up links
   - watch the anchor links (M6 pages cross-referencing sections that moved to M5)
-- status: **NOT STARTED**
+- status: **FIXED** → `local-demo-with-docker.md` 1001 → 156 lines: kept M6-specific content
+  (scope note, testnet-m6 stack download, APK links + M5-history note, API-keys warning,
+  closing notes) + new "## 3. Drive the wallet app — WalletConnect tutorial (unchanged from M5)"
+  with an anchor-verified link table to the M5 tutorial (scope/prereqs/connect/tx/other dapps/
+  production dapps/interpreting logs) + preserved as "M6-specific notes": MoonPay sandbox
+  return-funds, SOL pending-TTL <30s, M3 funding-guide link. All M5 anchors verified against
+  the built HTML; production build passes.
 
 ### [6] SDK access story: reviewer-facing "getting started" must make SDK access work & be documented
 - context: http://127.0.0.1:3456/developers/SDK/intro#status--scope-please-read — "The SDK will not
