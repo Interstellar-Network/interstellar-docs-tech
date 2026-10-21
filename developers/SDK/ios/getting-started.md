@@ -16,10 +16,56 @@ One SwiftUI `View`, one `InterstellarSdk.create(...)` call. No pinpad, no balanc
 | Tool | Version / notes |
 | --- | --- |
 | macOS | Apple Silicon (M1/M2/M3/M4) |
-| Xcode | 15+ (the SDK package targets **iOS 17**) |
+| Xcode | 15+ (the SDK package targets **iOS 17**) — see [Step 0](#step-0--install-xcode-and-a-simulator) |
 | **Rust / KMP / Gradle / linker flags** | **not needed** — the published package ships the compiled frameworks |
 | Interstellar stack | the local Docker stack from the [M6 tutorial](../../Milestones/M6/local-demo-with-docker.md) (defaults: `wss://127.0.0.1:2090` / `ws://127.0.0.1:9944` / IPFS `5001`) |
 | SDK access | read access to the private [`wallet-app-internal`](https://github.com/Interstellar-Network/wallet-app-internal) repo — the SDK is published as an asset of its **private** release (see [SDK access](../intro.md#status--scope-please-read)) |
+
+## Step 0 — Install Xcode and a Simulator
+
+The Android guide starts from "install Android Studio + the SDK"; the iOS equivalent is **Xcode + a simulator runtime**.
+
+### 0.1 — Install Xcode
+
+1. Open the **Mac App Store** and install [Xcode](https://apps.apple.com/us/app/xcode/id497799835) (or download it from the [Apple Developer website](https://developer.apple.com/xcode/) — the App Store build is the one that keeps itself up to date).
+2. Launch it once. Xcode asks to **install additional components** (the platform support files) — accept, and let it finish (it is a large download).
+3. If you skipped the prompt, add them later from *Xcode → Settings → Components* — cf [Downloading and installing additional Xcode components](https://developer.apple.com/documentation/xcode/downloading-and-installing-additional-xcode-components).
+
+:::note Check the command line tools
+`xcode-select --install` installs the (smaller) **command line tools** — useful for `xcrun simctl`, but **not** a replacement for the full Xcode: you need the full IDE to create the project, and the **simulator runtime** below.
+:::
+
+### 0.2 — Install a Simulator runtime
+
+A **simulator runtime** (the iOS OS itself) is a separate, large download:
+
+- *Xcode → Settings → **Components** → **Platforms*** → pick the iOS version (17 or later) and download it; or
+- let Xcode prompt you when you pick a run destination for the first time.
+
+### 0.3 — Create a simulator device
+
+1. *Xcode → Window → **Devices and Simulators*** (or the **Device Hub** in Xcode 16+) → the **Simulators** tab.
+2. **＋** → pick a device type (e.g. *iPhone 16*) and the iOS runtime you installed → **Create**.
+
+You can also do it from the command line:
+
+```bash
+xcrun simctl list devices available     # what is already there
+xcrun simctl create "iPhone 16" com.apple.CoreSimulator.SimRuntime.iOS-17-0
+```
+
+### 0.4 — Sanity check
+
+```bash
+xcodebuild -version        # the Xcode version
+xcodebuild -showsdks       # the installed iOS SDKs
+```
+
+:::info Apple Silicon only
+The Interstellar iOS SDK is **arm64 only** (the device slice + the arm64 simulator slice). On an
+Apple Silicon Mac the simulator is arm64 by default; on an Intel Mac set
+`EXCLUDED_ARCHS[sdk=iphonesimulator*] = x86_64` in your app target.
+:::
 
 ## Step 1 — Create a fresh project
 
@@ -170,7 +216,7 @@ The reference wallet app builds the SDK from source instead of consuming the pub
 The app target then links the Rust static libraries through a **Run Script** build phase (`:shared:embedAndSignAppleFrameworkForXcode`) plus the `FRAMEWORK_SEARCH_PATHS` / `LIBRARY_SEARCH_PATHS` / `OTHER_LDFLAGS` build settings — that is the "heavy" path the published package exists to avoid.
 
 :::note
-The iOS SDK is **arm64 only** (the device slice and the arm64 simulator slice). On an Apple Silicon Mac the simulator is arm64 by default; on an Intel Mac set `EXCLUDED_ARCHS[sdk=iphonesimulator*] = x86_64` in your app target.
+The iOS SDK is **arm64 only** (the device slice and the arm64 simulator slice) — see [Step 0.4](#step-0--install-xcode-and-a-simulator).
 :::
 
 ## Troubleshooting

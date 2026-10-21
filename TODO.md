@@ -279,7 +279,17 @@ command; `~/.cache` lives on a read-only mount is NOT an issue — Docusaurus ca
 - TODO when picked up:
   - add an "Install Xcode and a Simulator" step to `developers/SDK/ios/getting-started.md`
   - link to Apple's official docs instead of copy-pasting them
-- status: **PENDING** — not started yet (plan above).
+- status: **FIXED** → both getting-started guides now have the same shape:
+  - `developers/SDK/ios/getting-started.md` gained a "Step 0 — Install Xcode and a Simulator"
+    (install Xcode from the App Store + the extra components, download a **simulator
+    runtime** from *Settings → Components*, create a device in *Devices and Simulators* /
+    the Device Hub, `xcrun simctl` + `xcodebuild -showsdks` sanity checks) — Apple's own
+    pages are **linked**, not copy-pasted.
+  - `developers/SDK/android/getting-started.md` gained the symmetric "Step 0 — Install
+    Android Studio and the Android SDK" (setup wizard, SDK Manager, emulator creation,
+    `adb devices`) — with the explicit note that the **NDK is not needed** for the
+    published AAR.
+  Production build passes.
 ### [11] iOS Simulator has **no camera** → FauxCam (WalletConnect QR)
 - the iOS Simulator cannot scan the WalletConnect QR code; the workaround is
   <https://github.com/mkemalgokce/fauxcam> (FauxCamApp menu-bar app)

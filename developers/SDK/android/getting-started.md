@@ -35,6 +35,38 @@ current version and for the access to the private repository.
 :::
 :::
 
+## Step 0 — Install Android Studio and the Android SDK
+
+The iOS guide starts from "install Xcode + a simulator"; the Android equivalent is **Android Studio + the Android SDK**.
+
+### 0.1 — Install Android Studio
+
+1. Download and install [Android Studio](https://developer.android.com/studio) (the *Koala* or newer stable release is fine).
+2. Launch it once: the **setup wizard** installs the Android SDK (platform, build-tools, platform-tools) and offers to create an emulator.
+
+### 0.2 — Check the SDK components
+
+Open *Tools → SDK Manager* and make sure you have:
+
+- an **SDK Platform** for the API level you target (`compileSdk 37` in the example below),
+- **SDK Tools** and **Platform-Tools** (they provide `adb`).
+
+:::note The NDK is **not** needed
+The published AAR already contains the compiled Rust libraries (`arm64-v8a` + `x86_64`).
+You only need the **NDK** if you build the SDK **from source** — see [Alternative](#alternative--build-the-sdk-from-source).
+:::
+
+### 0.3 — Create an emulator (or use a real device)
+
+- *Tools → Device Manager → **＋** (Create Device)* → pick a hardware profile (e.g. *Pixel 8*) and a **system image** (API 37 or any recent one) → finish.
+- …or plug a real phone in with **USB debugging** enabled.
+
+### 0.4 — Sanity check
+
+```bash
+adb devices            # your emulator/device must be listed
+```
+
 ## Step 1 — Create a fresh project
 
 1. **Android Studio → New Project → Empty Views Activity** (Kotlin).
