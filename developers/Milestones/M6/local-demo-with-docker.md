@@ -1,9 +1,9 @@
 ---
-sidebar_label: 'Android App with Local Node'
+sidebar_label: 'Local Demo with Docker'
 sidebar_position: 1
 ---
 
-# Android App with Local Nodes
+# Local Demo with Docker — Stack, Demo App & SDK
 
 :::note Milestone 6 Scope
 
@@ -30,6 +30,14 @@ This setup enables full offline testing without relying on a hosted VPS.
 
 ## 1. Launch the Interstellar Stack 
 
+:::info Two repositories, two kinds of artifacts
+The **stack** (the `docker-compose.yml` + the IPFS init script) lives in the
+[`containers`](https://github.com/Interstellar-Network/containers) repository; the **app
+artifacts** (the APKs, the iOS `.ipa`) and the **SDK package** live in the
+[`wallet-app-internal`](https://github.com/Interstellar-Network/wallet-app-internal) repository,
+under the [`m6-v1` tag](https://github.com/Interstellar-Network/wallet-app-internal/releases/tag/m6-v1).
+:::
+
 ### Step 2: Download the stack config (links for M6)
 ```bash
 curl -L -o docker-compose.yml https://raw.githubusercontent.com/Interstellar-Network/containers/refs/tags/testnet-m6/docker-compose.yml
@@ -39,14 +47,66 @@ chmod +x docker-ipfs-init.sh
 
 ## 2. Install the Android Demo App
 
+:::warning The **same** build everywhere — and it needs the **local** stack
+The APK you get from the **GitHub release**, from **Firebase App Distribution** (below) or the
+`.ipa` you get from **TestFlight** (section 2.b) are **the very same builds**: they are
+configured for the **local dev stack** (`wss://127.0.0.1:2090`, `ws://127.0.0.1:9944`, IPFS
+`127.0.0.1:5001`), **not** for a hosted testnet.
+
+So: **start the stack first** (section 1) and, on Android, expose the three ports to the
+device/emulator:
+
+```bash
+adb reverse tcp:2090 tcp:2090
+adb reverse tcp:9944 tcp:9944
+adb reverse tcp:5001 tcp:5001
+```
+
+An iOS Simulator reaches `127.0.0.1` natively — no `adb reverse` needed.
+:::
+
 ### Download the APK (links for M6)
 
-From the official [Interstellar GitHub Release](https://github.com/Interstellar-Network/containers/releases/tag/testnet-m6) (specific APKs preconfigured to connect to `localhost`):
+From the official [Interstellar GitHub Release — M6 v1](https://github.com/Interstellar-Network/wallet-app-internal/releases/tag/m6-v1) (specific APKs preconfigured to connect to `localhost`):
 
 - `androidApp-arm64-release.apk` — for Android devices and Apple Silicon(M1/M2/M3/M4)
 - `androidApp-x86_64-release.apk` — for Android emulators running on x86_64 platforms (e.g., Windows PCs, Intel-based Mac)
 
-> **Latest version recommended**
+> **Latest version recommended** — the `m6-v1` release exists but is **empty for now**: the APKs are attached when the M6 release is cut.
+
+### Or: install it from Firebase App Distribution
+
+The Android app is also distributed through
+[Firebase App Distribution](https://firebase.google.com/docs/app-distribution/android/distribute-gradle) —
+the official channel for handing a build to a group of testers.
+
+**Get access to the testing group** (ask Interstellar to add you, or request access here):
+
+[appdistribution.firebase.dev/i/71f8c7de02bcbcdc](https://appdistribution.firebase.dev/i/71f8c7de02bcbcdc)
+
+:::note
+The group exists but is **empty for now** — the builds are attached when the M6 release is cut.
+:::
+
+Once you are in the group, the app installs **straight from the browser** (the Firebase tester
+page) or from the **Firebase tester app** on the device — no adb, no sideloading.
+
+Full details (and what the maintainer does to publish): [App Distribution — Android & iOS](./components_delivered/app_distribution.md).
+
+## 2.b Install the iOS Demo App
+
+iOS does **not** use Firebase: the app is archived with `xcodebuild`, exported and uploaded to
+**App Store Connect**, where it shows up in **TestFlight**. Since **TestFlight only delivers to
+real devices**, the M6 release offers **two** channels:
+
+| What you want | Channel | What you do |
+| --- | --- | --- |
+| Run the app in the **iOS Simulator** | direct `.ipa` download | download the `.ipa` from the [M6 v1 release](https://github.com/Interstellar-Network/wallet-app-internal/releases/tag/m6-v1), then in Xcode *Device > Install Simulated Package…* (or `xcrun simctl install <device> <app>.ipa`) |
+| Run the app on a **real device** | **TestFlight** | install the **TestFlight** app, accept the invitation, then install the build |
+
+> 📷 **[SCREENSHOT PLACEHOLDER]** — *the iOS simulator running the wallet app (to be captured)*
+
+Full details: [App Distribution — Android & iOS](./components_delivered/app_distribution.md).
 
 ::::warning Building the app from source? API keys
 The wallet app **builds fine with placeholder/blank API keys** for third-party services such as **MoonPay** and **Reown (WalletConnect)** — but those features **will fail at runtime** until real test keys are provided.
@@ -86,6 +146,39 @@ The **entire WalletConnect walkthrough is identical to M5** — the M6 wallet ap
 
 :::info
 The M5 page documents the validated end-to-end reference flow (Ethereum Sepolia with the PoHI / VCA approval screen), the expected reviewer logs, and the funded-account example (0.5 SOL) — all of it applies as-is to the M6 release.
+:::
+
+### 3.1 — iOS Simulator: scanning the WalletConnect QR
+
+The **iOS Simulator has no camera**: any app that opens an `AVCaptureSession` gets nothing, so
+the wallet app's QR scanner cannot work in the simulator. (The Android emulator is fine — it has
+a virtual camera.)
+
+The workaround is [**FauxCam**](https://github.com/mkemalgokce/fauxcam) — a macOS **menu-bar app**
+that feeds a fake camera (a still image, a video, your Mac's webcam or **a QR code you type**)
+into the apps running in the simulator.
+
+**Install it**
+
+1. Download the latest `FauxCam.dmg` from the [FauxCam releases](https://github.com/mkemalgokce/fauxcam/releases).
+2. Open the DMG, drag **FauxCam.app** into `/Applications`, then launch it.
+3. It is a **menu-bar app**: no Dock icon, no main window — click the menu-bar icon to open the viewfinder.
+
+> The upstream README documents the whole feature set (the *Media* / *Camera* / *QR* sources, the `faux` CLI, the requirements): [FauxCamApp — menu-bar app](https://github.com/mkemalgokce/fauxcam#fauxcamapp-menu-bar-app).
+
+**Use it — paste the WalletConnect URI**
+
+1. In the Reown lab Dapp, **copy the WalletConnect URI** (the M5 tutorial, [step 1.2](/developers/Milestones/M5/local-demo-with-docker#step-12--get-the-walletconnect-uri), shows how).
+2. In the FauxCam panel, switch to the **QR** tab and **paste the URI** — FauxCam encodes it as a QR code and streams it to the simulator.
+3. In the wallet app (on the simulator), open the **QR scanner** (Portfolio or Send → the QR icon at the top left) and point it at the FauxCam viewfinder: the URI is "scanned" and the session starts.
+
+This is the shortest path: **no screenshot of the QR code to take, re-encode and import** — the
+URI is copied once and everything else happens inside the simulator.
+
+:::note
+The fake camera is injected **when the app launches**, so restart the wallet app (or re-run it
+from Xcode) after starting FauxCam. The CLI can do the same in one command:
+`faux run <bundle-id> --source qr:<the-walletconnect-uri>`.
 :::
 
 ### M6-specific notes while driving the app

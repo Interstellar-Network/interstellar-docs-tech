@@ -55,7 +55,7 @@ Ensure that your device is configured for english language
 ### Option 2: Emulator
 
 1. Install [Android Studio](https://developer.android.com/studio)
-2. [Create](https://developer.android.com/studio/run/managing-avds#createavd) a `Pixel 7` or equivalent emulator (`x86_64`, API 31+ - API 35)
+2. [Create](https://developer.android.com/studio/run/managing-avds#createavd) a `Pixel 7` or equivalent emulator with the **API 35** system image (`x86_64`) — **API 36+ crashes in the emulator** (hardware devices are fine)
 
 3. Launch the emulator
 

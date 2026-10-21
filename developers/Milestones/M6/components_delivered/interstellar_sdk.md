@@ -65,6 +65,14 @@ The wallet application shipped for this milestone is the **reference integration
       <TableCell>Getting started — iOS (fresh app → root account ID screen)</TableCell>
       <TableCell><a href="/developers/SDK/ios/getting-started">iOS — Getting Started</a></TableCell>
     </TableRow>
+    <TableRow>
+      <TableCell>iOS port — the wallet app &amp; the iOS SDK</TableCell>
+      <TableCell><a href="/developers/Milestones/M6/components_delivered/ios_port">iOS Port</a></TableCell>
+    </TableRow>
+    <TableRow>
+      <TableCell>App distribution — Android (Firebase) &amp; iOS (ipa / TestFlight)</TableCell>
+      <TableCell><a href="/developers/Milestones/M6/components_delivered/app_distribution">App Distribution</a></TableCell>
+    </TableRow>
   </TableBody>
 </Table>
 
@@ -83,7 +91,12 @@ The pinpad/VCA orchestration is **SDK-owned**: the host app only renders the pro
 ## Scope & status
 
 :::note
-The SDK is delivered as a **technical preview** on top of the private `wallet-app-internal` repository, pending the final-testnet open-sourcing. It is **not public at this time**: reviewers/integrators get **read access to that repository**, and the SDK is published from it as a **private artifact** — a **Maven package on GitHub Packages** (Android, roadmap [#230](https://github.com/Interstellar-Network/roadmap/issues/230)) and a **GitHub Release asset** (iOS, roadmap [#231](https://github.com/Interstellar-Network/roadmap/issues/231)). Both publishing pipelines are implemented and CI-tested, but **no artifact is live yet** (the coordinates in the guides are marked ⚠️ PLACEHOLDER). Public API surface may still evolve; shared testnet endpoints and test keys are provided on request. See the [SDK overview](/developers/SDK/intro#status--scope-please-read) for the complete scope statement.
+The SDK is delivered as a **technical preview** on top of the private `wallet-app-internal` repository, pending the final-testnet open-sourcing. It is **not public at this time**: reviewers/integrators get **read access to that repository**, and the SDK is published from it as a **private artifact** — a **Maven package on GitHub Packages** (Android, roadmap [#230](https://github.com/Interstellar-Network/roadmap/issues/230)) and a **GitHub Release asset** (iOS, roadmap [#231](https://github.com/Interstellar-Network/roadmap/issues/231)). Both publishing pipelines are implemented and CI-tested; the artifacts are attached when the M6 release is cut (the version in the guides is the planned one). Public API surface may still evolve; shared testnet endpoints and test keys are provided on request. See the [SDK overview](/developers/SDK/intro#status--scope-please-read) for the complete scope statement.
 :::
 
-The WalletConnect/Reown interoperability delivered in **M5** remains testable through the same app and flows — see the [M5 documentation](/developers/Milestones/M5/local-demo-with-docker) and the running tutorial in [Android App with Local Nodes](../local-demo-with-docker.md).
+## See also
+
+- [iOS Port](./ios_port.md) — the iOS wallet app and the iOS SDK.
+- [App Distribution — Android & iOS](./app_distribution.md) — how to install the app.
+
+The WalletConnect/Reown interoperability delivered in **M5** remains testable through the same app and flows — see the [M5 documentation](/developers/Milestones/M5/local-demo-with-docker) and the running tutorial in [Local Demo with Docker](../local-demo-with-docker.md).

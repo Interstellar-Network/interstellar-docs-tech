@@ -273,7 +273,7 @@ command; `~/.cache` lives on a read-only mount is NOT an issue — Docusaurus ca
     architecture diagram fixed (no more "import shared" on iOS).
   - `developers/Milestones/M6/components_delivered/interstellar_sdk.md` aligned.
   Production build passes.
-### [10] iOS: install **Xcode + a Simulator** (the Android-structure equivalent)
+### [10] iOS: install **Xcode + a Simulator** (the Android-structuhttp://127.0.0.1:3456/developers/Milestones/M6/local-demo-with-dockerre equivalent)
 - the Android getting-started starts with an explicit "install the toolchain" step; the iOS one
   must have the same shape (Xcode from the App Store, the simulator runtime, creating a device)
 - TODO when picked up:
@@ -298,7 +298,14 @@ command; `~/.cache` lives on a read-only mount is NOT an issue — Docusaurus ca
 - TODO when picked up:
   - document the FauxCam install + usage (link to the upstream README)
   - wire it into the M6 local demo (WalletConnect section) and the iOS getting-started
-- status: **PENDING** — not started yet (plan above).
+- status: **FIXED** → new section "3.1 — iOS Simulator: scanning the WalletConnect QR" in
+  `developers/Milestones/M6/local-demo-with-docker.md`: the Simulator has **no camera**, so
+  the wallet app's QR scanner needs a fake camera — [FauxCam](https://github.com/mkemalgokce/fauxcam)
+  (a macOS menu-bar app). Install (the `FauxCam.dmg` from the releases → `/Applications`),
+  then **paste the WalletConnect URI in its "QR" tab**: FauxCam encodes it as a QR code and
+  the simulator "scans" it — no screenshot to take, re-encode and import. The upstream README
+  is linked, not copied. A pointer was added to the iOS getting-started troubleshooting.
+  Production build passes.
 ### [12] iOS: "save to files" shows a **white window** (Cloud Token recovery)
 - when adding a **Cloud Token** recovery, tapping "save to files" can show a **white window**
   instead of the file explorer → the fix is **Erase All Content and Settings** on the simulator
@@ -306,7 +313,14 @@ command; `~/.cache` lives on a read-only mount is NOT an issue — Docusaurus ca
 - it is a **transient simulator issue**, *not* a bug of the Interstellar app
 - TODO when picked up:
   - document the symptom + the fix in the iOS pages (recovery / troubleshooting)
-- status: **PENDING** — not started yet (plan above).
+- status: **FIXED** → the symptom + the fix are documented in three places:
+  - `developers/SDK/ios/getting-started.md` (troubleshooting table),
+  - `developers/SDK/ios/index.md` (warning box),
+  - `developers/Milestones/M6/components_delivered/ios_port.md` ("Known issue").
+  Symptom: adding a **Cloud Token** recovery and tapping **"save to files"** shows a **white
+  window** instead of the file explorer. Fix: *Device → Erase All Content and Settings* on
+  the simulator, then reinstall the app. It is explicitly stated to be a **transient Simulator
+  issue, not a bug of the Interstellar app**. Production build passes.
 ### [13] Android app testing: **Firebase App Distribution** (tester group)
 - source of truth: `../wallet-app-internal` PR **#52** — the Android app is distributed through
   [Firebase App Distribution](https://firebase.google.com/docs/app-distribution/android/distribute-gradle)
@@ -315,7 +329,14 @@ command; `~/.cache` lives on a read-only mount is NOT an issue — Docusaurus ca
 - TODO when picked up:
   - document it in the M6 local demo (Android app install section) + link to the official docs
   - do NOT copy-paste the official docs — link to them
-- status: **PENDING** — not started yet (plan above).
+- status: **FIXED** → `developers/Milestones/M6/local-demo-with-docker.md` "Install the
+  app" now documents the **Firebase App Distribution** route (the tester-group request link
+  `https://appdistribution.firebase.dev/i/71f8c7de02bcbcdc`, what the tester gets — install
+  from the browser / the Firebase tester app) with a link to the official
+  [distribute-gradle](https://firebase.google.com/docs/app-distribution/android/distribute-gradle)
+  documentation (linked, not copy-pasted), and
+  `developers/Milestones/M6/components_delivered/app_distribution.md` documents the channel in
+  full. Production build passes.
 ### [14] SDK access for a **tester**: Maven registry auth + iOS SDK download
 - the SDK is now **published** (PR #52 for Android, #53 for iOS) → the "Artifact publication —
   TBD (placeholder)" boxes must be replaced by the **real** access story

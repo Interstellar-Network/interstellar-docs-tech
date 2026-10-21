@@ -81,19 +81,20 @@ The iOS SDK is published as a **ready-to-use Swift package**: one zip, `Interste
 
 Because the repository is private, the release is private too: the download needs your repository access.
 
-:::warning ⚠️ PLACEHOLDER — not published yet
-The publishing pipeline is implemented and CI-tested, but **no artifact is live yet**. The
-release URL below is the **planned** one — ask Interstellar for the current tag/version and
-for the access to the private repository.
+:::warning ⚠️ The release exists, the asset is not there yet
+The publishing pipeline is implemented and CI-tested, but the asset is attached only when the
+M6 release is cut — the [`m6-v1` release](https://github.com/Interstellar-Network/wallet-app-internal/releases/tag/m6-v1)
+exists but is **empty for now**. The version in the file name (`<version>`) is the **planned**
+one — ask Interstellar for the current version and for the access to the private repository.
 :::
 
 **In the browser** — open the release and download the asset:
-[github.com/Interstellar-Network/wallet-app-internal/releases/download/&lt;TAG&gt;/](https://github.com/Interstellar-Network/wallet-app-internal/releases)
+[github.com/Interstellar-Network/wallet-app-internal/releases/tag/m6-v1](https://github.com/Interstellar-Network/wallet-app-internal/releases/tag/m6-v1)
 
 **Or with the GitHub CLI** (handy if you already have a token with the `repo` scope):
 
 ```bash
-gh release download <TAG> \
+gh release download m6-v1 \
   --repo Interstellar-Network/wallet-app-internal \
   --pattern "InterstellarSdk-*.zip"
 unzip InterstellarSdk-<version>.zip
@@ -228,6 +229,7 @@ The iOS SDK is **arm64 only** (the device slice and the arm64 simulator slice) �
 | The app links but crashes on launch with a missing symbol | the frameworks were not embedded — make sure the SDK product is set to **Embed & Sign** in *Frameworks, Libraries, and Embedded Content* |
 | App stuck on "Initializing…" | the local stack isn't reachable — check Docker is up and the URLs match |
 | Init throws `Keychain init failed` | rare Keychain entitlement issue on device — try the simulator first, then check signing team/entitlements |
+| The QR scanner shows nothing in the Simulator | the iOS Simulator has **no camera** — feed it one with [FauxCam](https://github.com/mkemalgokce/fauxcam) (paste the URI in its **QR** tab), see [the M6 demo notes](../../Milestones/M6/local-demo-with-docker#31--ios-simulator-scanning-the-walletconnect-qr) |
 | "save to files" opens a **white window** instead of the file explorer | a transient Simulator issue: *Device → Erase All Content and Settings*, then reinstall the app — see [Overview](./index.md) |
 
 Next: [**API Reference**](./api-reference.md) and the [**VCA pinpad guide**](./pinpad.md).

@@ -28,10 +28,11 @@ The SDK is published as a **private Maven package** on GitHub Packages:
 The package inherits the visibility of the repository it is published from, so it stays private —
 see [SDK access](../intro.md#status--scope-please-read) for the full story.
 
-:::warning ⚠️ PLACEHOLDER — not published yet
-The publishing pipeline is implemented and CI-tested, but **no artifact is live yet**. The
-repository URL below and the `<version>` are the **planned** ones — ask Interstellar for the
-current version and for the access to the private repository.
+:::warning ⚠️ The package is not there yet
+The publishing pipeline is implemented and CI-tested, but the package is published only when the
+M6 release is cut. The repository URL below is the **final** one; the `<version>` is the
+**planned** one — ask Interstellar for the current version and for the access to the private
+repository.
 :::
 :::
 
@@ -58,8 +59,15 @@ You only need the **NDK** if you build the SDK **from source** — see [Alternat
 
 ### 0.3 — Create an emulator (or use a real device)
 
-- *Tools → Device Manager → **＋** (Create Device)* → pick a hardware profile (e.g. *Pixel 8*) and a **system image** (API 37 or any recent one) → finish.
+- *Tools → Device Manager → **＋** (Create Device)* → pick a hardware profile (e.g. *Pixel 8*) and a **system image** → finish.
 - …or plug a real phone in with **USB debugging** enabled.
+
+:::warning Emulator: use **API 35** or lower
+The app **crashes in the emulator with API 36+** (it is not the 16KB page model — API 35 runs
+fine with 16KB pages; API 36 may change low-level runtime behaviour for the Rust code). The
+problem is **emulator-only**: the app has been **tested with Android 16 (API 36) on real
+devices**. So pick the **API 35** system image — the current main dev image — for the emulator.
+:::
 
 ### 0.4 — Sanity check
 
@@ -126,7 +134,7 @@ dependencyResolutionManagement {
         maven {
             name = "GitHubPackages"
             // NOTE: the owner MUST be lowercase, even though the org is "Interstellar-Network"
-            // ⚠️ PLACEHOLDER: the SDK is not published yet — ask for the live URL.
+            // The final URL of the (private) GitHub Packages registry of the repo.
             url = uri("https://maven.pkg.github.com/interstellar-network/wallet-app-internal")
             credentials {
                 username = providers.gradleProperty("gpr.user").orNull
@@ -164,7 +172,7 @@ dependencies {
     implementation("androidx.core:core-ktx:1.19.1")
     implementation("androidx.appcompat:appcompat:1.8.0")
     implementation("androidx.lifecycle:lifecycle-runtime-ktx:2.11.0")
-    // ⚠️ PLACEHOLDER version — the SDK is not published yet.
+    // ⚠️ the version is the planned one — ask Interstellar for the current one.
     implementation("gg.interstellar.wallet:shared:<version>")   // ← the Interstellar SDK
 }
 ```

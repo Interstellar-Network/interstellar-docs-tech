@@ -61,6 +61,18 @@ The SDK stores the root account id locally and compares it with the server at in
 
 All of this also surfaces **toasts** through the optional `sdk.toastListener` (`SdkToastListener.onToast(message, duration)` with `TOAST_LENGTH_SHORT`/`TOAST_LENGTH_LONG`) — implement it if you want the SDK's progress/error feedback (e.g. "Registering…", "Server reset detected") shown in your UI. Toasts are always fired on the main thread.
 
+:::warning For now — a convenience, **not** the final behaviour
+The **auto re-registration** described above is a **convenience for the current stage** (the local
+stack and the shared testnet, where the server is reset regularly while developing). The
+**production** version will do the opposite: if the servers no longer know the device's account,
+the SDK will **plainly fail** — your app must tell the user — instead of silently registering a
+new identity (which would quietly abandon the previous root account and everything on it).
+
+So treat `onServerResetDetected` as a **development-time** hook: in production, do **not**
+auto-accept it. Show a blocking error, and let the user retry or restore the account through
+the [recovery](./api-reference.md#recovery) flows.
+:::
+
 ## Resetting the device identity
 
 ```kotlin

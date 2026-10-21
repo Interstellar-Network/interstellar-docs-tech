@@ -63,15 +63,15 @@ Because the two platform APIs are *independent codebases* (Kotlin vs Swift), the
 
 ## Status & scope (please read)
 
-:::warning Not public (yet) — private distribution, and the artifacts are not live yet
+:::warning Not public (yet) — private distribution, and the artifacts are not there yet
 The SDK is **not public**: it lives in the private **`wallet-app-internal`** repository and is distributed to **reviewers and testers only**, through that repository's access control. There is no open-source release.
 
-The **publishing pipelines are implemented and continuously verified by the CI** (see [below](#the-artifacts-are-proved-by-the-ci)), but **no artifact is published yet**. Every URL and version marked ⚠️ **PLACEHOLDER** below is the *planned* location — ask us for the current version and for access.
+The **publishing pipelines are implemented and continuously verified by the CI** (see [below](#the-artifacts-are-proved-by-the-ci)), but the artifacts are attached only when the M6 release is cut — the release links below already exist but are **empty for now**. The versions marked ⚠️ **PLACEHOLDER** are the *planned* ones — ask us for the current version and for access.
 
 | Platform | Distribution mechanism | Planned coordinate (⚠️ PLACEHOLDER) |
 | --- | --- | --- |
-| **Android** | **GitHub Packages** (a Maven registry) — repository-scoped, so the package inherits the repo's visibility and stays **private** | `gg.interstellar.wallet:shared:<version>` from `https://maven.pkg.github.com/interstellar-network/wallet-app-internal` |
-| **iOS** | **GitHub Releases** — SPM has no Maven; a release asset *is* the registry. One zip contains the complete Swift package | `InterstellarSdk-<version>.zip` from `https://github.com/Interstellar-Network/wallet-app-internal/releases/download/<TAG>/` |
+| **Android** | **GitHub Packages** (a Maven registry) — repository-scoped, so the package inherits the repo's visibility and stays **private** | ⚠️ `gg.interstellar.wallet:shared:<version>` from `https://maven.pkg.github.com/interstellar-network/wallet-app-internal` |
+| **iOS** | **GitHub Releases** — SPM has no Maven; a release asset *is* the registry. One zip contains the complete Swift package | ⚠️ `InterstellarSdk-<version>.zip` from the [`m6-v1` release](https://github.com/Interstellar-Network/wallet-app-internal/releases/tag/m6-v1) |
 :::
 
 ### How a tester gets access
@@ -83,7 +83,7 @@ The **publishing pipelines are implemented and continuously verified by the CI**
    - add the repository to `settings.gradle.kts` (the **owner must be lowercase**).
    - Full walkthrough: [Android — Getting Started](./android/getting-started.md#step-2--get-access-to-the-sdk).
 3. **iOS — the private GitHub release**:
-   - download the release asset with your GitHub account (browser) or with the CLI — `gh release download <TAG> -R Interstellar-Network/wallet-app-internal -p "InterstellarSdk-*.zip"` (the CLI needs a token with the `repo` scope);
+   - download the release asset with your GitHub account (browser) or with the CLI — `gh release download m6-v1 -R Interstellar-Network/wallet-app-internal -p "InterstellarSdk-*.zip"` (the CLI needs a token with the `repo` scope);
    - unzip it and add the `InterstellarSdk` folder as a **local** Swift package — Xcode links *and embeds* the frameworks by itself;
    - the two `.xcframework`s are also attached **individually** (with their SPM checksums), but the **remote `.binaryTarget(url:checksum:)` flow is not recommended for a private repo**: SwiftPM downloads binary targets anonymously (nowhere to put a token) and every new build invalidates the checksum — see [why](./ios/getting-started.md#why-not-a-remote-hosted-swift-package).
    - Full walkthrough: [iOS — Getting Started](./ios/getting-started.md#step-2--download-the-sdk).
