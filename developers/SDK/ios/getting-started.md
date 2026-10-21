@@ -208,13 +208,37 @@ The Keychain key is **NOT deleted when the app is uninstalled** — reinstalling
 
 ## Alternative — build the SDK from source
 
-The reference wallet app builds the SDK from source instead of consuming the published package. If you need to patch the SDK (or read its internals), check out the repository and follow `iosSdk/README.md` — the package then needs the Rust libraries to be built first:
+If you have the `wallet-app-internal` repository checked out, you can consume the SDK **from the
+checkout** instead of from the published zip.
+
+### A. Use the local `iosSdk/` package
+
+The SDK is a Swift package in the repository (`iosSdk/`), so you can add **that folder** as a
+local Swift package (*File > Add Package Dependencies… > Add Local…* → `wallet-app-internal/iosSdk`).
+
+Its two binary targets point at the **local build outputs**, so the Rust libraries must be built
+once first:
 
 ```bash
+# in the wallet-app-internal checkout
 ./iosApp/scripts/publish-ios-sdk.sh --version <version> --no-publish
+# → iosApp/build/sdk/{substrate_clientFFI,rendererFFI}.xcframework
 ```
 
-The app target then links the Rust static libraries through a **Run Script** build phase (`:shared:embedAndSignAppleFrameworkForXcode`) plus the `FRAMEWORK_SEARCH_PATHS` / `LIBRARY_SEARCH_PATHS` / `OTHER_LDFLAGS` build settings — that is the "heavy" path the published package exists to avoid.
+After that, the package resolves like the published one — Xcode links **and embeds** the
+frameworks, no linker flags.
+
+### B. Build the SDK into your app target (what the reference app does)
+
+The wallet app does not use the package at all: it compiles the **Rust static libraries** and
+links them directly, through a **Run Script** build phase (`:shared:embedAndSignAppleFrameworkForXcode`)
+plus the `FRAMEWORK_SEARCH_PATHS` / `LIBRARY_SEARCH_PATHS` / `OTHER_LDFLAGS` build settings —
+that is the "heavy" path the published package exists to avoid.
+
+:::tip Which one?
+**A** is enough to *patch* the SDK (edit the Swift sources and rebuild). **B** is what the
+reference app does — use it only if you need the Rust libraries compiled into your own binary.
+:::
 
 :::note
 The iOS SDK is **arm64 only** (the device slice and the arm64 simulator slice) — see [Step 0.4](#step-0--install-xcode-and-a-simulator).

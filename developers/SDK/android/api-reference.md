@@ -28,16 +28,33 @@ The API mirrors the underlying Rust calls: **`getter…`** functions read state,
 
 ### Value objects
 
-- **`WalletBalances(dot, sol, btc, eth: BigDecimal)`** — standard base units (planck/lamport/satoshi/wei).
+- **`WalletBalances(dot, sol, btc, eth: BigDecimal)`** — standard base units (planck/lamport/satoshi/wei). Public DTO: what your UI displays.
 - **`enum class CoinType(id: Int)`** — `Dot(0)`, `Sol(1)`, `Btc(2)`, `Eth(3)`. **Ordinal/id is wire-compatible with the Rust core — do not reorder.**
-- **`JniTxAmount`** — amount spec for `extrinsicClientInitializeTransaction`: `JniTxAmount.fixed(amount)` for a fixed amount in *display* units (e.g. `0.1` ETH), or `JniTxAmount.drainAccount()` to send the whole balance.
-- **`JniPendingTxResult(status, circuitsPackage, txHash)`** — result of `getterClientGetPendingTx()`: `status == 0` → `RequiresVca` (a `JniCircuitsPackage` needs user confirmation), `status == 1` → `AutoSent` (`txHash` already broadcast, no VCA required). `null` → the transaction could not be prepared (e.g. insufficient funds).
-- **`JniCircuitsPackage`** — opaque handle for a rendered VCA package: pass it to `TxPinpadView`/`importRecoveryToken`/pinpad-consuming calls; **never** inspect it.
-- **`CampaignInfo(campaignId, status, chain, amountPerClaim, claimLimit, totalFunds, registrationCount, claimCount, fundingAddress)`** — full campaign details.
+- **`enum class VcaFlowType`** — the flow the SDK is currently armed for: `DEMO_TX`, `RECOVERY_VCA_VOUCH`, `AIRDROP_REGISTRATION`, `AIRDROP_CLAIM`, `COIN_TRANSFER`.
+- **`JniTxAmount`** — amount spec for `extrinsicClientInitializeTransaction`: `JniTxAmount.fixed(amount)` for a fixed amount in **display** units (e.g. `0.1` ETH), or `JniTxAmount.drainAccount()` to send the whole balance. (⚠️ iOS takes **atomic** units — see the [differences table](../ios/api-reference.md#differences-from-android-quick-map).)
+- **`JniPendingTxResult(status: Int, circuitsPackage: JniCircuitsPackage?, txHash: String?)`** — result of `getterClientGetPendingTx()`: `status == 0` → `RequiresVca` (a `JniCircuitsPackage` needs user confirmation), `status == 1` → `AutoSent` (`txHash` already broadcast, no VCA required). `null` → the transaction could not be prepared (e.g. insufficient funds).
+- **`JniCircuitsPackage`** — opaque handle for a rendered VCA package (the garbled circuits, the tx id and the number of message digits): pass it to `TxPinpadView` / `importRecoveryToken` / the pinpad-consuming calls; **never** inspect it.
+- **`CampaignInfo(campaignId, status, chain, amountPerClaim: String, claimLimit: Int, totalFunds: String, registrationCount: Int, claimCount: Int, fundingAddress)`** — full campaign details. ⚠️ `amountPerClaim` and `totalFunds` are **strings** (they are decimal amounts).
 - **`UserCampaign(campaignId, state)`** — this account's registration state in a campaign.
-- **`SdkInitListener`** — `suspend fun onServerResetDetected()`; `SdkToastListener` — `onToast(message: String, duration: Int)`.
-- **`InterstellarFileSharer`** — `shareData(data, fileName, mimeType, shareTitle)`; used to export recovery tokens.
-- Price constants `DOTUSD`, `SOLUSD`, `BTCUSD`, `ETHUSD` (BigDecimal; demo-grade values).
+- **`SdkInitListener`** — `suspend fun onServerResetDetected()`; **`SdkToastListener`** — `onToast(message: String, duration: Int)`.
+- **`InterstellarFileSharer`** — `shareData(data: ByteArray, fileName: String, mimeType: String, shareTitle: String)`; used to export the recovery token.
+- **`InterstellarSigningException`** — thrown when the Android Keystore signing fails.
+- Price constants `DOTUSD`, `SOLUSD`, `BTCUSD`, `ETHUSD` (`BigDecimal`; demo-grade values).
+
+### Constants
+
+| Constant | Value | Description |
+| --- | --- | --- |
+| `DEFAULT_WS_URL` | `wss://127.0.0.1:2090` | The Interstellar worker (L2) endpoint the SDK talks to by default. |
+| `DEFAULT_NODE_URL` | `ws://127.0.0.1:9944` | The Integritee node (L1) endpoint. |
+| `DEFAULT_IPFS_ADDR` | `/ip4/127.0.0.1/tcp/5001` | The IPFS endpoint (the garbled circuits). |
+| `TOAST_LENGTH_SHORT` / `TOAST_LENGTH_LONG` | `0` / `1` | The `duration` values for `SdkToastListener.onToast`. |
+
+:::note
+The three `DEFAULT_*` constants point at the **local dev stack**: each port needs an
+`adb reverse tcp:PORT tcp:PORT` to be reachable from a device or an emulator. Changing the
+environment is done at integration time by Interstellar — **contact us** for the other values.
+:::
 
 ## Initialization & lifecycle
 
@@ -175,3 +192,20 @@ with iOS. Do not build on them; use the real flows (`prepareCoinTransfer`,
 - Suspend functions hop to `Dispatchers.IO`; SDK-internal toasts are re-posted to the main thread.
 - `StateFlow`s are safe to collect from the UI thread.
 - On iOS the equivalent published-state mutations are serialized on the main thread — see the [iOS reference](../ios/api-reference.md).
+
+## What is **not** public API
+
+The SDK module contains a few more classes; they are `internal` and are **not** part of the
+contract — do not use them (and do not expect them to exist in a future release):
+
+| Symbol | What it is |
+| --- | --- |
+| `processPinpadInputs(inputs)` | the SDK's internal pinpad entry point (it is called by `TxPinpadView` for you). ⚠️ it **is** public on iOS — an asymmetry, not a contract. |
+| `RustWrapper` | the thin adapter over the uniffi-Kotlin bindings. |
+| `CurrencyMath` | the internal currency helpers (the public entry points are `convertToUsd`, `convertCoinToAtomic`, `getterClientGetBalanceInUsd`, …). |
+| `MobileKeySigner` / `AndroidKeyStoreSigner` / `AndroidMobileSigner` | the internal signing seam over the Android Keystore (it is injectable **in the tests only**). |
+| `PreferencesManager` / `KeysManager` | the internal persistence and key-management helpers. |
+| `updateWorkerEndpointForTest(wsUrl)` | test-only endpoint switch. |
+
+The **public** Rust surface is reachable through the same uniffi bindings, but the supported
+entry point is the `InterstellarSdk` API documented above.

@@ -362,7 +362,27 @@ command; `~/.cache` lives on a read-only mount is NOT an issue — Docusaurus ca
     (done in [9], re-verify)
   - make sure the **value objects / helpers** (the pinpad view, the currency math, the
     `InterstellarFileSharer` / file-saving contract, the `CoinType` enum) are documented too
-- status: **PENDING** — not started yet (plan above).
+- status: **FIXED** → both API references re-verified **member by member** against the
+  source of truth (`shared/src/androidMain/kotlin/gg/interstellar/wallet/InterstellarSdk.kt`
+  and `iosSdk/Sources/InterstellarSdk/InterstellarSdk.swift`):
+  - **Android**: the `DEFAULT_WS_URL` / `DEFAULT_NODE_URL` / `DEFAULT_IPFS_ADDR` /
+    `TOAST_LENGTH_*` constants added; the value objects fixed to their **exact** definitions
+    (`CoinType(id)`, `VcaFlowType`, `JniTxAmount` — display units, `JniPendingTxResult(status,
+    …)` with 0 = RequiresVca / 1 = AutoSent, `JniCircuitsPackage`, `CampaignInfo` — where
+    `amountPerClaim`/`totalFunds` are **strings**, `UserCampaign`, `InterstellarSigningException`);
+    a new "What is **not** public API" section (`processPinpadInputs` is internal on Android
+    but public on iOS, `RustWrapper`, `CurrencyMath`, `MobileKeySigner`,
+    `PreferencesManager`/`KeysManager`, `updateWorkerEndpointForTest`).
+  - **iOS**: the `MobileKeychainSigner` documented, the "What is **not** public API" section
+    added (the `_getter…`/`_extrinsic…` internal wrappers, the `rust…` wrappers, the failable
+    `init?`, `SdkVcaFlowType`).
+  - `developers/SDK/android/index.md`: the requirements aligned with the source of truth
+    (`minSdk 24`, `compileSdk 37`), the published AAR mentioned, the endpoint constants named.
+  - the "build from source" alternatives are now **two** routes on both platforms
+    (Android: a Gradle **composite build** of the local clone — no publish at all — or the
+    local Maven repo; iOS: the local `iosSdk/` package, or the reference app's static-link
+    build).
+  Production build passes.
 ## Screenshot placeholders (to be replaced with real captures)
 
 All placeholders are visible blockquotes in the pages (`📷 [SCREENSHOT PLACEHOLDER] — …`).

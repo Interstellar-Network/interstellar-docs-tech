@@ -12,17 +12,22 @@ The Android SDK is the Gradle module **`:shared`** (package **`gg.interstellar.w
 - the **`TxPinpadView`** Android view for the VCA confirmation pad ([dedicated page](./pinpad.md)),
 - the currency math helpers (`CurrencyMath`, `WalletBalances`).
 
+It is **published** as a Maven artifact — `gg.interstellar.wallet:shared` on **GitHub Packages**
+(private, repository-scoped): you consume the AAR, and the prebuilt native libraries come with
+it, so **no Rust, no NDK and no cargo** are needed on your machine. See
+[Getting Started](./getting-started.md).
+
 ## Requirements
 
 | Requirement | Value |
 | --- | --- |
 | Language | Kotlin (Java 17 toolchain) |
-| Android | `minSdk 23`, `compileSdk 36` |
+| Android | `minSdk 24`, `compileSdk 37` |
 | Device key | **Android Keystore** — P-256 (secp256r1) ECDSA, alias `interstellar_mobile_proxy_v1` |
 | Backend | An Interstellar worker (L2, `wss://`), node (L1, `ws://`) and IPFS endpoint |
 
 :::note Endpoint defaults
-The SDK defaults are the **local dev stack**: `wss://127.0.0.1:2090` (worker), `ws://127.0.0.1:9944` (node), `/ip4/127.0.0.1/tcp/5001` (IPFS). Connecting to a different environment is currently configured at build/integration time by Interstellar — **contact us** for the values to use. When developing against the local stack, each port needs `adb reverse tcp:PORT tcp:PORT`.
+The SDK defaults are the **local dev stack**: `wss://127.0.0.1:2090` (worker), `ws://127.0.0.1:9944` (node), `/ip4/127.0.0.1/tcp/5001` (IPFS) — the `DEFAULT_WS_URL` / `DEFAULT_NODE_URL` / `DEFAULT_IPFS_ADDR` constants. Connecting to a different environment is currently configured at build/integration time by Interstellar — **contact us** for the values to use. When developing against the local stack, each port needs `adb reverse tcp:PORT tcp:PORT`.
 :::
 
 ## The one and only entry point

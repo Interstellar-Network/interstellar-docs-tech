@@ -267,14 +267,49 @@ The same device key + root account survive app restarts (and iOS reinstalls, see
 
 ## Alternative — build the SDK from source
 
-If you have the `wallet-app-internal` repository checked out, you can consume the SDK **without** the private Maven registry at all: publish it to a local Maven repository and point Gradle at it.
+If you have the `wallet-app-internal` repository checked out, you can consume the SDK **without**
+the private Maven registry at all. There are two ways — pick the one that fits what you are doing.
+
+### A. A composite build (no publish at all)
+
+The SDK is a Gradle module of that repository, so you can **include the whole checkout as a
+composite build** and let Gradle resolve `gg.interstellar.wallet:shared` to the local project.
+
+**`settings.gradle.kts`**
+
+```kotlin
+includeBuild("<path-to>/wallet-app-internal") {
+    dependencySubstitution {
+        // any requested version resolves to the local :shared project
+        substitute(module("gg.interstellar.wallet:shared")).using(project(":shared"))
+    }
+}
+```
+
+**`app/build.gradle.kts`** — the dependency stays the same:
+
+```kotlin
+dependencies {
+    implementation("gg.interstellar.wallet:shared:<version>")
+}
+```
+
+This is the **closest to "just consume the clone"**: the Rust build runs inside the checkout (the
+cargo workspace lives at the *root* of the `wallet-app-internal` Gradle build), so you do not have
+to move any file around.
+
+### B. Publish to a local Maven repository
+
+The other way is to let the SDK publish **itself** to a local Maven folder, and to consume it
+exactly like the published artifact (same coordinates, same POM, same transitive dependencies):
 
 ```bash
 # in the wallet-app-internal checkout
 ./gradlew :shared:publishSdkToLocalTest -Psdk.version=0.1.0-local
 # → shared/build/local-maven/gg/interstellar/wallet/shared/…
 ```
-Then add the repository to `settings.gradle.kts` and depend on the local version:
+
+Then add the repository to `settings.gradle.kts`:
 
 ```kotlin
 repositories {
@@ -293,8 +328,19 @@ dependencies {
 }
 ```
 
-:::note
-This path also needs **Rust nightly**, the **Android NDK** and the cargo Android targets, because the AAR is compiled from source: `rustup target add aarch64-linux-android x86_64-linux-android`. Prefer the published artifact unless you want to patch the SDK.
+:::tip When to use which?
+- **A (composite build)** — you are **patching** the SDK: the sources are rebuilt on every build,
+  no intermediate artifact.
+- **B (local Maven)** — you want to check that the **published** artifact is complete (the POM
+  carries the transitive metadata: JNA, Compose, …). This is exactly what the CI's
+  [SDK consumer smoke test](https://github.com/Interstellar-Network/wallet-app-internal) does
+  with `sdk-consumer/`.
+:::
+
+:::warning Both need the Rust toolchain
+Building the SDK from source needs **Rust nightly**, the **Android NDK** and the cargo Android
+targets (`rustup target add aarch64-linux-android x86_64-linux-android`). Prefer the published
+artifact unless you want to patch the SDK.
 :::
 
 ## Troubleshooting

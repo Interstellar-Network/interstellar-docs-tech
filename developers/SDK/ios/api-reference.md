@@ -52,7 +52,7 @@ Since the iOS SDK was published as a standalone package, its API is **name-ident
 - **`PendingTxResult`** (uniffi) — result of `getterClientGetPendingTx()`: `.requiresVca(circuits: CircuitsPackage)` or `.autoSent(txHash: String)`.
 - **`CircuitsPackage(circuitsPackage: Data, txId: Data, nbMessageDigits: UInt32)`** (uniffi) — opaque VCA package; render via `TxPinpadScreen`, never inspect.
 - **`CampaignInfo` / `UserCampaign`** (uniffi records) — same fields as Android (`campaignId`, `status`, `chain`, `amountPerClaim`, `claimLimit`, `totalFunds`, `registrationCount`, `claimCount`, `fundingAddress` / `campaignId`, `state`).
-- **`SdkVcaFlowType`** — the flow the SDK is currently armed for: `.demoTx`, `.coinTransfer(coinIdx:)`, `.recoveryVouch`, `.airdropRegistration`, `.airdropClaim`.
+- **`MobileKeychainSigner`** — the P-256 (secp256r1) ECDSA device key stored in the **iOS Keychain** (tag `interstellar_mobile_proxy_v1`); `publicKeySec1Compressed` is the 33-byte SEC1-compressed public key. It is the counterpart of the (internal) Android Keystore signer.
 
 ## Initialization & lifecycle
 
@@ -212,6 +212,21 @@ The Android SDK exposes the same Rust surface through its `RustWrapper` adapter.
 - Every `@Published` mutation is routed through the SDK's main-thread hop, so SwiftUI/Combine never sees an off-main write.
 - The FFI calls block; the SDK runs them off the main thread. `await` the `async` methods from a `Task`.
 - Failures are **logged** (`[InterstellarSdk] …`) and surfaced as `nil`/`false` — check the return values, not the console.
+
+## What is **not** public API
+
+A few more symbols ship in the package; they are **internal** and are not part of the contract —
+do not use them (and do not expect them to exist in a future release):
+
+| Symbol | What it is |
+| --- | --- |
+| the `_getter…` / `_extrinsic…` methods | the internal wrappers over the uniffi bindings (the public API of the same name calls them). |
+| the `rust…` functions of `Rust.swift` | the raw uniffi wrappers — the same reason they exist. |
+| `InterstellarSdk.init?(wsURL:nodeURL:ipfsAddr:)` | the failable initializer; `create` is the supported entry point. |
+| `SdkVcaFlowType` | the internal "which flow is armed" state (it is public, but it is a detail of the SDK's state machine). |
+
+The **public** Rust surface is re-exported by the package (see above) — but the supported entry
+point is the `InterstellarSdk` API documented on this page.
 
 ## Differences from Android (quick map)
 
