@@ -251,7 +251,28 @@ command; `~/.cache` lives on a read-only mount is NOT an issue — Docusaurus ca
     `developers/SDK/intro.md` (the "signatures are intentionally close but not identical" claim)
   - keep the **real** differences (amount units, `BigDecimal` vs `Decimal`, `StateFlow` vs
     `@Published`, `InterstellarFileSharer` vs returned `Data`) in an explicit table
-- status: **PENDING** — not started yet (plan above).
+- status: **FIXED** → the iOS SDK now exposes the **same function names** as Android
+  (PR #53), so the whole iOS documentation was re-verified against
+  `iosSdk/Sources/InterstellarSdk/InterstellarSdk.swift`:
+  - `developers/SDK/ios/api-reference.md` rewritten — every public member with its real
+    signature (`getterRootAccount`, `getterCampaigns`, `getterCampaignInfo`,
+    `getterUserCampaigns`, `getterClientGetAccount(WithPrefix)`, `getterClientGetBalanceInCoin`
+    (2 overloads), `getterClientGetBalanceInUsd`, `getterClientGetTotalBalanceInUsd`,
+    `getterClientGetPendingTx`, `getterLatestBroadcastedTxHash`, `getterSignMessage`,
+    `getterAirdropVca`, `extrinsicClient*`, `prepare*`, `processPinpadInputs`, …), the
+    value objects (`CoinType`, `SdkCoinBalance`, `CoinBalanceBuilder`, `WalletBalances`,
+    `CurrencyMath`, `SdkVcaFlowType`), the pinpad UI types, the re-exported Rust API and
+    a "Differences from Android" table reduced to the **real** ones.
+  - `developers/SDK/ios/index.md` rewritten: the SDK is the `iosSdk/` **Swift package**
+    (the KMP `shared` framework is **not** part of the iOS SDK), iOS 17 / arm64-only,
+    the published-package integration.
+  - `developers/SDK/ios/pinpad.md`: `HeaderWithBrand`/`ConfirmMessageBar` now ship **with**
+    the SDK (only the logo asset is app-side).
+  - `developers/SDK/intro.md`: the "signatures are intentionally close but not identical"
+    claim replaced by "the **names** are identical, only the signatures differ" + the
+    architecture diagram fixed (no more "import shared" on iOS).
+  - `developers/Milestones/M6/components_delivered/interstellar_sdk.md` aligned.
+  Production build passes.
 ### [10] iOS: install **Xcode + a Simulator** (the Android-structure equivalent)
 - the Android getting-started starts with an explicit "install the toolchain" step; the iOS one
   must have the same shape (Xcode from the App Store, the simulator runtime, creating a device)
@@ -291,7 +312,16 @@ command; `~/.cache` lives on a read-only mount is NOT an issue — Docusaurus ca
 - TODO when picked up:
   - `developers/SDK/intro.md` "Status & scope" → the real distribution story for both platforms
   - the two getting-started guides must be consistent with it
-- status: **PENDING** — not started yet (plan above).
+- status: **FIXED** → `developers/SDK/intro.md` "Status & scope" rewritten: the SDK is
+  published but **private** and the artifacts are **not live yet** — the Android
+  (GitHub Packages / Maven) and iOS (GitHub Release → one zip with the Swift package)
+  coordinates are marked ⚠️ **PLACEHOLDER**, the roadmap deliverables (#230 / #231) are
+  linked, the **tester access story** is spelled out (repo read access + classic PAT with
+  `read:packages` + org SSO for Android; the private release asset + `gh release download`
+  for iOS) and the **CI consumer smoke tests** (Android `sdk-consumer/`, iOS
+  `sdk-consumer-ios/`) are documented as the proof that a consumer needs nothing but
+  Android Studio / Xcode. The same placeholders were applied to both getting-started
+  guides, and the M6 `interstellar_sdk.md` scope note was aligned. Production build passes.
 ### [15] SDK coverage sweep: the **whole** SDK must be documented on both platforms
 - "DO make sure the docs for each SDK are complete and expose/explain the whole SDKs for each
   Android and iOS"

@@ -5,12 +5,17 @@ sidebar_position: 2
 
 # iOS API Reference
 
-Complete reference of the **public** iOS SDK surface. All members live on `InterstellarSdk: ObservableObject` unless noted otherwise. The API mirrors the Android SDK ([Android reference](../android/api-reference.md)) but is **not** name-identical — this page is authoritative for Swift.
+Complete reference of the **public** iOS SDK surface (`iosSdk/Sources/InterstellarSdk/`). All members live on `InterstellarSdk: ObservableObject` unless noted otherwise.
+
+:::tip Android parity
+Since the iOS SDK was published as a standalone package, its API is **name-identical to the Android SDK** — the same function names (`getterRootAccount`, `getterCampaigns`, `extrinsicClientTransfer`, …), only the **signatures** differ (Swift vs Kotlin). You can port an app from one platform to the other without renaming anything; see the [differences table](#differences-from-android-quick-map) at the bottom.
+:::
 
 :::tip Conventions
 - `@Published` state is mutated **on the main thread only** (the SDK hops internally) — bind it directly in SwiftUI.
-- Methods prefixed with `prepare…` arm a pinpad/VCA flow; `_getter…`/`_extrinsic…` methods are thin FFI wrappers kept public for advanced use; **`getRootAccount`/`getCampaignIds`/`getCampaignInfo`** differ from Android only because uniffi generates global functions with the same names.
-- Errors are **not thrown** in most paths (Swift lacks the Kotlin suspend ergonomics): failures are logged (`[InterstellarSdk]`) and surfaced as `nil`/`false`. `prepareCoinTransfer` and `create` are the notable `throws` exceptions.
+- Methods prefixed with `prepare…` arm a pinpad/VCA flow; `getter…` read state; `extrinsic…` submit on-chain actions.
+- Errors are **not thrown** in most paths: failures are logged (`[InterstellarSdk]`) and surfaced as `nil`/`false`. `create`, `prepareCoinTransfer` and `prepareRecoveryVcaVouch` are the notable `throws` exceptions.
+- `import InterstellarSdk` also re-exports the **raw Rust API** (the uniffi bindings + the renderer C FFI) — see [Exports](#the-raw-rust-api-is-re-exported).
 :::
 
 ## Observable state (`@Published`)
@@ -26,16 +31,28 @@ Complete reference of the **public** iOS SDK surface. All members live on `Inter
 | `pendingCampaignId` | `String?` | Campaign id of the armed airdrop flow (nil otherwise). |
 | `navigateToPinpad` | `Bool` | `true` when your app must **show the pinpad now** ([pinpad page](./pinpad.md)). |
 | `showTxFailed` | `Bool` | `true` **only** when a *coin-transfer* pad input was rejected. Never infer failure from a `nil` pinpad result alone. |
-| `airdropPinpadCompleted` | `Bool` | Set when an airdrop registration/claim pad completed (reference app uses it to navigate back). |
+| `airdropPinpadCompleted` | `Bool` | Set when an airdrop registration/claim pad completed (the reference app uses it to navigate back). |
+
+### Other public properties
+
+| Member | Type | Description |
+| --- | --- | --- |
+| `wsURL` / `nodeURL` / `ipfsAddr` | `String` | The backend endpoints the SDK talks to (defaults = the local dev stack). Set them at `create` time. |
+| `workerCliPtr` | `UInt64` | The raw pointer to the Rust worker client. Exposed for advanced/debug use — you normally never touch it. |
+| `pubKeyCompressed` | `Data` (read-only) | The SEC1-compressed public key (33 bytes) of the device key. |
 
 ### Value objects
 
-- **`SdkCoinBalance(coinIdx: Int32, rawBalance: Int64, usdBalance: Double, address: String?)`** — `Identifiable` by `coinIdx`. `SdkCoinBalance.supportedCoins` holds the coin table: DOT (10 decimals, $3.79), SOL (9, $177.9), BTC (8, $113796), ETH (18, $4192).
-- **Coin indexing** — coins are addressed by `Int32` index matching `CoinType`: `0=DOT`, `1=SOL`, `2=BTC`, `3=ETH`. The `CoinType` enum comes from the KMP `shared` framework (common source set); currency math lives in the SDK's own **`CurrencyMath.swift`** (mirroring Android's `CurrencyMath.kt`) — that's what `convertToUsd` uses internally.
+- **`SdkCoinBalance(coinIdx: Int32, rawBalance: Int64, usdBalance: Double, address: String?)`** — `Identifiable` by `coinIdx`. `SdkCoinBalance.supportedCoins` holds the coin table: DOT (10 decimals, $3.79), SOL (9, $177.9), BTC (8, $113796), ETH (18, $4192). `SdkCoinBalance.usdPrice(for:)` returns the price of a coin index.
+- **`CoinBalanceBuilder(coinIdx:decimals:usdPrice:)`** — the coin table entry; `convertToUsd(rawBalance:)` converts atomic units to USD.
+- **`CoinType`** (`enum CoinType: Int, CaseIterable, Identifiable`) — `.dot = 0`, `.sol = 1`, `.btc = 2`, `.eth = 3`. **The order is wire-compatible with the Rust core and with Android's `CoinType` — do not reorder.** Each case exposes `intIndex` (`Int32`) and `name`.
+- **`CurrencyMath`** (enum, static helpers) — `priceUsd(_:)`, `divisor(for:)`, `coinToUsd(_:coinAmount:)`, `coinToAtomic(_:amount:)`, `amountToUsd(_:amount:)`, `atomicToBase(_:divisor:)`, `totalBalanceInUsd(_:)`, `computeTotalUsd(_:)`. The price table is **hardcoded** (demo-grade values).
+- **`WalletBalances`** (struct) — `dot`/`sol`/`btc`/`eth` in base units (`Decimal`), the iOS mirror of Android's `WalletBalances`.
 - **`TxAmount`** (uniffi) — amount spec: `.fixed(amountInAtomicUnits: UInt64)` **in atomic units**, or `.drainAccount()`.
-- **`PendingTxResult`** (uniffi) — result of `_getterClientGetPendingTx()`: `.requiresVca(circuits: CircuitsPackage)` or `.autoSent(txHash: String)`.
+- **`PendingTxResult`** (uniffi) — result of `getterClientGetPendingTx()`: `.requiresVca(circuits: CircuitsPackage)` or `.autoSent(txHash: String)`.
 - **`CircuitsPackage(circuitsPackage: Data, txId: Data, nbMessageDigits: UInt32)`** (uniffi) — opaque VCA package; render via `TxPinpadScreen`, never inspect.
 - **`CampaignInfo` / `UserCampaign`** (uniffi records) — same fields as Android (`campaignId`, `status`, `chain`, `amountPerClaim`, `claimLimit`, `totalFunds`, `registrationCount`, `claimCount`, `fundingAddress` / `campaignId`, `state`).
+- **`SdkVcaFlowType`** — the flow the SDK is currently armed for: `.demoTx`, `.coinTransfer(coinIdx:)`, `.recoveryVouch`, `.airdropRegistration`, `.airdropClaim`.
 
 ## Initialization & lifecycle
 
@@ -47,13 +64,17 @@ Complete reference of the **public** iOS SDK surface. All members live on `Inter
 | `resetKeyPairAndRegister` | `func resetKeyPairAndRegister() async` | **[network]** Delete the Keychain key, wipe cache, register a new identity. User-initiated only. |
 | `updateWorkerEndpointForTest` | `func updateWorkerEndpointForTest(wsURL: String) throws` | **Test-only**: retarget the worker cli mid-session (Rust `update_worker_cli_endpoint`). |
 
+:::note The `init?` is public but the factory is the way in
+`InterstellarSdk.init?(wsURL:nodeURL:ipfsAddr:)` is public (it returns `nil` when the Keychain is unavailable), but `create` is the supported entry point: it is the only one that performs the registration, the server-reset check and the first balance pull.
+:::
+
 ## Root & coin accounts
 
 | API | Signature | Description |
 | --- | --- | --- |
-| `getRootAccount` | `func getRootAccount() async -> Data` | **[cached → network]** 32-byte root account id (hex-cached in `UserDefaults` suite `gg.interstellar.sdk.preferences`). Android equivalent: `getterRootAccount()`. |
-| `_getterClientGetAccount` | `func _getterClientGetAccount(coinTypeIdx: Int32) -> String?` | **[cached]** Coin client deposit address (usable as-is for transfers/faucets). Refresh via `updateBalance`. |
-| `_getterClientGetAccountWithPrefix` | `func _getterClientGetAccountWithPrefix(coinTypeIdx: Int32) -> String?` | **[cached → network]** Prefixed address form (e.g. SS58) for display. |
+| `getterRootAccount` | `func getterRootAccount() async -> Data` | **[cached → network]** The 32-byte root account id (hex-cached in the `UserDefaults` suite `gg.interstellar.sdk.preferences`). |
+| `getterClientGetAccount` | `func getterClientGetAccount(coinTypeIdx: Int32) -> String?` | **[cached → network]** Coin client deposit address (usable as-is for transfers/faucets). Refresh via `updateBalance`. |
+| `getterClientGetAccountWithPrefix` | `func getterClientGetAccountWithPrefix(coinTypeIdx: Int32) -> String?` | **[cached → network]** Prefixed address form (e.g. SS58 for DOT) for display. |
 
 ## Balances
 
@@ -61,8 +82,11 @@ Complete reference of the **public** iOS SDK surface. All members live on `Inter
 | --- | --- | --- |
 | `updateBalances` | `func updateBalances(onServerResetDetected: (() async -> Void)? = nil) async` | **[network]** Refresh **all** coins (balance + address + prefixed address), then republish `coinBalances`/`totalBalanceUsd`. Optional server-reset check first. |
 | `updateBalance` | `func updateBalance(coinTypeIdx: Int32, onServerResetDetected: (() async -> Void)? = nil) async` | **[network]** Refresh a **single** coin. |
-| `_getterClientGetBalance` | `func _getterClientGetBalance(coinTypeIdx: Int32) -> Int64` | **[cached]** Raw atomic balance (no network). |
+| `getterClientGetBalanceInCoin` | `func getterClientGetBalanceInCoin(coinTypeIdx: Int32) -> Int64` **and** `func getterClientGetBalanceInCoin(coinType: CoinType) -> Int64` | **[cached]** Raw **atomic** balance (no network). Two overloads: by index or by `CoinType`. |
+| `getterClientGetBalanceInUsd` | `func getterClientGetBalanceInUsd(coinType: CoinType) -> Double` | **[cached]** Balance converted to USD (2 decimals, hardcoded price table). |
+| `getterClientGetTotalBalanceInUsd` | `func getterClientGetTotalBalanceInUsd() -> Double` | **[cached]** Sum over all coins. |
 | `convertToUsd` | `func convertToUsd(coin: CoinType, amount: Double) -> Double` | Display helper: USD value of a user-entered amount (2 decimals). |
+| `convertCoinToAtomic` | `func convertCoinToAtomic(coinType: CoinType, amount: Double) -> Int64` | Convert a display amount (e.g. `0.1` ETH) to atomic units (Wei). |
 
 `coinBalances[i].usdBalance` and `totalBalanceUsd` give the cached USD views directly.
 
@@ -72,13 +96,13 @@ Supported end-to-end flow — all steps are **[network]**:
 
 ```swift
 // 1. Prepare the transaction (note: TxAmount is in ATOMIC units on iOS).
-let _ = await sdk._extrinsicClientInitializeTransaction(
+let _ = await sdk.extrinsicClientInitializeTransaction(
     recipient: "9WzDX…",
     txAmount: .fixed(amountInAtomicUnits: 500_000_000),  // 0.5 SOL
     coinTypeIdx: 1)
 
 // 2. Ask the SDK what to do next.
-if let pending = await sdk._getterClientGetPendingTx() {
+if let pending = await sdk.getterClientGetPendingTx() {
     switch pending {
     case .autoSent(let txHash):
         // No VCA required for this policy — already broadcast.
@@ -92,12 +116,12 @@ if let pending = await sdk._getterClientGetPendingTx() {
 
 | API | Signature | Description |
 | --- | --- | --- |
-| `_extrinsicClientInitializeTransaction` | `func _extrinsicClientInitializeTransaction(recipient: String, txAmount: TxAmount, coinTypeIdx: Int32) async -> String` | Initialize a transaction to `recipient`. Returns a tx hash (or `""` on failure). |
-| `_getterClientGetPendingTx` | `func _getterClientGetPendingTx() async -> PendingTxResult?` | Inspect the pending tx: `.requiresVca` / `.autoSent`. `nil` on failure (e.g. insufficient funds). |
-| `prepareCoinTransfer` | `func prepareCoinTransfer(coinTypeIdx: Int32) async throws -> String?` | High-level: runs the pending-tx dance for you. **Throws** if no pending tx. If the flow was `.autoSent`, returns the broadcasted tx hash directly; otherwise arms the pinpad and returns `nil`. |
-| `_extrinsicClientTransfer` | `func _extrinsicClientTransfer(inputDigits: Data, coinTypeIdx: Int32) -> String` | Low-level: submit pad digits. **You normally do not call this** — `CircuitSurfaceView` (inside `TxPinpadScreen`) does it via `processPinpadInputs`. |
+| `extrinsicClientInitializeTransaction` | `func extrinsicClientInitializeTransaction(recipient: String, txAmount: TxAmount, coinTypeIdx: Int32) async -> String` | Initialize a transaction to `recipient`. Returns a tx hash (or `""` on failure). |
+| `getterClientGetPendingTx` | `func getterClientGetPendingTx() async -> PendingTxResult?` | Inspect the pending tx: `.requiresVca` / `.autoSent`. `nil` on failure (e.g. insufficient funds). |
+| `prepareCoinTransfer` | `func prepareCoinTransfer(coinTypeIdx: Int32) async throws -> String?` | High-level: runs the pending-tx dance for you. **Throws** if there is no pending tx. If the flow was `.autoSent`, returns the broadcasted tx hash directly; otherwise arms the pinpad (`navigateToPinpad = true`) and returns `nil`. |
+| `extrinsicClientTransfer` | `func extrinsicClientTransfer(inputDigits: Data, coinTypeIdx: Int32) -> String` | Low-level: submit pad digits. **You normally do not call this** — `CircuitSurfaceView` (inside `TxPinpadScreen`) does it via `processPinpadInputs`. |
 | `processPinpadInputs` | `func processPinpadInputs(inputs: Data) -> String?` | The single entry the pad uses for **all** flows (transfer, recovery vouch, airdrop, demo). Returns the **new** broadcasted hash only when a coin transfer was accepted; otherwise `nil`. Clears the pinpad state afterwards. |
-| `_getterLatestBroadcastedTxHash` | `func _getterLatestBroadcastedTxHash() -> String?` | Latest broadcasted tx hash for this account (receipt display). |
+| `getterLatestBroadcastedTxHash` | `func getterLatestBroadcastedTxHash() -> String?` | Latest broadcasted tx hash for this account (receipt display). |
 | `clearPinpad` | `func clearPinpad()` | Reset pinpad state (`navigateToPinpad=false`, package/campaign cleared). |
 
 :::warning Reading the transfer result
@@ -108,9 +132,9 @@ if let pending = await sdk._getterClientGetPendingTx() {
 
 | API | Signature | Description |
 | --- | --- | --- |
-| `_extrinsicClientAddKeypair` | `func _extrinsicClientAddKeypair(coinTypeIdx: Int32) async` | Create a new coin keypair (automatic at registration). |
-| `_extrinsicClientSignMessage` | `func _extrinsicClientSignMessage(message: Data, coinTypeIdx: Int32) -> String` | **[network]** Sign an arbitrary message (e.g. `eth_sign`). **Does NOT use a VCA.** |
-| `_getterSignMessage` | `func _getterSignMessage() -> Data?` | Retrieve the signature produced above. |
+| `extrinsicClientAddKeypair` | `func extrinsicClientAddKeypair(coinTypeIdx: Int32) async` | Create a new coin keypair (automatic at registration). |
+| `extrinsicClientSignMessage` | `func extrinsicClientSignMessage(message: Data, coinTypeIdx: Int32) -> String` | **[network]** Sign an arbitrary message (e.g. `eth_sign`). **Does NOT use a VCA.** |
+| `getterSignMessage` | `func getterSignMessage() -> Data?` | Retrieve the signature produced above. |
 
 ## Recovery
 
@@ -118,27 +142,31 @@ if let pending = await sdk._getterClientGetPendingTx() {
 | --- | --- | --- |
 | `recoverySetThreshold` | `func recoverySetThreshold(_ threshold: Int32) async -> Bool` | **[network]** Set the recovery threshold. `false` = rejected by the chain (local value unchanged). |
 | `recoveryAddNfc` | `func recoveryAddNfc(nfcSerialNumber: Data) async -> Bool` | **[network]** Register an NFC card as recovery method (increments `nfcCount` on success). |
-| `recoveryAddVcaToken` | `func recoveryAddVcaToken() async -> Data` | **[network]** Generate a **VCA token file** (`Data`, file `recovery-token.interstellar.enc`) — your app handles saving/sharing it (on Android the SDK shares via `InterstellarFileSharer`). Increments `vcaCount`. |
+| `recoveryAddVcaToken` | `func recoveryAddVcaToken() async -> Data` | **[network]** Generate a **VCA token file** (`Data`, file `recovery-token.interstellar.enc`) — **your app** handles saving/sharing it (on Android the SDK shares via `InterstellarFileSharer`). Increments `vcaCount`. |
 | `importRecoveryToken` | `func importRecoveryToken(encryptedVca: Data) async -> CircuitsPackage?` | Decrypt an imported token file into a VCA package (`nil` on corrupt data). |
-| `prepareRecoveryVcaVouch` | `func prepareRecoveryVcaVouch(fileBytes: Data) async throws` | High-level restore: import the token **and** arm the vouch pinpad. **Throws** on undecryptable token. |
-| `recoveryVouchVca` | `func recoveryVouchVca(txId: Data, inputs: Data)` | **[network]** Complete the VCA-token vouch (pad digits normally delivered through `processPinpadInputs`). Sets `recoveryVouchSubmitted=true`. |
-| `recoveryVouchNfc` | `func recoveryVouchNfc(nfcSerialNumber: Data) async -> Bool` | **[network]** Vouch with an NFC card. Sets `recoveryVouchSubmitted=true` on success. |
+| `prepareRecoveryVcaVouch` | `func prepareRecoveryVcaVouch(fileBytes: Data) async throws` | High-level restore: import the token **and** arm the vouch pinpad. **Throws** on an undecryptable token. |
+| `recoveryVouchVca` | `func recoveryVouchVca(txId: Data, inputs: Data)` | **[network]** Complete the VCA-token vouch (pad digits normally delivered through `processPinpadInputs`). Sets `recoveryVouchSubmitted = true`. |
+| `recoveryVouchNfc` | `func recoveryVouchNfc(nfcSerialNumber: Data) async -> Bool` | **[network]** Vouch with an NFC card. Sets `recoveryVouchSubmitted = true` on success. |
 | `recoveryClaim` | `func recoveryClaim() async` | **[network]** Claim the recovered account after the ~10-block delay; clears cached accounts/root and zeroes balances until refresh. |
+
+:::note Vouch → Claim flow
+Recovering a **lost** account: the helping device (with its own or the imported token/NFC) vouches — `recoveryVouchVca` or `recoveryVouchNfc` — then the *same* device waits for the ~10-block delay (watch `recoveryVouchSubmitted == true`) and finally calls `recoveryClaim()`.
+:::
 
 ## Airdrop campaigns
 
 | API | Signature | Description |
 | --- | --- | --- |
-| `getCampaignIds` | `func getCampaignIds() async -> [String]` | **[network]** All campaign ids (Android: `getterCampaigns`). |
-| `getCampaignInfo` | `func getCampaignInfo(_ campaignId: String) async -> CampaignInfo?` | **[network]** Full campaign details. |
-| `getUserCampaigns` | `func getUserCampaigns() async -> [UserCampaign]` | **[network]** This account's registrations/states. |
-| `_extrinsicCreateCampaign` | `func _extrinsicCreateCampaign(coinTypeIdx: Int32, amountPerClaim: Int64, claimLimit: Int32, freezePeriod: Int32, registrationPeriod: Int32, claimPeriod: Int32) async` | **[network]** Create a campaign (organizer flow). |
-| `_extrinsicFundCampaign` | `func _extrinsicFundCampaign(campaignId: String) async` | **[network]** Fund & activate a campaign. |
+| `getterCampaigns` | `func getterCampaigns() async -> [String]` | **[network]** All campaign ids. |
+| `getterCampaignInfo` | `func getterCampaignInfo(_ campaignId: String) async -> CampaignInfo?` | **[network]** Full campaign details. |
+| `getterUserCampaigns` | `func getterUserCampaigns() async -> [UserCampaign]` | **[network]** This account's registrations/states. |
+| `extrinsicCreateCampaign` | `func extrinsicCreateCampaign(coinTypeIdx: Int32, amountPerClaim: Int64, claimLimit: Int32, freezePeriod: Int32, registrationPeriod: Int32, claimPeriod: Int32) async` | **[network]** Create a campaign (organizer flow). The funding address comes back in `getterCampaignInfo`. |
+| `extrinsicFundCampaign` | `func extrinsicFundCampaign(campaignId: String) async` | **[network]** Fund & activate a campaign. |
 | `prepareAirdropRegistration` | `func prepareAirdropRegistration(campaignId: String) async` | **[network]** High-level: arm the **registration** VCA pinpad. |
 | `prepareAirdropClaim` | `func prepareAirdropClaim(campaignId: String) async` | **[network]** High-level: arm the **claim** VCA pinpad. |
-| `_extrinsicPrepareRegistration` / `_extrinsicCompleteRegistration` | `func …(campaignId: String, inputIndices: Data)` | Low-level 2-step registration. Prefer `prepareAirdropRegistration`. |
-| `_extrinsicPrepareClaim` / `_extrinsicClaimAirdrop` | `func …(campaignId: String, inputIndices: Data)` | Low-level 2-step claim. Prefer `prepareAirdropClaim`. |
-| `_getterAirdropVca` | `func _getterAirdropVca(campaignId: String) -> CircuitsPackage?` | Fetch the campaign's VCA package directly. |
+| `extrinsicPrepareRegistration` / `extrinsicCompleteRegistration` | `func extrinsicPrepareRegistration(campaignId: String)` / `func extrinsicCompleteRegistration(campaignId: String, inputIndices: Data)` | Low-level 2-step registration (VCA #1 created, then validated by the pad digits). Prefer `prepareAirdropRegistration`. |
+| `extrinsicPrepareClaim` / `extrinsicClaimAirdrop` | `func extrinsicPrepareClaim(campaignId: String)` / `func extrinsicClaimAirdrop(campaignId: String, inputIndices: Data)` | Low-level 2-step claim (VCA #2 created, then validated). Prefer `prepareAirdropClaim`. |
+| `getterAirdropVca` | `func getterAirdropVca(campaignId: String) -> CircuitsPackage?` | Fetch the campaign's VCA package directly. |
 
 ## On/off-ramp (MoonPay)
 
@@ -146,21 +174,54 @@ if let pending = await sdk._getterClientGetPendingTx() {
 | --- | --- | --- |
 | `signMoonpayUrl` | `func signMoonpayUrl(queryString: String) async -> String?` | **[network]** Server-signs a MoonPay query string so your app can build a trusted MoonPay URL. |
 
-## Demo transaction (visual cryptography sandbox)
+## Demo transaction (visual cryptography sandbox) — *not part of the public API*
 
-| API | Signature | Description |
-| --- | --- | --- |
-| `createDemoTx` | `func createDemoTx(txMessage: String) -> CircuitsPackage?` | Garble & strip a display circuits package for `txMessage` — render it with `TxPinpadScreen` to demo the renderer without a real transaction. |
-| `demoTxCheckInputs` | `func demoTxCheckInputs(txId: Data, inputs: Data)` | Validate demo pad inputs. |
+The SDK code still carries a `createDemoTx` / `demoTxCheckInputs` pair: it garbles a display
+circuits package for a free-form message so the VCA renderer can be exercised without a real
+transaction. **These are internal sandbox helpers, not public API** — they are not documented
+as a contract, they may change or disappear, and they are not covered by the parity promise
+with Android. Do not build on them; use the real flows (`prepareCoinTransfer`,
+`prepareAirdropRegistration`, `prepareAirdropClaim`, `prepareRecoveryVcaVouch`) instead.
+
+## The pinpad UI (shipped with the SDK)
+
+| Type | Description |
+| --- | --- |
+| `TxPinpadScreen(circuits:sdk:onTxDone:)` | The SwiftUI pad: 12 digit slots + the message bar, rendered through the garbled-circuit surface. See the [pinpad guide](./pinpad.md). |
+| `CircuitSurfaceView` | The `UIView` that hosts the Metal/WGPU renderer (`configure(circuitsPackage:)`, `start()`, `stop()`, `onClickPinpadDigit(_:)`). |
+| `CircuitSurfaceViewRepresentable` | The `UIViewRepresentable` wrapper used by `TxPinpadScreen`. |
+
+## The raw Rust API is re-exported
+
+`import InterstellarSdk` also gives you the **uniffi bindings** and the **renderer C API** (the package re-exports the two FFI modules). Handy for advanced use — e.g. calling the renderer directly:
+
+```swift
+import InterstellarSdk   // gives you the uniffi globals + the renderer C functions
+
+var msgWidth: UInt32 = 0
+var msgHeight: UInt32 = 0
+var padWidth: UInt32 = 0
+var padHeight: UInt32 = 0
+_ = get_dimensions(ctxPtr, &msgWidth, &msgHeight, &padWidth, &padHeight)
+```
+
+The Android SDK exposes the same Rust surface through its `RustWrapper` adapter.
+
+## Threading & guarantees
+
+- Every `@Published` mutation is routed through the SDK's main-thread hop, so SwiftUI/Combine never sees an off-main write.
+- The FFI calls block; the SDK runs them off the main thread. `await` the `async` methods from a `Task`.
+- Failures are **logged** (`[InterstellarSdk] …`) and surfaced as `nil`/`false` — check the return values, not the console.
 
 ## Differences from Android (quick map)
 
 | Android | iOS | Note |
 | --- | --- | --- |
-| `getterRootAccount()` | `getRootAccount()` | iOS name differs (uniffi shadowing). |
-| `getterCampaigns()` / `getterCampaignInfo()` | `getCampaignIds()` / `getCampaignInfo(_:)` | Same reason. |
-| `JniTxAmount.fixed(0.5)` — display units | `TxAmount.fixed(amountInAtomicUnits:)` — **atomic** units | ⚠️ convert before calling on iOS. |
+| `StateFlow<T>` | `@Published var` | Kotlin flows vs Combine/SwiftUI. |
+| `BigDecimal` (base units) | `Decimal` (base units) / `Double` (USD) | Swift has no `BigDecimal`; the SDK uses `Decimal` for the money math. |
+| `JniTxAmount.fixed(0.5)` — **display** units | `TxAmount.fixed(amountInAtomicUnits:)` — **atomic** units | ⚠️ convert before calling on iOS (`sdk.convertCoinToAtomic(coin:amount:)`). |
 | `JniPendingTxResult(status, …)` | `PendingTxResult` `.requiresVca`/`.autoSent` | Swift is an enum. |
 | `WalletBalances(dot:, sol:, …)` | `[SdkCoinBalance]` keyed by `coinIdx` | iOS addresses ride along in the same DTO. |
-| SDK shares recovery tokens via `InterstellarFileSharer` | `recoveryAddVcaToken()` returns `Data` | Your iOS app owns save/share. |
-| Endpoint override at build time | `create(wsURL:nodeURL:ipfsAddr:)` | iOS factory takes overrides. |
+| The SDK shares recovery tokens via `InterstellarFileSharer` | `recoveryAddVcaToken()` returns `Data` | Your iOS app owns save/share. |
+| Endpoint override at build time | `create(wsURL:nodeURL:ipfsAddr:)` | iOS factory takes runtime overrides. |
+| `getterRootAccount(): ByteArray` | `getterRootAccount(): Data` | Same name, Swift type. |

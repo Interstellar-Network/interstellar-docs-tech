@@ -161,12 +161,14 @@ Recovering a **lost** account: the helping device (with its own or the imported 
 | --- | --- | --- |
 | `signMoonpayUrl` | `suspend fun signMoonpayUrl(queryString: String): String?` | **[network]** Server-signs a MoonPay query string so your app can build a trusted MoonPay URL. |
 
-## Demo transaction (visual cryptography sandbox)
+## Demo transaction (visual cryptography sandbox) — *not part of the public API*
 
-| API | Signature | Description |
-| --- | --- | --- |
-| `createDemoTx` | `suspend fun createDemoTx(tx_message: String): JniCircuitsPackage` | Garble & strip a display circuits package for `tx_message` — render it with `TxPinpadView` to demo the VCA renderer without a real transaction. |
-| `demoTxCheckInputs` | `suspend fun demoTxCheckInputs(jniCircuitsPackage: JniCircuitsPackage, inputs: ByteArray, onTxDone: () -> Unit)` | Validate demo pinpad inputs; `onTxDone` fires when done. |
+The SDK code still carries a `createDemoTx` / `demoTxCheckInputs` pair: it garbles a display
+circuits package for a free-form message so the VCA renderer can be exercised without a real
+transaction. **These are internal sandbox helpers, not public API** — they are not documented
+as a contract, they may change or disappear, and they are not covered by the parity promise
+with iOS. Do not build on them; use the real flows (`prepareCoinTransfer`,
+`prepareAirdropRegistration`, `prepareAirdropClaim`, `prepareRecoveryVcaVouch`) instead.
 
 ## Thread-safety & threading guarantees
 

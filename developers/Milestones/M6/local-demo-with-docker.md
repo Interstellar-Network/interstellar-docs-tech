@@ -10,7 +10,7 @@ sidebar_position: 1
 
 Milestone 6 turns the Interstellar wallet technology into an **integrable component**: it delivers the first version of the (semi) public **Interstellar Android/iOS SDK** together with its **documentation and integration guides**, plus refreshed **containers and wallet-app releases** for testing the whole stack locally.
 
-The WalletConnect/Reown integration delivered in [Milestone 5](../M5/local-demo-with-docker.md) remains fully testable through the same flows (session handling, signing, transaction broadcasting and transaction-hash feedback to the requesting dApp). Its scope and implementation references — the wallet-side Reown integration (wallet-app-internal PR #32), the pallet-side “Sign in with Reown” adaptations (pallets-internal PR #73) and the broadcasted-transaction-hash feedback (pallets-internal PR #72) — are documented in the [M5 tutorial](../M5/local-demo-with-docker.md) and reviewed in the [M5 Review follow-up](../M5/m5-walletconnect-reown-review-follow-up.md).
+The WalletConnect/Reown integration delivered in [Milestone 5](../M5/local-demo-with-docker.md) remains fully testable through the same flows (session handling, signing, transaction broadcasting and transaction-hash feedback to the requesting dApp). Its scope and implementation references — the wallet-side Reown integration (wallet-app-internal PR #32), the pallet-side “Sign in with Reown” adaptations (pallets-internal PR #73) and the broadcasted-transaction-hash feedback (pallets-internal PR #72) — are documented in the [M5 tutorial](../M5/local-demo-with-docker.md).
 
 What is **new in M6**:
 
@@ -47,18 +47,6 @@ From the official [Interstellar GitHub Release](https://github.com/Interstellar-
 - `androidApp-x86_64-release.apk` — for Android emulators running on x86_64 platforms (e.g., Windows PCs, Intel-based Mac)
 
 > **Latest version recommended**
-
-::::note
-This M6 release includes the fixes from the **M5 external review** follow-up: the critical issues **C1, C2, C3 and C4** plus the additional fixes/improvements **H2** and **M7** — see the [M5 Review follow-up](/developers/Milestones/M5/m5-walletconnect-reown-review-follow-up.md) for the point-by-point remediation.
-
-For **M5 history** (initial release and v2 hotfix), the previous links are kept for transparency:
-
-**Docker compose file (M5 v2):**
-```bash
-curl -L -o docker-compose.yml https://raw.githubusercontent.com/Interstellar-Network/containers/refs/tags/testnet-m5-v2/docker-compose.yml
-```
-**Previous app download (M5 v2):** https://github.com/Interstellar-Network/containers/releases/tag/testnet-m5-v2
-::::
 
 ::::warning Building the app from source? API keys
 The wallet app **builds fine with placeholder/blank API keys** for third-party services such as **MoonPay** and **Reown (WalletConnect)** — but those features **will fail at runtime** until real test keys are provided.
@@ -136,7 +124,7 @@ You can inspect chain state and transactions via:
 
 ---
 :::note Technical Preview – Foundation for Secure Mobile SDKs  
-This Android application is provided as a technical demonstration of Interstellar’s secure Web3 account infrastructure. It serves as a foundation for the forthcoming Android and iOS SDKs, which are still under active development.  
+This Android application is provided as a technical demonstration of Interstellar’s secure Web3 account infrastructure. It is the **reference integration** of the mobile SDKs delivered in Milestone 6 (see the [Interstellar SDK section](/developers/SDK/intro)).
 
 Please note that the current user interface and experience are not representative of the final product. Both UI and UX will be significantly refined to align with Interstellar’s core mission: delivering the highest levels of simplicity and security in mobile self-custody.  
 :::

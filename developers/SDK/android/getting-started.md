@@ -24,9 +24,15 @@ One Activity, one `TextView`, one `InterstellarSdk.create(...)` call. No Compose
 
 :::info Which artifact?
 The SDK is published as a **private Maven package** on GitHub Packages:
-`gg.interstellar.wallet:shared:0.1.0` (the KMP root metadata + the Android AAR).
+`gg.interstellar.wallet:shared:<version>` (the KMP root metadata + the Android AAR).
 The package inherits the visibility of the repository it is published from, so it stays private —
 see [SDK access](../intro.md#status--scope-please-read) for the full story.
+
+:::warning ⚠️ PLACEHOLDER — not published yet
+The publishing pipeline is implemented and CI-tested, but **no artifact is live yet**. The
+repository URL below and the `<version>` are the **planned** ones — ask Interstellar for the
+current version and for the access to the private repository.
+:::
 :::
 
 ## Step 1 — Create a fresh project
@@ -88,6 +94,7 @@ dependencyResolutionManagement {
         maven {
             name = "GitHubPackages"
             // NOTE: the owner MUST be lowercase, even though the org is "Interstellar-Network"
+            // ⚠️ PLACEHOLDER: the SDK is not published yet — ask for the live URL.
             url = uri("https://maven.pkg.github.com/interstellar-network/wallet-app-internal")
             credentials {
                 username = providers.gradleProperty("gpr.user").orNull
@@ -125,7 +132,8 @@ dependencies {
     implementation("androidx.core:core-ktx:1.19.1")
     implementation("androidx.appcompat:appcompat:1.8.0")
     implementation("androidx.lifecycle:lifecycle-runtime-ktx:2.11.0")
-    implementation("gg.interstellar.wallet:shared:0.1.0")   // ← the Interstellar SDK
+    // ⚠️ PLACEHOLDER version — the SDK is not published yet.
+    implementation("gg.interstellar.wallet:shared:<version>")   // ← the Interstellar SDK
 }
 ```
 
@@ -226,7 +234,6 @@ If you have the `wallet-app-internal` repository checked out, you can consume th
 ./gradlew :shared:publishSdkToLocalTest -Psdk.version=0.1.0-local
 # → shared/build/local-maven/gg/interstellar/wallet/shared/…
 ```
-
 Then add the repository to `settings.gradle.kts` and depend on the local version:
 
 ```kotlin
@@ -254,7 +261,7 @@ This path also needs **Rust nightly**, the **Android NDK** and the cargo Android
 
 | Symptom | Fix |
 | --- | --- |
-| `Could not find gg.interstellar.wallet:shared:0.1.0` | the GitHub Packages repository is missing or the credentials are wrong — check the URL (lowercase owner!), `gpr.user` / `gpr.key` in `~/.gradle/gradle.properties`, and that your token has `read:packages` **and** SSO authorization |
+| `Could not find gg.interstellar.wallet:shared:<version>` | the GitHub Packages repository is missing or the credentials are wrong — check the URL (lowercase owner!), `gpr.user` / `gpr.key` in `~/.gradle/gradle.properties`, and that your token has `read:packages` **and** SSO authorization |
 | `401 Unauthorized` / `403 Forbidden` | your token is missing the `read:packages` scope, or it was not authorized for the org's SSO, or you have no read access to the private repo |
 | `Received status code 402` while publishing (maintainers) | the organisation's GitHub Packages budget is exhausted — see the [Packages billing docs](https://docs.github.com/en/billing/concepts/product-billing/github-packages) |
 | `OutOfMemoryError` / D8 dex merge fails | raise `org.gradle.jvmargs` to `-Xmx2048M` in the project's `gradle.properties` |

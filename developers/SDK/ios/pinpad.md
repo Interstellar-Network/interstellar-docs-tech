@@ -7,7 +7,7 @@ sidebar_position: 3
 
 The **pinpad** is how the user authorizes policy-gated actions (coin transfers above a threshold, airdrop registration/claim, recovery vouch). The pad is rendered **inside a garbled-circuit pixel stream** — the digits the user taps are validated cryptographically against the circuits, not against app memory — and the **SDK owns the whole flow**.
 
-On iOS the pinpad ships as **`TxPinpadScreen`** (SwiftUI) + **`CircuitSurfaceView`** (Metal/WGPU-backed `UIViewRepresentable`), the mirror of Android's `TxPinpadView`.
+On iOS the pinpad ships as **`TxPinpadScreen`** (SwiftUI) + **`CircuitSurfaceView`** (the `UIView` that hosts the Metal/WGPU renderer, wrapped by `CircuitSurfaceViewRepresentable`), the mirror of Android's `TxPinpadView`. Both are **part of the published SDK package** — you get them with `import InterstellarSdk`.
 
 :::warning SOL & other coins: complete the pad quickly
 Some coins have a **short-lived “pending tx TTL”**: a prepared transaction is only valid for a short window, so the pinpad should be completed **quickly** (e.g. **SOL < 30s** or so on devnet). If you take too long the transaction fails — simply re-initiate it.
@@ -83,8 +83,8 @@ Internally the screen:
 2. once frames are measured, mounts `CircuitSurfaceViewRepresentable` with the measured rects and the package's garbled circuits,
 3. taps are forwarded to the surface, which renders the visual-cryptography feedback and finally calls `sdk.processPinpadInputs`.
 
-:::note App-only dependencies
-The reference `TxPinpadScreen` also renders the wallet's own `HeaderWithBrand`/`ConfirmMessageBar` components (`Components/CommonUI.swift`). When integrating into **your** app, provide equivalent views or strip those lines — everything else is self-contained.
+:::note Branding assets
+The SDK's `TxPinpadScreen` renders the `HeaderWithBrand` header (also part of the SDK), which uses the app's logo asset (`ic_interstellar_black_logo`). If you use the stock screen, add that image to your app's asset catalog under the same name — or replace the header with your own view.
 :::
 
 ## Reading the result — `showTxFailed` vs `nil`

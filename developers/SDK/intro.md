@@ -32,7 +32,6 @@ flowchart TD
     subgraph iOS
         B["Your iOS app (Swift)"] --> B1["InterstellarSdk.swift"]
         B1 -->|"uniffi Swift bindings"| R
-        B1 -.->|import shared| K["KMP shared framework (shared enums/DTOs)"]
         B1 -.->|"extern C glue (renderer only)"| REN
     end
     R --> W[("Integritee worker (L2)")]
@@ -40,14 +39,14 @@ flowchart TD
     R --> I[("IPFS (circuits)")]
 ```
 
-- **Android**: the SDK ships as the Gradle module `:shared` (package `gg.interstellar.wallet`) — the Kotlin SDK (public API + a thin `RustWrapper` adapter over the **committed uniffi-generated Kotlin bindings**, JNA) plus the Rust core compiled as Android `.so` libraries; the device key lives in the **Android Keystore** (P-256 ECDSA).
-- **iOS**: the SDK is the `InterstellarSdk.swift` layer (Keychain-backed P-256 signer) over the **committed uniffi-generated Swift bindings** to the **same Rust core**, plus the Kotlin Multiplatform `shared` framework for the shared enums/DTOs (`CoinType`, …).
+- **Android**: the SDK ships as the Gradle module `:shared` (package `gg.interstellar.wallet`) — the Kotlin SDK (public API + a thin `RustWrapper` adapter over the **committed uniffi-generated Kotlin bindings**, JNA) plus the Rust core compiled as Android `.so` libraries; the device key lives in the **Android Keystore** (P-256 ECDSA). It is published as a **Maven artifact** (`gg.interstellar.wallet:shared`) — see [Getting Started](./android/getting-started.md).
+- **iOS**: the SDK ships as a **Swift Package** (`InterstellarSdk`) — the `InterstellarSdk.swift` layer (Keychain-backed P-256 signer) over the **committed uniffi-generated Swift bindings** to the **same Rust core**, plus the pinpad UI and the data model (`CoinType`, …) — see [Getting Started](./ios/getting-started.md).
 
 :::note One per-platform seam: the renderer surface
 The only hand-written FFI glue is the pinpad **renderer** surface binding — Android wires it through JNI (`external fun initSurface`, it must hold the Android `Surface` object), iOS through extern `"C"` functions (`init_surface_with_view`, CAMetalLayer). Both wrap the same Rust `renderer` crate; platform surface objects simply cannot cross uniffi.
 :::
 
-Because the two platform APIs are *independent codebases* (Kotlin vs Swift), they are **documented separately** — the signatures are intentionally close but not identical (e.g. `getterRootAccount()` on Android vs `getRootAccount()` on iOS). Where a behavior is exactly shared (pinpad orchestration, server-reset semantics, VCA flows) both references say the same thing.
+Because the two platform APIs are *independent codebases* (Kotlin vs Swift), they are **documented separately** — but their **function names are identical** (`getterRootAccount()`, `updateBalances()`, `prepareCoinTransfer()`, …), so an app can be ported from one platform to the other without renaming anything. Only the **signatures** differ (e.g. `StateFlow<T>` vs `@Published`, `BigDecimal` vs `Decimal`, amounts in display units on Android and in atomic units on iOS) — each reference spells its own contract out, and the [iOS reference](./ios/api-reference.md#differences-from-android-quick-map) ends with an explicit differences table.
 
 - 👉 [**Android SDK**](./android/index.md)
 - 👉 [**iOS SDK**](./ios/index.md)
@@ -56,7 +55,7 @@ Because the two platform APIs are *independent codebases* (Kotlin vs Swift), the
 
 | Concept | Description |
 | --- | --- |
-| **Root account** | The Interstellar *smart account* of this device, returned as 32 bytes (`getterRootAccount()` / `getRootAccount()`). Created automatically at first init. |
+| **Root account** | The Interstellar *smart account* of this device, returned as 32 bytes (`getterRootAccount()` on both platforms). Created automatically at first init. |
 | **Coin client account** | One keypair per supported coin (DOT/SOL/BTC/ETH) derived from the root account. Its address can be funded from a faucet and used as a transfer recipient. |
 | **VCA / pinpad** | A full-screen, circuit-rendered pad where the user re-enters a code to authorize an action. Driven by SDK state (`navigateToPinpad`, `pendingCircuitsPackage`) — you only render the view the SDK hands you. |
 | **Server reset** | If the Interstellar server loses the account (e.g. devnet reset), the SDK detects it at init/resume and asks your app to confirm **re-registration** before proceeding. |
@@ -64,18 +63,46 @@ Because the two platform APIs are *independent codebases* (Kotlin vs Swift), the
 
 ## Status & scope (please read)
 
-:::warning Not public (yet) — access is granted via the private repo
-The SDK is **not public at this time**: no open-source release and no package-registry artifact yet. What you get instead:
+:::warning Not public (yet) — private distribution, and the artifacts are not live yet
+The SDK is **not public**: it lives in the private **`wallet-app-internal`** repository and is distributed to **reviewers and testers only**, through that repository's access control. There is no open-source release.
 
-- **Repository access** — reviewers and integrators are granted (or already have) read access to the private **`wallet-app-internal`** repository, the SDK's source of truth. A plain clone is all the [Android](./android/getting-started.md) / [iOS](./ios/getting-started.md) getting-started guides need:
+The **publishing pipelines are implemented and continuously verified by the CI** (see [below](#the-artifacts-are-proved-by-the-ci)), but **no artifact is published yet**. Every URL and version marked ⚠️ **PLACEHOLDER** below is the *planned* location — ask us for the current version and for access.
 
-  ```bash
-  git clone ssh://git@github.com/Interstellar-Network/wallet-app-internal.git
-  ```
+| Platform | Distribution mechanism | Planned coordinate (⚠️ PLACEHOLDER) |
+| --- | --- | --- |
+| **Android** | **GitHub Packages** (a Maven registry) — repository-scoped, so the package inherits the repo's visibility and stays **private** | `gg.interstellar.wallet:shared:<version>` from `https://maven.pkg.github.com/interstellar-network/wallet-app-internal` |
+| **iOS** | **GitHub Releases** — SPM has no Maven; a release asset *is* the registry. One zip contains the complete Swift package | `InterstellarSdk-<version>.zip` from `https://github.com/Interstellar-Network/wallet-app-internal/releases/download/<TAG>/` |
+:::
 
-- **Endpoints & test keys** — the shared testnet endpoints (and MoonPay/Reown test keys, see the [M6 demo notes](/developers/Milestones/M6/local-demo-with-docker)) are provided by Interstellar on request.
+### How a tester gets access
 
-- **Artifact publication — TBD (placeholder)**: publishing the SDK as a proper dependency (e.g. a Maven coordinate for Android / an SPM package for iOS) is planned but **does not exist yet** — until it does, the git repository above is the only distribution channel. Ask us for the current status.
+1. **Repository access** — ask Interstellar for read access to the private [`wallet-app-internal`](https://github.com/Interstellar-Network/wallet-app-internal) repository. It is the source of truth: everything below is published from it.
+2. **Android — GitHub Packages (Maven)**:
+   - create a **classic** personal access token with the **`read:packages`** scope (GitHub Packages does **not** support fine-grained tokens) and, if the organisation enforces SAML SSO, authorize it for `Interstellar-Network`;
+   - put the credentials in your **global** `~/.gradle/gradle.properties` (`gpr.user` = your GitHub username, `gpr.key` = the token) — never in the project;
+   - add the repository to `settings.gradle.kts` (the **owner must be lowercase**).
+   - Full walkthrough: [Android — Getting Started](./android/getting-started.md#step-2--get-access-to-the-sdk).
+3. **iOS — the private GitHub release**:
+   - download the release asset with your GitHub account (browser) or with the CLI — `gh release download <TAG> -R Interstellar-Network/wallet-app-internal -p "InterstellarSdk-*.zip"` (the CLI needs a token with the `repo` scope);
+   - unzip it and add the `InterstellarSdk` folder as a **local** Swift package — Xcode links *and embeds* the frameworks by itself;
+   - the two `.xcframework`s are also attached **individually** (with their SPM checksums), but the **remote `.binaryTarget(url:checksum:)` flow is not recommended for a private repo**: SwiftPM downloads binary targets anonymously (nowhere to put a token) and every new build invalidates the checksum — see [why](./ios/getting-started.md#why-not-a-remote-hosted-swift-package).
+   - Full walkthrough: [iOS — Getting Started](./ios/getting-started.md#step-2--download-the-sdk).
+4. **Endpoints & test keys** — the shared testnet endpoints (and the MoonPay/Reown test keys, see the [M6 demo notes](/developers/Milestones/M6/local-demo-with-docker)) are provided by Interstellar on request.
+
+### The artifacts are proved by the CI
+
+Both platforms are validated end-to-end by a **consumer smoke test** that runs on every CI build — a *real external consumer app* is built against the published artifact, exactly like you would:
+
+| Platform | What the CI does | Where |
+| --- | --- | --- |
+| **Android** | publishes `:shared` to a **local Maven repo** and builds the standalone `sdk-consumer/` project (debug **and** release) against `gg.interstellar.wallet:shared:<version>`, then asserts both APKs contain the `arm64-v8a` **and** `x86_64` native libraries | `wallet-app-internal` → `sdk-consumer/` |
+| **iOS** | runs the real publish script (`--no-publish`), **unzips the published zip** into `sdk-consumer-ios/SDK/`, builds the consumer app against it, checks the two frameworks are **embedded** in the app bundle, then **runs it in the simulator** and asserts its output | `wallet-app-internal` → `sdk-consumer-ios/` |
+
+This is what guarantees that a consumer needs **no Rust, no NDK, no uniffi, no Kotlin/Native and no linker flags** — and it is why the guides above need nothing but Android Studio / Xcode.
+
+:::note Building from source is still possible
+If you have the repository, you can always build the SDK from source and consume it locally (Android: the `:shared` Gradle module; iOS: the reference app's Gradle/Xcode bridge). See the "Alternative" sections of the two getting-started guides.
+:::
 
 Until the final testnet release:
 
