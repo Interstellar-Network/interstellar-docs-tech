@@ -231,7 +231,14 @@ command; `~/.cache` lives on a read-only mount is NOT an issue — Docusaurus ca
     (no more "copy the Swift sources + Gradle Run Script phase + linker flags")
   - document the download (`gh release download` / browser) + "Add Local…" package step
   - keep the "build it from source" (the reference app) as a documented alternative
-- status: **PENDING** — not started yet (plan above).
+- status: **FIXED** → `developers/SDK/ios/getting-started.md` rewritten around the published
+  `InterstellarSdk-0.1.0.zip` local Swift package: prerequisites (Xcode only — no Rust/KMP/
+  Gradle), a new "Step 2 — Download the SDK" (private release + `gh release download`),
+  "Step 3 — Add the package to your project" (*Add Package Dependencies… > Add Local…*;
+  Xcode links **and embeds** the frameworks — no linker flags, no "Embed & Sign" phase),
+  the hello-world `ContentView` (now using the Android-parity `getterRootAccount()`), an
+  "Alternative — build the SDK from source" section (the reference-app path) and a
+  troubleshooting table. Production build passes.
 ### [9] iOS API is now **name-identical** to Android (PR #53) — sweep the iOS docs
 - source of truth: `../wallet-app-internal` PR **#53** — "the API is now the SAME as the Android SDK"
 - the iOS SDK exposes the **same function names** as Android (the `_`-prefixed uniffi wrappers
