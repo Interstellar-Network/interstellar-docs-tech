@@ -17,67 +17,60 @@ One Activity, one `TextView`, one `InterstellarSdk.create(...)` call. No Compose
 | --- | --- |
 | Android Studio | recent stable (Hedgehog or later recommended) |
 | JDK | 17 (Android Studio's embedded JBR is fine) |
-| Android SDK | `compileSdk 36` |
-| NDK | `28.0.13004108` (SDK Manager → SDK Tools → NDK (Side by side)) |
-| Rust | **nightly** toolchain (the workspace `rust-toolchain.toml` pins the exact version once copied) |
-| Rust targets | `rustup target add aarch64-linux-android x86_64-linux-android` |
+| Android SDK | `compileSdk 37` |
+| **Rust / NDK / cargo** | **not needed** — the published AAR already ships the prebuilt native libraries (`arm64-v8a` + `x86_64`) |
 | Interstellar stack | the local Docker stack from the [M6 tutorial](../../Milestones/M6/local-demo-with-docker.md) must be running (the SDK's default endpoints are `wss://127.0.0.1:2090` / `ws://127.0.0.1:9944` / IPFS `5001`) |
-| SDK access | read access to the private [`wallet-app-internal`](https://github.com/Interstellar-Network/wallet-app-internal) repo (granted to reviewers/integrators — plain `git clone`, see [SDK access](../intro.md#status--scope-please-read)) |
+| SDK access | read access to the private [`wallet-app-internal`](https://github.com/Interstellar-Network/wallet-app-internal) repo **+** a GitHub **classic** PAT with the `read:packages` scope — see [Get access to the SDK](#step-2--get-access-to-the-sdk) |
+
+:::info Which artifact?
+The SDK is published as a **private Maven package** on GitHub Packages:
+`gg.interstellar.wallet:shared:0.1.0` (the KMP root metadata + the Android AAR).
+The package inherits the visibility of the repository it is published from, so it stays private —
+see [SDK access](../intro.md#status--scope-please-read) for the full story.
+:::
 
 ## Step 1 — Create a fresh project
 
 1. **Android Studio → New Project → Empty Views Activity** (Kotlin).
 2. Name it anything (e.g. `MyFirstInterstellarApp`), package `com.example.myfirstinterstellarapp`.
-3. **Minimum SDK: API 24** (the SDK requires `minSdk 23` or above).
+3. **Minimum SDK: API 24** (the SDK requires `minSdk 24` or above).
 
 > 📷 **[SCREENSHOT PLACEHOLDER]** — *Android Studio "New Project" dialog with Empty Views Activity selected (to be captured)*
 
-## Step 2 — Bring in the SDK
+## Step 2 — Get access to the SDK
 
-Clone the SDK repository (you have read access as a reviewer/integrator — see [SDK access](../intro.md#status--scope-please-read)) and copy these items **from its root into your project root**:
+The SDK lives in a **private** repository, so you need two things.
 
-```bash
-git clone ssh://git@github.com/Interstellar-Network/wallet-app-internal.git
-cd wallet-app-internal
-# then copy into YOUR project root:
-#   shared/  Cargo.toml  Cargo.lock  rust-toolchain.toml  .cargo/config.toml
+### 2.1 — Read access to the repository
+
+Ask Interstellar for read access to [`Interstellar-Network/wallet-app-internal`](https://github.com/Interstellar-Network/wallet-app-internal). Without it the Maven package is invisible to you (and so is the source, if you want to read it).
+
+### 2.2 — A GitHub **classic** personal access token
+
+GitHub Packages only authenticates with a **classic** PAT — fine-grained tokens are *not* supported. The official instructions are in
+[Managing your personal access tokens](https://docs.github.com/en/authentication/keeping-your-account-and-data-secure/managing-your-personal-access-tokens); the short version:
+
+1. **GitHub → Settings → Developer settings → Personal access tokens → Tokens (classic) → Generate new token (classic)**.
+2. Select the **`read:packages`** scope (that is all a consumer needs).
+3. If the organisation enforces SAML SSO, click **Configure SSO** and authorize the token for `Interstellar-Network`.
+4. Copy the token (`ghp_…`) — GitHub shows it only once.
+
+### 2.3 — Give the token to Gradle
+
+Put it in your **global** Gradle properties — `~/.gradle/gradle.properties` (never in the project, never in git):
+
+```properties
+gpr.user=<your-github-username>
+gpr.key=ghp_…your-classic-token…
 ```
 
-| What | Why |
-| --- | --- |
-| `shared/` | the SDK Gradle module (Kotlin API + its Rust sources under `shared/rust/`) |
-| `Cargo.toml` | the Rust workspace manifest the module's build drives |
-| `Cargo.lock` | pinned Rust dependencies |
-| `rust-toolchain.toml` | pinned nightly toolchain |
-| `.cargo/config.toml` | cargo env needed by the Rust build |
+`gpr.user` is your GitHub **username** (not your email, not the org name). The environment variables `GITHUB_ACTOR` / `GITHUB_TOKEN` work too if you prefer them.
 
-Your project root then looks like:
-
-```
-MyFirstInterstellarApp/
-├── app/                    ← your app module
-├── shared/                 ← the Interstellar SDK module (copied)
-├── Cargo.toml              ← Rust workspace (copied)
-├── Cargo.lock
-├── rust-toolchain.toml
-├── .cargo/config.toml
-├── build.gradle.kts
-└── settings.gradle.kts
-```
-
-> 📷 **[SCREENSHOT PLACEHOLDER]** — *Project view showing `app/` + `shared/` + the copied Rust workspace files (to be captured)*
-
-:::info Why these files
-The SDK module compiles its **Rust core** (garbled circuits, chain clients) with `cargo` during the Gradle build — the workspace must live at your **project root** (the module's build scripts use the Gradle `rootDir` as the cargo workspace).
-:::
-
-:::note Artifact publication — TBD (placeholder)
-The SDK is **not yet published** to a package registry (no Maven coordinate / published AAR yet) — today the only distribution channel is the **git repository** cloned above. A published artifact is planned; ask us for the current status.
-:::
+> ⚠️ **The Maven URL owner is lowercase.** GitHub requires `maven.pkg.github.com/interstellar-network/…` even though the organisation is `Interstellar-Network`. See [Working with the Gradle registry](https://docs.github.com/en/packages/working-with-a-github-packages-registry/working-with-the-gradle-registry).
 
 ## Step 3 — Wire up Gradle
 
-**`settings.gradle.kts`** — include the module and add the repositories the SDK needs:
+**`settings.gradle.kts`** — add the GitHub Packages repository (it is the only extra one; the SDK's own dependencies come from `google()` and `mavenCentral()`):
 
 ```kotlin
 pluginManagement {
@@ -92,27 +85,34 @@ dependencyResolutionManagement {
     repositories {
         google()
         mavenCentral()
-        maven("https://jitpack.io")   // needed by the SDK's Rust/KMP dependencies
+        maven {
+            name = "GitHubPackages"
+            // NOTE: the owner MUST be lowercase, even though the org is "Interstellar-Network"
+            url = uri("https://maven.pkg.github.com/interstellar-network/wallet-app-internal")
+            credentials {
+                username = providers.gradleProperty("gpr.user").orNull
+                    ?: providers.environmentVariable("GITHUB_ACTOR").orNull
+                password = providers.gradleProperty("gpr.key").orNull
+                    ?: providers.environmentVariable("GITHUB_TOKEN").orNull
+            }
+        }
     }
 }
 rootProject.name = "MyFirstInterstellarApp"
 include(":app")
-include(":shared")
 ```
 
-**`app/build.gradle.kts`** — depend on the module and pick the ABI dimension:
+**`app/build.gradle.kts`** — depend on the SDK:
 
 ```kotlin
 android {
     namespace = "com.example.myfirstinterstellarapp"
-    compileSdk = 36
+    compileSdk = 37
 
     defaultConfig {
         applicationId = "com.example.myfirstinterstellarapp"
         minSdk = 24
-        targetSdk = 36
-        // The SDK module ships per-ABI flavors: "x86_64" for emulators, "arm64" for devices.
-        missingDimensionStrategy("abi", "x86_64")   // use "arm64" for a physical device
+        targetSdk = 37
     }
     compileOptions {
         sourceCompatibility = JavaVersion.VERSION_17
@@ -122,14 +122,24 @@ android {
 }
 
 dependencies {
-    implementation("androidx.core:core-ktx:1.13.1")
-    implementation("androidx.appcompat:appcompat:1.7.0")
-    implementation("androidx.lifecycle:lifecycle-runtime-ktx:2.8.7")
-    implementation(project(":shared"))   // ← the Interstellar SDK
+    implementation("androidx.core:core-ktx:1.19.1")
+    implementation("androidx.appcompat:appcompat:1.8.0")
+    implementation("androidx.lifecycle:lifecycle-runtime-ktx:2.11.0")
+    implementation("gg.interstellar.wallet:shared:0.1.0")   // ← the Interstellar SDK
 }
 ```
 
-Let Gradle **sync** — the first sync/build compiles the Rust core (several minutes; subsequent builds are incremental).
+**`gradle.properties`** (project level) — the AAR is big (it embeds two native ABIs), so give the Gradle daemon enough heap:
+
+```properties
+org.gradle.jvmargs=-Xmx2048M
+```
+
+:::info No ABI juggling needed
+The published AAR contains **both** `arm64-v8a` (real devices) and `x86_64` (emulators), so there is no `missingDimensionStrategy("abi", …)` to set — the same APK runs everywhere.
+:::
+
+Let Gradle **sync** — the first sync downloads the SDK and its dependencies.
 
 ## Step 4 — Initialize the SDK and show the root account ID
 
@@ -207,13 +217,47 @@ adb reverse tcp:5001 tcp:5001
 
 The same device key + root account survive app restarts (and iOS reinstalls, see the [iOS guide](../ios/getting-started.md)); the account appears in the stack's chain state — you can inspect it with [Polkadot.js Apps](https://polkadot.js.org/apps/?rpc=ws://localhost:9944).
 
+## Alternative — build the SDK from source
+
+If you have the `wallet-app-internal` repository checked out, you can consume the SDK **without** the private Maven registry at all: publish it to a local Maven repository and point Gradle at it.
+
+```bash
+# in the wallet-app-internal checkout
+./gradlew :shared:publishSdkToLocalTest -Psdk.version=0.1.0-local
+# → shared/build/local-maven/gg/interstellar/wallet/shared/…
+```
+
+Then add the repository to `settings.gradle.kts` and depend on the local version:
+
+```kotlin
+repositories {
+    google()
+    mavenCentral()
+    maven {
+        name = "localSdk"
+        url = uri("<path-to>/wallet-app-internal/shared/build/local-maven")
+    }
+}
+```
+
+```kotlin
+dependencies {
+    implementation("gg.interstellar.wallet:shared:0.1.0-local")
+}
+```
+
+:::note
+This path also needs **Rust nightly**, the **Android NDK** and the cargo Android targets, because the AAR is compiled from source: `rustup target add aarch64-linux-android x86_64-linux-android`. Prefer the published artifact unless you want to patch the SDK.
+:::
+
 ## Troubleshooting
 
 | Symptom | Fix |
 | --- | --- |
-| Gradle: "The project uses flavors but…" / dimension error | make sure `missingDimensionStrategy("abi", …)` is set (or add matching flavors) |
-| `cargo: … can't find C compiler` / NDK errors | install **NDK 28.0.13004108**; the module selects it via `ndkVersion` |
-| `rustc: the nightly toolchain is not installed` | `rustup toolchain install nightly` (or let `rust-toolchain.toml` drive it) + the two `rustup target add` above |
+| `Could not find gg.interstellar.wallet:shared:0.1.0` | the GitHub Packages repository is missing or the credentials are wrong — check the URL (lowercase owner!), `gpr.user` / `gpr.key` in `~/.gradle/gradle.properties`, and that your token has `read:packages` **and** SSO authorization |
+| `401 Unauthorized` / `403 Forbidden` | your token is missing the `read:packages` scope, or it was not authorized for the org's SSO, or you have no read access to the private repo |
+| `Received status code 402` while publishing (maintainers) | the organisation's GitHub Packages budget is exhausted — see the [Packages billing docs](https://docs.github.com/en/billing/concepts/product-billing/github-packages) |
+| `OutOfMemoryError` / D8 dex merge fails | raise `org.gradle.jvmargs` to `-Xmx2048M` in the project's `gradle.properties` |
 | App shows `SDK init failed: …` at start | the local stack isn't reachable — check Docker + `adb reverse` for **all three** ports |
 | Init succeeds but no balances | expected for a fresh account — fund the coin address (see the [M6 tutorial](../../Milestones/M6/local-demo-with-docker.md)) |
 

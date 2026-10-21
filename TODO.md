@@ -30,15 +30,27 @@ cd ~/workspace/interstellar/interstellar-docs-tech
 PATH=~/workspace/bin:$PATH npm ci --no-audit --no-fund
 ```
 
-Start / keep alive the dev server (background, port 3000, hot-reload on file edits):
+Start / keep alive the dev server (background, **port 3456**, hot-reload on file edits).
+A helper script does it (it detaches the server from the agent's process group, so it
+survives the command timeouts):
 
 ```sh
 cd ~/workspace/interstellar/interstellar-docs-tech
-PATH=~/workspace/bin:$PATH nohup npx docusaurus start --no-open --host 0.0.0.0 --port 3000 \
-  > /tmp/docusaurus-dev.log 2>&1 &
-# check: curl -s -o /dev/null -w "%{http_code}\n" http://localhost:3000/   # -> 200
+./.dev-server.sh
+# check: curl -s -o /dev/null -w "%{http_code}\n" http://127.0.0.1:3456/   # -> 200
 # logs:  tail -f /tmp/docusaurus-dev.log
 ```
+
+Manual equivalent:
+
+```sh
+cd ~/workspace/interstellar/interstellar-docs-tech
+PATH=~/workspace/bin:$PATH setsid nohup npx docusaurus start --no-open --host 0.0.0.0 \
+  --port 3456 > /tmp/docusaurus-dev.log 2>&1 < /dev/null &
+```
+
+Production build check (takes minutes → run it in the background, `./.build-check.sh`;
+the exit code lands in `/tmp/docusaurus-build.exit`, the log in `/tmp/docusaurus-build.log`).
 
 If the server dies (log shows "compiled successfully" but process gone), restart with the same
 command; `~/.cache` lives on a read-only mount is NOT an issue — Docusaurus cache is in-repo
@@ -169,6 +181,120 @@ command; `~/.cache` lives on a read-only mount is NOT an issue — Docusaurus ca
   Run Script phase `:shared:embedAndSignAppleFrameworkForXcode` + reference-app build settings
   (FRAMEWORK/LIBRARY_SEARCH_PATHS, OTHER_LDFLAGS, bridging header, Generated/)
 
+### [7] Android SDK: consume the **published** Maven artifact (GitHub Packages) — rewrite the getting-started
+- source of truth: `../wallet-app-internal` PR **#52** ("Android Firebase App Distribution + SDK publishing")
+- facts (from the PR):
+  - `:shared` applies `maven-publish` → group `gg.interstellar.wallet`, artifact `shared`,
+    published test version **`0.1.0`** (KMP root metadata + the Android AAR `shared-android`)
+  - distribution = **GitHub Packages** (private, repository-scoped) →
+    `https://maven.pkg.github.com/interstellar-network/wallet-app-internal` (**lowercase owner!**)
+  - auth = **classic** PAT (`read:packages` for consumers) + read access to the private repo;
+    fine-grained PATs are NOT supported by GitHub Packages
+  - the published AAR already contains the prebuilt native libs (`arm64-v8a` **and** `x86_64`)
+    → a consumer needs **no Rust, no NDK, no cargo, no `:shared` module copy**
+  - the consumer build needs `org.gradle.jvmargs=-Xmx2048M` (else D8 dex merging OOMs)
+  - a local alternative exists: `./gradlew :shared:publishSdkToLocalTest -Psdk.version=0.1.0-local`
+    → `shared/build/local-maven` (this is what the `sdk-consumer/` smoke test resolves)
+- TODO when picked up:
+  - rewrite `developers/SDK/android/getting-started.md` around the **published artifact**
+    (no more "copy `shared/` + the Rust workspace files")
+  - document the tester auth path end-to-end: classic PAT + `~/.gradle/gradle.properties`
+    (`gpr.user` / `gpr.key`) + the `settings.gradle.kts` repository block
+  - keep the local-maven variant as a documented alternative
+  - drop the now-unneeded `jitpack.io` repository and the ABI `missingDimensionStrategy`
+  - align the SDK levels with the source of truth (`compileSdk 37`, `minSdk 24`, JDK 17)
+- status: **FIXED** → `developers/SDK/android/getting-started.md` rewritten around
+  `gg.interstellar.wallet:shared:0.1.0` from GitHub Packages: prerequisites (no Rust/NDK
+  needed — the AAR ships the prebuilt `arm64-v8a` + `x86_64` libs), a new "Step 2 — Get access
+  to the SDK" (repo read access + **classic** PAT with `read:packages` + org SSO authorization +
+  `~/.gradle/gradle.properties` `gpr.user`/`gpr.key`), the `settings.gradle.kts` repository
+  block (lowercase owner!), the `app/build.gradle.kts` dependency, `org.gradle.jvmargs=-Xmx2048M`,
+  the (unchanged) hello-world `MainActivity` using `InterstellarSdk.create(...)` +
+  `getterRootAccount()`, a "build it from source instead" alternative (`:shared` module +
+  `publishSdkToLocalTest` local Maven repo) and a troubleshooting table.
+  `jitpack.io` and the ABI `missingDimensionStrategy` dropped. Production build passes.
+
+### [8] iOS SDK: consume the **published** Swift package (GitHub Release zip) — rewrite the getting-started
+- source of truth: `../wallet-app-internal` PR **#53** ("iOS TestFlight publishing + iOS SDK publishing")
+- facts (from the PR):
+  - the iOS SDK moved to **`iosSdk/`** (repo root) and is a **Swift Package Manager package**
+    (`Package.swift`, `Sources/InterstellarSdk/`, `platforms: [.iOS(.v17)]`)
+  - the published asset is **ONE ready-to-use zip** (`InterstellarSdk-0.1.0.zip`) containing the
+    package + the two `.xcframework`s (`substrate_clientFFI`, `rendererFFI`)
+  - a consumer needs **nothing but Xcode/SPM**: no Rust, no uniffi, no KMP, no Gradle,
+    **no linker flags**, no "Embed & Sign" phase (the frameworks are dynamic)
+  - distribution = **GitHub Releases** (the repo is private → the release is private too;
+    reviewers download the asset through their repo access)
+  - the SDK is **arm64 only** (device slice + arm64 simulator slice)
+- TODO when picked up:
+  - rewrite `developers/SDK/ios/getting-started.md` around the **published package**
+    (no more "copy the Swift sources + Gradle Run Script phase + linker flags")
+  - document the download (`gh release download` / browser) + "Add Local…" package step
+  - keep the "build it from source" (the reference app) as a documented alternative
+- status: **PENDING** — not started yet (plan above).
+### [9] iOS API is now **name-identical** to Android (PR #53) — sweep the iOS docs
+- source of truth: `../wallet-app-internal` PR **#53** — "the API is now the SAME as the Android SDK"
+- the iOS SDK exposes the **same function names** as Android (the `_`-prefixed uniffi wrappers
+  are internal again): `getterRootAccount` (was `getRootAccount`), `getterCampaigns` (was
+  `getCampaignIds`), `getterCampaignInfo`, `getterUserCampaigns`, `getterClientGetAccount`,
+  `getterClientGetPendingTx`, `getterLatestBroadcastedTxHash`, `extrinsicClient*`, …
+- TODO when picked up:
+  - rewrite `developers/SDK/ios/api-reference.md` with the real signatures
+  - fix `developers/SDK/ios/index.md`, `developers/SDK/ios/pinpad.md` and
+    `developers/SDK/intro.md` (the "signatures are intentionally close but not identical" claim)
+  - keep the **real** differences (amount units, `BigDecimal` vs `Decimal`, `StateFlow` vs
+    `@Published`, `InterstellarFileSharer` vs returned `Data`) in an explicit table
+- status: **PENDING** — not started yet (plan above).
+### [10] iOS: install **Xcode + a Simulator** (the Android-structure equivalent)
+- the Android getting-started starts with an explicit "install the toolchain" step; the iOS one
+  must have the same shape (Xcode from the App Store, the simulator runtime, creating a device)
+- TODO when picked up:
+  - add an "Install Xcode and a Simulator" step to `developers/SDK/ios/getting-started.md`
+  - link to Apple's official docs instead of copy-pasting them
+- status: **PENDING** — not started yet (plan above).
+### [11] iOS Simulator has **no camera** → FauxCam (WalletConnect QR)
+- the iOS Simulator cannot scan the WalletConnect QR code; the workaround is
+  <https://github.com/mkemalgokce/fauxcam> (FauxCamApp menu-bar app)
+- the simplest flow: **copy/paste the WalletConnect URI in FauxCam's "QR" tab** (it encodes the
+  text as a QR code that the simulator then "scans") — no screenshot needed
+- TODO when picked up:
+  - document the FauxCam install + usage (link to the upstream README)
+  - wire it into the M6 local demo (WalletConnect section) and the iOS getting-started
+- status: **PENDING** — not started yet (plan above).
+### [12] iOS: "save to files" shows a **white window** (Cloud Token recovery)
+- when adding a **Cloud Token** recovery, tapping "save to files" can show a **white window**
+  instead of the file explorer → the fix is **Erase All Content and Settings** on the simulator
+  + reinstall the app
+- it is a **transient simulator issue**, *not* a bug of the Interstellar app
+- TODO when picked up:
+  - document the symptom + the fix in the iOS pages (recovery / troubleshooting)
+- status: **PENDING** — not started yet (plan above).
+### [13] Android app testing: **Firebase App Distribution** (tester group)
+- source of truth: `../wallet-app-internal` PR **#52** — the Android app is distributed through
+  [Firebase App Distribution](https://firebase.google.com/docs/app-distribution/android/distribute-gradle)
+- a tester can request access to the testing group here:
+  <https://appdistribution.firebase.dev/i/71f8c7de02bcbcdc>
+- TODO when picked up:
+  - document it in the M6 local demo (Android app install section) + link to the official docs
+  - do NOT copy-paste the official docs — link to them
+- status: **PENDING** — not started yet (plan above).
+### [14] SDK access for a **tester**: Maven registry auth + iOS SDK download
+- the SDK is now **published** (PR #52 for Android, #53 for iOS) → the "Artifact publication —
+  TBD (placeholder)" boxes must be replaced by the **real** access story
+- TODO when picked up:
+  - `developers/SDK/intro.md` "Status & scope" → the real distribution story for both platforms
+  - the two getting-started guides must be consistent with it
+- status: **PENDING** — not started yet (plan above).
+### [15] SDK coverage sweep: the **whole** SDK must be documented on both platforms
+- "DO make sure the docs for each SDK are complete and expose/explain the whole SDKs for each
+  Android and iOS"
+- TODO when picked up:
+  - re-check the Android API reference against `InterstellarSdk.kt` (every public member)
+  - re-check the iOS API reference against `iosSdk/Sources/InterstellarSdk/InterstellarSdk.swift`
+    (done in [9], re-verify)
+  - make sure the **value objects / helpers** (the pinpad view, the currency math, the
+    `InterstellarFileSharer` / file-saving contract, the `CoinType` enum) are documented too
+- status: **PENDING** — not started yet (plan above).
 ## Screenshot placeholders (to be replaced with real captures)
 
 All placeholders are visible blockquotes in the pages (`📷 [SCREENSHOT PLACEHOLDER] — …`).
