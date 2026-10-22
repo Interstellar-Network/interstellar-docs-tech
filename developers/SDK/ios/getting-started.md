@@ -23,6 +23,10 @@ One SwiftUI `View`, one `InterstellarSdk.create(...)` call. No pinpad, no balanc
 
 ## Step 0 — Install Xcode and a Simulator
 
+:::warning Step 0 has not been tested end-to-end
+The steps below describe a fresh-machine setup. The subsequent steps (creating the project, adding the SDK, running the app) have been tested on a VM based on the image [`ghcr.io/cirruslabs/macos-tahoe-xcode:latest`](https://github.com/cirruslabs/macos-image-templates), which itself is based on the [macOS 26 image from `actions/runner-images`](https://github.com/actions/runner-images/blob/main/images/macos/macos-26-Readme.md). That image ships **many dependencies pre-built**, so your mileage on a clean Mac may vary (the commands and links below are the canonical way).
+:::
+
 The Android guide starts from "install Android Studio + the SDK"; the iOS equivalent is **Xcode + a simulator runtime**.
 
 ### 0.1 — Install Xcode

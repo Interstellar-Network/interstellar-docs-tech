@@ -290,6 +290,10 @@ command; `~/.cache` lives on a read-only mount is NOT an issue — Docusaurus ca
     Android Studio and the Android SDK" (setup wizard, SDK Manager, emulator creation,
     `adb devices`) — with the explicit note that the **NDK is not needed** for the
     published AAR.
+  - added a `:::warning` note in `developers/SDK/ios/getting-started.md` explaining that
+    Step 0 itself has not been tested end-to-end, but that the subsequent steps were tested
+    on a VM image (`ghcr.io/cirruslabs/macos-tahoe-xcode:latest`, based on the `macos-26`
+    image from actions/runner-images) which ships many dependencies pre-built.
   Production build passes.
 ### [11] iOS Simulator has **no camera** → FauxCam (WalletConnect QR)
 - the iOS Simulator cannot scan the WalletConnect QR code; the workaround is
