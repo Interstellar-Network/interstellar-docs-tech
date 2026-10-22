@@ -240,7 +240,9 @@ The Keychain key is **NOT deleted when the app is uninstalled** — reinstalling
 1. Start the Docker stack (node `9944`, worker `2090`, IPFS `5001`) — see the [M6 tutorial](../../Milestones/M6/local-demo-with-docker.md).
 2. Pick an **iOS Simulator** and **Run ▶** — simulators reach host `127.0.0.1` ports natively (no `adb reverse` needed).
 
-> 📷 **[SCREENSHOT PLACEHOLDER]** — *iOS Simulator running the hello-world app, screen showing the 64-char hex root account id (to be captured)*
+> **What to expect:** While the app starts, watch the **Xcode console** — you will see logs for the connection to the worker, key generation/registration in the Keychain, and the initial balance/account fetches. If everything works, the app shows the **64-character hex root account ID** after about **10–20 seconds**.
+
+![iOS Simulator running the hello-world app, showing the root account ID](/img/ios-simulator-root-account.png)
 
 ## Alternative — build the SDK from source
 

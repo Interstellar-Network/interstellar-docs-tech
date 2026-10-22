@@ -401,7 +401,7 @@ GUI sessions; a local hello-world build is also possible but heavy, ask first):
      `Xcode_AddLocalBottom.png`, `Xcode_AddPackageLocalSelected.png`,
      `Xcode_AddPackageProgressPopup.png`, `Xcode_ChoosePackageProducts.png` added to `static/img/`
      and embedded in the guide)
-  3. [ ] iOS Simulator running the app showing "Root account ID:" + 64-char hex
+  3. [x] iOS Simulator running the app showing "Root account ID:" + 64-char hex (provided by user as `static/img/ios-simulator-root-account.png`; the docs now explain the Xcode logs and the expected 10–20 s wait time)
 - [ ] `developers/Milestones/M6/local-demo-with-docker.md`:
   1. the iOS simulator running the wallet app
 
