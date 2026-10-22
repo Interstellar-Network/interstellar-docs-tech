@@ -254,6 +254,14 @@ The Keychain key is **NOT deleted when the app is uninstalled** — reinstalling
 
 ## Alternative — build the SDK from source
 
+:::warning ⚠️ Not a supported use case at this stage
+Building the SDK from source is **not supported** at this stage. It is a complex setup that
+requires **many dependencies** to be installed and configured: **Android Studio**, a **JVM**,
+**Rust** (nightly), the **Android NDK**, and the full build toolchain. Use the published zip
+package as described in [Step 2](#step-2--download-the-sdk) unless you have a specific reason
+to build from source.
+:::
+
 If you have the `wallet-app-internal` repository checked out, you can consume the SDK **from the
 checkout** instead of from the published zip.
 

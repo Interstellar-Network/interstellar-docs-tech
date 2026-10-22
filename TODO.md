@@ -244,6 +244,9 @@ command; `~/.cache` lives on a read-only mount is NOT an issue — Docusaurus ca
   to the start of "Step 3 — Add the package to your project" (where it is actually needed),
   and moved the "Why not a 'remote' (hosted) Swift package?" explanatory note to the end of
   "Step 2 — Download the SDK" (right after the folder structure).
+- added a prominent warning to the "Alternative — build the SDK from source" section: **not a
+  supported use case at this stage** — it requires many dependencies (Android Studio, a JVM,
+  Rust nightly, the Android NDK) to compile, and users should stick to the published zip package.
 ### [9] iOS API is now **name-identical** to Android (PR #53) — sweep the iOS docs
 - source of truth: `../wallet-app-internal` PR **#53** — "the API is now the SAME as the Android SDK"
 - the iOS SDK exposes the **same function names** as Android (the `_`-prefixed uniffi wrappers
