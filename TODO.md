@@ -240,6 +240,10 @@ command; `~/.cache` lives on a read-only mount is NOT an issue — Docusaurus ca
   the hello-world `ContentView` (now using the Android-parity `getterRootAccount()`), an
   "Alternative — build the SDK from source" section (the reference-app path) and a
   troubleshooting table. Production build passes.
+- reorganized the guide for better flow: moved the "Unzip the SDK before importing" warning
+  to the start of "Step 3 — Add the package to your project" (where it is actually needed),
+  and moved the "Why not a 'remote' (hosted) Swift package?" explanatory note to the end of
+  "Step 2 — Download the SDK" (right after the folder structure).
 ### [9] iOS API is now **name-identical** to Android (PR #53) — sweep the iOS docs
 - source of truth: `../wallet-app-internal` PR **#53** — "the API is now the SAME as the Android SDK"
 - the iOS SDK exposes the **same function names** as Android (the `_`-prefixed uniffi wrappers

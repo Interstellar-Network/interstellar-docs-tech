@@ -130,7 +130,32 @@ InterstellarSdk/
 └── Sources/InterstellarSdk/         ← the SDK layer + the pre-generated uniffi bindings
 ```
 
+### Why not a "remote" (hosted) Swift package?
+
+:::note
+The release also attaches the two `.xcframework`s **individually**, with their SPM checksums,
+so a `.binaryTarget(url:checksum:)` package *could* be written — but for a **private**
+repository that path is not worth it:
+
+- **SwiftPM downloads binary targets anonymously.** A private release asset needs
+  authentication and SwiftPM has nowhere to put a token, so the resolution simply fails
+  (404/403). The usual workarounds (`~/.netrc`, a custom URL scheme) are fragile.
+- **Every new build invalidates the checksum.** The checksum lives in `Package.swift`, so
+  each SDK release means: upload → recompute the checksum → edit `Package.swift` →
+  re-publish. If the checksum does not match, the resolution fails hard.
+- The **local** package (download the zip → *Add Local…*) needs none of that: no
+  authentication, no checksum, no re-publish loop — Xcode resolves it from the folder on
+  disk.
+
+For more details, cf
+[Publishing a private Swift package on GitHub with a privately hosted xcframework](https://medium.com/@p.nasirimehr/publishing-a-private-swift-package-on-github-with-a-privately-hosted-xcframework-827b8f515a98).
+:::
+
 ## Step 3 — Add the package to your project
+
+:::warning Unzip the SDK before importing
+Xcode **cannot import the `.zip` directly**. You must **unzip** it first — the **Add Local…** dialog needs a folder that contains `Package.swift`.
+:::
 
 1. In Xcode, open **File → Add Package Dependencies…**
 
@@ -168,27 +193,6 @@ InterstellarSdk/
 </figure>
 
 That is the whole installation: Xcode **links and embeds** the two dynamic frameworks by itself — there is **no** "Embed & Sign" build phase, **no** bridging header and **no** linker flag to add.
-
-### Why not a "remote" (hosted) Swift package?
-
-:::note
-The release also attaches the two `.xcframework`s **individually**, with their SPM checksums,
-so a `.binaryTarget(url:checksum:)` package *could* be written — but for a **private**
-repository that path is not worth it:
-
-- **SwiftPM downloads binary targets anonymously.** A private release asset needs
-  authentication and SwiftPM has nowhere to put a token, so the resolution simply fails
-  (404/403). The usual workarounds (`~/.netrc`, a custom URL scheme) are fragile.
-- **Every new build invalidates the checksum.** The checksum lives in `Package.swift`, so
-  each SDK release means: upload → recompute the checksum → edit `Package.swift` →
-  re-publish. If the checksum does not match, the resolution fails hard.
-- The **local** package (download the zip → *Add Local…*) needs none of that: no
-  authentication, no checksum, no re-publish loop — Xcode resolves it from the folder on
-  disk.
-
-For more details, cf
-[Publishing a private Swift package on GitHub with a privately hosted xcframework](https://medium.com/@p.nasirimehr/publishing-a-private-swift-package-on-github-with-a-privately-hosted-xcframework-827b8f515a98).
-:::
 
 ## Step 4 — Initialize the SDK and show the root account ID
 
