@@ -195,33 +195,25 @@ import SwiftUI
 import InterstellarSdk
 
 struct ContentView: View {
-    @State private var rootAccountHex: String?
-    @State private var errorText: String?
+    @State private var rootAccountHex: String = "Initializing..."
 
     var body: some View {
-        VStack(spacing: 12) {
-            if let rootAccountHex {
-                Text("Root account ID:").font(.headline)
-                Text(rootAccountHex)
-                    .font(.system(.footnote, design: .monospaced))
-                    .textSelection(.enabled)
-            } else if let errorText {
-                Text("SDK init failed: \(errorText)").foregroundColor(.red)
-            } else {
-                ProgressView("Initializing Interstellar SDK…")
-            }
+        VStack {
+            Image(systemName: "globe")
+                .imageScale(.large)
+                .foregroundStyle(.tint)
+            Text(rootAccountHex)
+                .font(.system(.footnote, design: .monospaced))
+                .textSelection(.enabled)
         }
         .padding()
         .task {
             do {
-                let sdk = try await InterstellarSdk.create(onServerResetDetected: {
-                    // Server reset detected: returning here lets the SDK re-register.
-                    // A real app shows a blocking confirmation dialog first.
-                })
+                let sdk = try await InterstellarSdk.create(onServerResetDetected: {})
                 let rootData = await sdk.getterRootAccount()
                 rootAccountHex = rootData.map { String(format: "%02hhx", $0) }.joined()
             } catch {
-                errorText = error.localizedDescription
+                rootAccountHex = "Error: \(error.localizedDescription)"
             }
         }
     }
@@ -248,7 +240,7 @@ The Keychain key is **NOT deleted when the app is uninstalled** — reinstalling
 1. Start the Docker stack (node `9944`, worker `2090`, IPFS `5001`) — see the [M6 tutorial](../../Milestones/M6/local-demo-with-docker.md).
 2. Pick an **iOS Simulator** and **Run ▶** — simulators reach host `127.0.0.1` ports natively (no `adb reverse` needed).
 
-> 📷 **[SCREENSHOT PLACEHOLDER]** — *iOS Simulator running the hello-world app, screen showing "Root account ID:" followed by the 64-char hex id (to be captured)*
+> 📷 **[SCREENSHOT PLACEHOLDER]** — *iOS Simulator running the hello-world app, screen showing the 64-char hex root account id (to be captured)*
 
 ## Alternative — build the SDK from source
 
