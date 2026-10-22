@@ -392,11 +392,12 @@ GUI sessions; a local hello-world build is also possible but heavy, ask first):
 - [ ] `developers/SDK/android/getting-started.md`:
   1. Android Studio "New Project" dialog (Empty Views Activity selected)
   2. Running app (emulator/device) showing "Root account ID:" + 64-char hex
-- [ ] `developers/SDK/ios/getting-started.md`:
-  1. Xcode "Choose a template" dialog (iOS App selected)
-  2. Xcode "Add Package Dependencies… > Add Local…" dialog with the unzipped `InterstellarSdk`
+- [x] `developers/SDK/ios/getting-started.md`:
+  1. ~Xcode "Choose a template" dialog (iOS App selected)~ → **done** (images: `Xcode_ChooseTemplate.png`,
+     `Xcode_iOSAppTemplate.png`, `Xcode_NewProjectForm.png` added to `static/img/` and embedded in the guide)
+  2. [ ] Xcode "Add Package Dependencies… > Add Local…" dialog with the unzipped `InterstellarSdk`
      folder selected
-  3. iOS Simulator running the app showing "Root account ID:" + 64-char hex
+  3. [ ] iOS Simulator running the app showing "Root account ID:" + 64-char hex
 - [ ] `developers/Milestones/M6/local-demo-with-docker.md`:
   1. the iOS simulator running the wallet app
 

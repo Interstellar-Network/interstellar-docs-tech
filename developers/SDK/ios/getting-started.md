@@ -69,11 +69,26 @@ Apple Silicon Mac the simulator is arm64 by default; on an Intel Mac set
 
 ## Step 1 — Create a fresh project
 
-1. **Xcode → File → New → Project → iOS → App** (Interface: **SwiftUI**, Language: **Swift**).
-2. Name it anything (e.g. `MyFirstInterstellarApp`).
-3. **Minimum deployment target: iOS 17.0** (the SDK package declares `platforms: [.iOS(.v17)]`).
+1. **Xcode → File → New → Project** — the *"Choose a template"* dialog opens. Pick the **iOS App** template and click *Next*.
 
-> 📷 **[SCREENSHOT PLACEHOLDER]** — *Xcode "Choose a template" dialog with the iOS App template selected (to be captured)*
+<figure>
+  <img src="/img/Xcode_ChooseTemplate.png" alt="Xcode choose a template dialog" width="350"/>
+  <figcaption>Select the iOS App template</figcaption>
+</figure>
+
+2. On the **template options** screen choose **SwiftUI** as the interface and **Swift** as the language.
+
+<figure>
+  <img src="/img/Xcode_iOSAppTemplate.png" alt="Xcode iOS App template options" width="500"/>
+  <figcaption>SwiftUI interface, Swift language</figcaption>
+</figure>
+
+3. Fill in the **new project form**: Product Name (e.g. `MyFirstInterstellarApp`), Organization Identifier, etc. Set the minimum deployment target to **iOS 17.0** (the SDK package declares `platforms: [.iOS(.v17)]`).
+
+<figure>
+  <img src="/img/Xcode_NewProjectForm.png" alt="Xcode new project form" width="500"/>
+  <figcaption>Name your project and set the deployment target</figcaption>
+</figure>
 
 ## Step 2 — Download the SDK
 
