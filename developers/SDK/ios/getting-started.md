@@ -128,13 +128,42 @@ InterstellarSdk/
 
 ## Step 3 — Add the package to your project
 
-1. In Xcode: **File → Add Package Dependencies… → Add Local…**
-2. Pick the unzipped **`InterstellarSdk`** folder (the one containing `Package.swift`).
-3. Add the `InterstellarSdk` library to your app target (**Add Product** in the dialog, or *Frameworks, Libraries, and Embedded Content* in the target's *General* tab).
+1. In Xcode, open **File → Add Package Dependencies…**
+
+<figure>
+  <img src="/img/Xcode_AddPackageDependenciesButton.png" alt="Xcode Add Package Dependencies menu item" width="500"/>
+  <figcaption>The "Add Package Dependencies…" menu item</figcaption>
+</figure>
+
+2. In the dialog, click **Add Local…** — it is **at the bottom** of the dialog.
+
+<figure>
+  <img src="/img/Xcode_AddLocalBottom.png" alt="Xcode Add Local button at the bottom of the dialog" width="500"/>
+  <figcaption>"Add Local…" is at the bottom</figcaption>
+</figure>
+
+3. Pick the unzipped **`InterstellarSdk`** folder (the one containing `Package.swift`). The dialog fills in the package details.
+
+<figure>
+  <img src="/img/Xcode_AddPackageLocalSelected.png" alt="Xcode Add Package dialog with the InterstellarSdk folder selected" width="500"/>
+  <figcaption>The InterstellarSdk folder is selected</figcaption>
+</figure>
+
+4. Click **Add Package** to confirm. Xcode resolves the package.
+
+<figure>
+  <img src="/img/Xcode_AddPackageProgressPopup.png" alt="Xcode package resolution progress popup" width="350"/>
+  <figcaption>Resolving the package</figcaption>
+</figure>
+
+5. In the **Choose Package Products** dialog, add the `InterstellarSdk` library to your app target and click **Add Package**.
+
+<figure>
+  <img src="/img/Xcode_ChoosePackageProducts.png" alt="Xcode Choose Package Products dialog" width="500"/>
+  <figcaption>Add the InterstellarSdk library to the app target</figcaption>
+</figure>
 
 That is the whole installation: Xcode **links and embeds** the two dynamic frameworks by itself — there is **no** "Embed & Sign" build phase, **no** bridging header and **no** linker flag to add.
-
-> 📷 **[SCREENSHOT PLACEHOLDER]** — *Xcode "Add Package Dependencies… > Add Local…" dialog with the unzipped InterstellarSdk folder selected (to be captured)*
 
 ### Why not a "remote" (hosted) Swift package?
 
