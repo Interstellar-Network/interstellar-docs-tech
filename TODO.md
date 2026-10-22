@@ -175,7 +175,7 @@ command; `~/.cache` lives on a read-only mount is NOT an issue — Docusaurus ca
 - status: **FIXED** → `developers/SDK/android/getting-started.md` + `developers/SDK/ios/getting-started.md`
   (sidebar positions reshuffled: getting-started=1, api-reference=2, pinpad=3; index "Next steps",
   M6 quick-start and interstellar_sdk.md table now link to them)
-  - note: the iOS "Step 4" hello-world sample was updated to match the actual `iosApp/InterstellarSdk/ContentView.swift` template app (simpler `@State` string + globe icon; `onServerResetDetected: {}` inline).
+  - note: the iOS "Step 4" hello-world sample was updated to match the actual `iosApp/InterstellarSdk/ContentView.swift` template app (simpler `@State` string + globe icon; `onServerResetDetected: {}` inline); the display text was then simplified to `Text("Account: \(rootAccountHex)").font(.headline)`.
 - integration recipes verified against wallet-app-internal: Android = copy `shared/` + the Rust
   workspace files (Cargo.toml, Cargo.lock, rust-toolchain.toml, .cargo/config.toml) because the
   module's cargo build runs at the Gradle rootDir; iOS = sibling wallet-app-internal checkout +

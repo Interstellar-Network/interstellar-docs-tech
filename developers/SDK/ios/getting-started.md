@@ -202,8 +202,8 @@ struct ContentView: View {
             Image(systemName: "globe")
                 .imageScale(.large)
                 .foregroundStyle(.tint)
-            Text(rootAccountHex)
-                .font(.system(.footnote, design: .monospaced))
+            Text("Account: \(rootAccountHex)")
+                .font(.headline)
                 .textSelection(.enabled)
         }
         .padding()
