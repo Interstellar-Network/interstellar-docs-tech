@@ -304,7 +304,14 @@ command; `~/.cache` lives on a read-only mount is NOT an issue — Docusaurus ca
   - added the **symmetric** `:::warning` note in `developers/SDK/android/getting-started.md`
     (Step 0 not tested end-to-end; subsequent steps tested on a **fresh Ubuntu 26.04 VM**
     with Android Studio installed through the **App Manager** — the Ubuntu **snap** package,
-    `sudo snap install android-studio --classic`).
+    `sudo snap install android-studio --classic`). Fixed the admonition colons
+    (must be `::::` both sides, like the iOS note — the initial `:::` closing
+    colon count leaked the rest of the page into the warning box).
+  - the Android Studio install link in `developers/SDK/android/getting-started.md` now
+    points at the official **install guide** `https://developer.android.com/studio/install`
+    (instead of the generic `/studio` landing page). The older milestone docs (M1–M4,
+    `android_app_local_node_launch.md`) still use the generic link — left untouched on purpose
+    (out of the current SDK task scope).
   Production build passes.
 ### [11] iOS Simulator has **no camera** → FauxCam (WalletConnect QR)
 - the iOS Simulator cannot scan the WalletConnect QR code; the workaround is
