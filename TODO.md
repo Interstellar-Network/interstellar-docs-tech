@@ -416,8 +416,10 @@ GUI sessions; a local hello-world build is also possible but heavy, ask first):
   1. [x] Android Studio "New Project" flow → **done** (4 images added to `static/img/` and embedded in Step 1:
      `AS_LandingPage.png` (landing page with New project/Clone/Open), `AS_ProjectTypePicker.png`
      (Empty Views Activity selected), `AS_NewProjectConfig.png` (default fields: My Application,
-     Kotlin, Min SDK 24), `AS_GradleSync.png` (template ready, Gradle sync in progress));
-     Step 1 prose rewritten around that flow (name/package/language/Min SDK 24 defaults)
+     Kotlin, Min SDK 24), `AS_GradleSync.png` (template ready, Gradle sync in progress),
+     `AS_SyncDone.png` (Gradle sync finished — added right after the "sync in progress" one));
+     Step 1 prose rewritten around that flow ("pick a name" — Package name/Kotlin/Min SDK 24
+     all default to the right values, everything else left as default)
   2. Running app (emulator/device) showing "Root account ID:" + 64-char hex
 - [x] `developers/SDK/ios/getting-started.md`:
   1. ~Xcode "Choose a template" dialog (iOS App selected)~ → **done** (images: `Xcode_ChooseTemplate.png`,

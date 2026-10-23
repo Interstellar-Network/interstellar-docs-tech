@@ -89,12 +89,7 @@ adb devices            # your emulator/device must be listed
 
    ![Project type picker with "Empty Views Activity" selected](/img/AS_ProjectTypePicker.png)
 
-3. Fill in the new-project form:
-   - **Name**: `My Application` (or anything you like, e.g. `MyFirstInterstellarApp`),
-   - **Package name**: `com.example.myapplication` (auto-derived from the name),
-   - **Language**: **Kotlin**,
-   - **Minimum SDK**: **API 24** (the SDK requires `minSdk 24` or above),
-   - leave everything else at its default.
+3. Pick a name — `My Application` (or anything you like, e.g. `MyFirstInterstellarApp`); the **Package name** (`com.example.myapplication`), **Language** (**Kotlin**) and **Minimum SDK** (**API 24**, what the SDK requires) all default to the right values. Leave everything else as default.
 
    Then click **Finish**.
 
@@ -103,6 +98,10 @@ adb devices            # your emulator/device must be listed
 4. Wait for the template to materialise: the editor opens and **Gradle sync** starts in the background (progress shown in the status bar / Build window at the bottom). Let it finish before touching anything else — the SDK dependency added in the next step only resolves once the sync machinery is warm.
 
    ![Project template ready with Gradle sync in progress](/img/AS_GradleSync.png)
+
+   …and once Gradle has finished syncing, you should see this (the project tree on the left, the empty editor on the right, no more sync banners):
+
+   ![You should see this after Gradle has finished syncing](/img/AS_SyncDone.png)
 
 ## Step 2 — Get access to the SDK
 
