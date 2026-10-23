@@ -19,7 +19,7 @@ One SwiftUI `View`, one `InterstellarSdk.create(...)` call. No pinpad, no balanc
 | Xcode | 15+ (the SDK package targets **iOS 17**) — see [Step 0](#step-0--install-xcode-and-a-simulator) |
 | **Rust / KMP / Gradle / linker flags** | **not needed** — the published package ships the compiled frameworks |
 | Interstellar stack | the local Docker stack from the [M6 tutorial](../../Milestones/M6/local-demo-with-docker.md) (defaults: `wss://127.0.0.1:2090` / `ws://127.0.0.1:9944` / IPFS `5001`) |
-| SDK access | read access to the private [`wallet-app-internal`](https://github.com/Interstellar-Network/wallet-app-internal) repo — the SDK is published as an asset of its **private** release (see [SDK access](../intro.md#status--scope-please-read)) |
+| SDK access | read access to the private [`wallet-app-internal`](https://github.com/Interstellar-Network/wallet-app-internal) repo — **the repo that hosts the SDK's release** — the SDK is published as an asset of its **private** release (see [SDK access](../intro.md#status--scope-please-read)) |
 
 ## Step 0 — Install Xcode and a Simulator
 
@@ -99,6 +99,8 @@ Apple Silicon Mac the simulator is arm64 by default; on an Intel Mac set
 The iOS SDK is published as a **ready-to-use Swift package**: one zip, `InterstellarSdk-<version>.zip`, that contains the whole package (the Swift sources, the uniffi bindings and the two `.xcframework`s).
 
 Because the repository is private, the release is private too: the download needs your repository access.
+
+Why this repository? The SDK package could be distributed from **anywhere** (any release host, any Maven-style registry); for simplicity we chose **GitHub's built-in release mechanism** on the same repository as the SDK sources. GitHub Releases are **scoped to the repository they live on**, and the repo is private → the release (and its asset) is private too, only visible to accounts that have read access to `wallet-app-internal`. The read access is needed **for the release** — being able to read the sources with the same access is a side effect, not the reason.
 
 :::warning ⚠️ The release exists, the asset is not there yet
 The publishing pipeline is implemented and CI-tested, but the asset is attached only when the

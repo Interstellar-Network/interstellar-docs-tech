@@ -76,7 +76,7 @@ The **publishing pipelines are implemented and continuously verified by the CI**
 
 ### How a tester gets access
 
-1. **Repository access** — ask Interstellar for read access to the private [`wallet-app-internal`](https://github.com/Interstellar-Network/wallet-app-internal) repository. It is the source of truth: everything below is published from it.
+1. **Repository access** — ask Interstellar for read access to the private [`wallet-app-internal`](https://github.com/Interstellar-Network/wallet-app-internal) repository. **The access is needed for the registry, not for the sources.** The SDK artifacts could be published/hosted anywhere; for simplicity we chose GitHub's **built-in** registry mechanisms (GitHub Packages for Android, GitHub Releases for iOS) on the same repository as the SDK sources. Those GitHub registries are **scoped to the repository they live on**, so the artifacts are only visible to accounts that can read `wallet-app-internal` — reading the sources with the same access is a side effect.
 2. **Android — GitHub Packages (Maven)**:
    - create a **classic** personal access token with the **`read:packages`** scope (GitHub Packages does **not** support fine-grained tokens) and, if the organisation enforces SAML SSO, authorize it for `Interstellar-Network`;
    - put the credentials in your **global** `~/.gradle/gradle.properties` (`gpr.user` = your GitHub username, `gpr.key` = the token) — never in the project;

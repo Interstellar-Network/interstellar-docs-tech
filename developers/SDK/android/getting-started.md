@@ -20,7 +20,7 @@ One Activity, one `TextView`, one `InterstellarSdk.create(...)` call. No Compose
 | Android SDK | `compileSdk 37` |
 | **Rust / NDK / cargo** | **not needed** — the published AAR already ships the prebuilt native libraries (`arm64-v8a` + `x86_64`) |
 | Interstellar stack | the local Docker stack from the [M6 tutorial](../../Milestones/M6/local-demo-with-docker.md) must be running (the SDK's default endpoints are `wss://127.0.0.1:2090` / `ws://127.0.0.1:9944` / IPFS `5001`) |
-| SDK access | read access to the private [`wallet-app-internal`](https://github.com/Interstellar-Network/wallet-app-internal) repo **+** a GitHub **classic** PAT with the `read:packages` scope — see [Get access to the SDK](#step-2--get-access-to-the-sdk) |
+| SDK access | read access to the private [`wallet-app-internal`](https://github.com/Interstellar-Network/wallet-app-internal) repo — **the repo that hosts the SDK's Maven registry** — plus a GitHub **classic** PAT with the `read:packages` scope — see [Get access to the SDK](#step-2--get-access-to-the-sdk) |
 
 :::info Which artifact?
 The SDK is published as a **private Maven package** on GitHub Packages:
@@ -109,7 +109,9 @@ The SDK lives in a **private** repository, so you need two things.
 
 ### 2.1 — Read access to the repository
 
-Ask Interstellar for read access to [`Interstellar-Network/wallet-app-internal`](https://github.com/Interstellar-Network/wallet-app-internal). Without it the Maven package is invisible to you (and so is the source, if you want to read it).
+Ask Interstellar for read access to [`Interstellar-Network/wallet-app-internal`](https://github.com/Interstellar-Network/wallet-app-internal).
+
+Why this repository? The Maven package could be published to **any** Maven registry; for simplicity we chose **GitHub's built-in Maven registry** on the same repository as the SDK sources. GitHub Packages registries are **scoped to the repository they are published from**, so the package is only visible to accounts that have read access to `wallet-app-internal`. The read access is needed **for the registry** — being able to read the sources with the same access is a side effect, not the reason.
 
 ### 2.2 — A GitHub **classic** personal access token
 

@@ -406,6 +406,17 @@ command; `~/.cache` lives on a read-only mount is NOT an issue — Docusaurus ca
     local Maven repo; iOS: the local `iosSdk/` package, or the reference app's static-link
     build).
   Production build passes.
+### [16] SDK access story: clarify why repository access is needed (registry vs. sources)
+- the initial wording ("the reason is the registry, not the sources") was still confusing → user feedback:
+  - "we COULD publish the SDK Maven Package ANYWHERE in ANY MAVEN REPOSITORY! For simplicity, we CHOSE to put it next to its source code in the GitHub BUILT-IN Maven Registry on said repository"
+- TODO when picked up:
+  - align the Android (`developers/SDK/android/getting-started.md`), iOS (`developers/SDK/ios/getting-started.md`)
+    and intro (`developers/SDK/intro.md`) access explanations with the exact feedback above
+- status: **FIXED** → all three pages now use the exact user wording: the artifacts could be published/hosted
+  anywhere (any Maven registry / any release host); for simplicity we chose the GitHub **built-in** registry
+  (Packages for Android, Releases for iOS) on the same repository as the SDK sources; those registries are
+  **scoped to the repository they live on**, so the read access is needed **for the registry/release** —
+  being able to read the sources with the same access is a side effect, not the reason.
 ## Screenshot placeholders (to be replaced with real captures)
 
 All placeholders are visible blockquotes in the pages (`📷 [SCREENSHOT PLACEHOLDER] — …`).
