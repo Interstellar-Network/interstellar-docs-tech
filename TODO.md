@@ -172,7 +172,7 @@ command; `~/.cache` lives on a read-only mount is NOT an issue — Docusaurus ca
 ### [3] "Getting started" per platform (Android AND iOS)
 - fresh new app in Android Studio / Xcode → integrate SDK the most basic way
 - end with a screen showing the root account ID (`getterRootAccount` / `getRootAccount`) and stop there
-- status: **FIXED** → `developers/SDK/android/getting-started.md` + `developers/SDK/ios/getting-started.md`
+- status: **FIXED** (implementation done — pending UI screenshots) → `developers/SDK/android/getting-started.md` + `developers/SDK/ios/getting-started.md`
   (sidebar positions reshuffled: getting-started=1, api-reference=2, pinpad=3; index "Next steps",
   M6 quick-start and interstellar_sdk.md table now link to them)
   - note: the iOS "Step 4" hello-world sample was updated to match the actual `iosApp/InterstellarSdk/ContentView.swift` template app (simpler `@State` string + globe icon; `onServerResetDetected: {}` inline); the display text was then simplified to `Text("Account: \(rootAccountHex)").font(.headline)`.
@@ -413,6 +413,7 @@ GUI sessions; a local hello-world build is also possible but heavy, ask first):
      `Xcode_AddPackageProgressPopup.png`, `Xcode_ChoosePackageProducts.png` added to `static/img/`
      and embedded in the guide)
   3. [x] iOS Simulator running the app showing "Root account ID:" + 64-char hex (provided by user as `static/img/ios-simulator-root-account.png`; the docs now explain the Xcode logs and the expected 10–20 s wait time)
+  4. [x] iOS Simulator running the **offline pinpad test** (provided by user as `static/img/ios-offline-pinpad-test.png`; embedded in the hidden "Step 6" `<details>` block, inside the collapsed section)
 - [ ] `developers/Milestones/M6/local-demo-with-docker.md`:
   1. the iOS simulator running the wallet app
 

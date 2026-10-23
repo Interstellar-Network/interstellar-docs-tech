@@ -252,6 +252,316 @@ The Keychain key is **NOT deleted when the app is uninstalled** — reinstalling
 
 ![iOS Simulator running the hello-world app, showing the root account ID](/img/ios-simulator-root-account.png)
 
+## Step 6 — *(advanced, NOT supported)* Test the pinpad offline with the internal `ContentView.swift`
+
+:::warning ⚠️ Not an officially supported use case
+
+This hidden step is **NOT an officially supported use case**. The file below is the
+**all-in-one offline pinpad test** `ContentView.swift` taken from the **internal**
+[`wallet-app-internal`](https://github.com/Interstellar-Network/wallet-app-internal/blob/main/ContentView.swift)
+repo (repo root). Using it requires **knowledge of the internal file structures** — the
+test circuits `.bin` files, the SCALE-encoded `offline_circuits_package.bin` blob format,
+how the reference app wires the pinpad, etc. **Do not expect any support if you use it.**
+
+:::
+
+<details>
+<summary>▶ Show the hidden step 6</summary>
+
+Replace your hello-world `ContentView.swift` with the file below — it is self-documented:
+the Swift code, the full workflow, and the embedded Python generator script that produces
+the `offline_circuits_package.bin` blob are all in this single file. Follow the
+`WORKFLOW FOR AN LLM / DEVELOPER` comment at the top of the file.
+
+~~~swift title="ContentView.swift" collapse
+/*
+ * ============================================================================
+ * ALL-IN-ONE OFFLINE PINPAD TEST — ContentView.swift
+ * ============================================================================
+ *
+ * This single file contains EVERYTHING needed to test the full VCA pinpad
+ * screen offline (no network/IPFS/worker required for the pinpad itself).
+ *
+ * It is self-contained: the Swift app code + the workflow instructions + the
+ * Python generator script that produces the `offline_circuits_package.bin`
+ * blob are all in this file.
+ *
+ * ============================================================================
+ * WORKFLOW FOR AN LLM / DEVELOPER
+ * ============================================================================
+ *
+ * STEP 1 — GET THE SOURCE .bin FILES
+ *   From the wallet-app-internal repo:
+ *     shared/rust/circuit_evaluate/tests/data/display_message_640x360_2digits.garbled.pb.bin  (~15.8 MB)
+ *     shared/rust/circuit_evaluate/tests/data/display_pinpad_590x50.garbled.pb.bin            (~4.2 MB)
+ *
+ * STEP 2 — RUN THE PYTHON GENERATOR (embedded below)
+ *   Copy the script between the "BEGIN PYTHON GENERATOR SCRIPT" and "END PYTHON
+ *   GENERATOR SCRIPT" markers to a file named `gen_circuits.py`, then run:
+ *
+ *     python3 gen_circuits.py \
+ *       <path>/display_message_640x360_2digits.garbled.pb.bin \
+ *       <path>/display_pinpad_590x50.garbled.pb.bin \
+ *       offline_circuits_package.bin \
+ *       2
+ *
+ *   Expected output:
+ *     Wrote 20027832 bytes to offline_circuits_package.bin
+ *       msg: 15855080 bytes, pinpad: 4172674 bytes, nb_digits: 2
+ *
+ * STEP 3 — PLACE THE OUTPUT IN THE APP SOURCE DIRECTORY
+ *   Copy `offline_circuits_package.bin` next to this ContentView.swift.
+ *   The Xcode project uses PBXFileSystemSynchronizedRootGroup, so the file is
+ *   automatically bundled — no manual "Copy Bundle Resources" step needed.
+ *
+ * STEP 4 — BUILD AND RUN
+ *     xcodebuild -project InterstellarGettingStarted.xcodeproj \
+ *       -scheme InterstellarGettingStarted \
+ *       -destination "platform=iOS Simulator,name=iPhone 17e" build
+ *
+ *   The app shows the root account, loads the offline circuits from the
+ *   bundle, and auto-triggers the pinpad after 2 seconds. Tap
+ *   "Trigger Offline Pinpad Test" to re-trigger it manually.
+ *
+ * ============================================================================
+ * WHAT THE BLOB IS
+ * ============================================================================
+ *
+ * `offline_circuits_package.bin` is a SCALE-encoded
+ * `DisplayStrippedCircuitsPackageBuffers` struct (the same wire format the Rust
+ * worker uses when it sends a `CircuitsPackage` to the client). It is NOT a
+ * protobuf or raw binary.
+ *
+ * SCALE layout:
+ *   [compact_u32 len][message_pgarbled_buf bytes]
+ *   [compact_u32 len][pinpad_pgarbled_buf bytes]
+ *   [compact_u32 len][message_pgarbled_cid bytes]   (dummy 32-byte zeros)
+ *   [compact_u32 len][pinpad_pgarbled_cid bytes]    (dummy 32-byte zeros)
+ *   [u32 LE][message_nb_digits]                     (2 for "2digits" circuit)
+ *
+ * The CIDs are tx identifiers only — dummy zeros are fine for offline
+ * rendering. The resulting blob is ~20 MB.
+ */
+
+/* ============================================================================
+  * BEGIN PYTHON GENERATOR SCRIPT (gen_circuits.py)
+  * ============================================================================
+ #!/usr/bin/env python3
+ """Generate a SCALE-encoded DisplayStrippedCircuitsPackageBuffers blob."""
+ import struct
+ import sys
+
+ def compact_u32(n):
+     """Parity SCALE compact encoding for u32."""
+     if n < 64:
+         return bytes([n << 2])
+     elif n < 16384:
+         v = (n << 2) | 0b01
+         return struct.pack('<H', v)
+     elif n < 2**30:
+         v = (n << 2) | 0b10
+         return struct.pack('<I', v)
+     else:
+         # Big-integer mode: first byte lower 2 bits = 0b11,
+         # upper 6 bits = number of bytes - 4
+         b = n.to_bytes((n.bit_length() + 7) // 8, 'little')
+         nb = len(b)
+         first = ((nb - 4) << 2) | 0b11
+         return bytes([first]) + b
+
+ def read_bin(path):
+     with open(path, 'rb') as f:
+         return f.read()
+
+ def main():
+     msg_path = sys.argv[1]
+     pinpad_path = sys.argv[2]
+     out_path = sys.argv[3]
+     nb_digits = int(sys.argv[4]) if len(sys.argv) > 4 else 2
+
+     msg = read_bin(msg_path)
+     pinpad = read_bin(pinpad_path)
+
+     # Dummy CIDs (32 bytes each) - fine for offline rendering
+     msg_cid = b'\x00' * 32
+     pinpad_cid = b'\x00' * 32
+
+     # Encode DisplayStrippedCircuitsPackageBuffers
+     blob = b''
+     # 1. message_pgarbled_buf: Vec<u8>
+     blob += compact_u32(len(msg)) + msg
+     # 2. pinpad_pgarbled_buf: Vec<u8>
+     blob += compact_u32(len(pinpad)) + pinpad
+     # 3. package: DisplayStrippedCircuitsPackage
+     #    a. message_pgarbled_cid: BoundedVec<u8, 64>
+     blob += compact_u32(len(msg_cid)) + msg_cid
+     #    b. pinpad_pgarbled_cid: BoundedVec<u8, 64>
+     blob += compact_u32(len(pinpad_cid)) + pinpad_cid
+     #    c. message_nb_digits: u32 LE
+     blob += struct.pack('<I', nb_digits)
+
+     with open(out_path, 'wb') as f:
+         f.write(blob)
+
+     print(f"Wrote {len(blob)} bytes to {out_path}")
+     print(f"  msg: {len(msg)} bytes, pinpad: {len(pinpad)} bytes, nb_digits: {nb_digits}")
+
+ if __name__ == '__main__':
+     main()
+  * ============================================================================
+  * END PYTHON GENERATOR SCRIPT
+  * ============================================================================
+  */
+
+import InterstellarSdk
+import SwiftUI
+
+struct ContentView: View {
+    @State private var rootAccountHex: String = "Initializing..."
+    @State private var sdk: InterstellarSdk?
+    @State private var errorText: String?
+    @State private var offlineCircuits: CircuitsPackage?
+    @State private var showPinpad = false
+    @State private var rendererKey = 0
+    @State private var autoTriggered = false
+
+    var body: some View {
+        VStack(spacing: 16) {
+            Image(systemName: "globe")
+                .imageScale(.large)
+                .foregroundStyle(.tint)
+
+            Text("Account: \(rootAccountHex)")
+                .font(.headline)
+                .textSelection(.enabled)
+
+            if let errorText {
+                Text("Error: \(errorText)")
+                    .foregroundColor(.red)
+                    .font(.caption)
+            }
+
+            Button("Trigger Offline Pinpad Test") {
+                Task { await triggerOfflinePinpad() }
+            }
+            .disabled(sdk == nil)
+        }
+        .padding()
+        // Use fullScreenCover driven by a local @State boolean, mirroring the
+        // reference app's `.fullScreenCover(isPresented: $viewModel.navigateToPinpad)`.
+        // The parent view does NOT observe the SDK, so checking sdk.navigateToPinpad
+        // directly in .overlay would never re-evaluate when the SDK mutates it.
+        .fullScreenCover(isPresented: $showPinpad, onDismiss: {
+            rendererKey += 1
+        }) {
+            if let sdk {
+                PinpadOverlay(sdk: sdk, rendererKey: rendererKey)
+            }
+        }
+        .task {
+            // Load the hardcoded offline circuits from the app bundle.
+            // This blob is a SCALE-encoded DisplayStrippedCircuitsPackageBuffers
+            // generated from the Rust desktop_offline example's .bin files.
+            if let url = Bundle.main.url(forResource: "offline_circuits_package", withExtension: "bin"),
+               let blobData = try? Data(contentsOf: url)
+            {
+                offlineCircuits = CircuitsPackage(
+                    circuitsPackage: blobData,
+                    txId: Data(repeating: 0, count: 32),
+                    nbMessageDigits: 2
+                )
+                print("[ContentView] Loaded offline circuits: \(blobData.count) bytes")
+            } else {
+                print("[ContentView] WARNING: offline_circuits_package.bin not found in bundle")
+            }
+
+            do {
+                let newSdk = try await InterstellarSdk.create(onServerResetDetected: {})
+                sdk = newSdk
+                let rootData = await newSdk.getterRootAccount()
+                rootAccountHex = rootData.map { String(format: "%02hhx", $0) }.joined()
+                print("[ContentView] SDK ready, root account loaded")
+
+                // Auto-trigger the offline pinpad after a short delay so the
+                // full pinpad screen appears without a manual tap.
+                if !autoTriggered, offlineCircuits != nil {
+                    autoTriggered = true
+                    try? await Task.sleep(nanoseconds: 2_000_000_000)
+                    print("[ContentView] Auto-triggering offline pinpad")
+                    await triggerOfflinePinpad()
+                }
+            } catch {
+                rootAccountHex = "Error"
+                errorText = error.localizedDescription
+                print("[ContentView] SDK init failed: \(error.localizedDescription)")
+            }
+        }
+    }
+
+    private func triggerOfflinePinpad() async {
+        guard let sdk, let offlineCircuits else {
+            print("[ContentView] Cannot trigger pinpad: sdk or offlineCircuits is nil")
+            return
+        }
+        print("[ContentView] Injecting offline circuits into SDK state")
+        await MainActor.run {
+            sdk.pendingCircuitsPackage = offlineCircuits
+            sdk.navigateToPinpad = true
+            showPinpad = true
+        }
+    }
+}
+
+/// Overlay shown when the SDK has armed the pinpad.
+struct PinpadOverlay: View {
+    @ObservedObject var sdk: InterstellarSdk
+    let rendererKey: Int
+
+    var body: some View {
+        ZStack {
+            Color.black.opacity(0.9).ignoresSafeArea()
+
+            if let circuits = sdk.pendingCircuitsPackage {
+                TxPinpadScreen(
+                    circuits: circuits,
+                    sdk: sdk,
+                    onTxDone: { hash in
+                        if sdk.showTxFailed {
+                            // Coin transfer rejected
+                        } else if let hash {
+                            // Coin transfer accepted — `hash` is the tx hash
+                            _ = hash
+                        }
+                        // SDK clears navigateToPinpad/pendingCircuitsPackage
+                    }
+                )
+                .id(rendererKey)
+            } else {
+                VStack {
+                    Spacer()
+                    ProgressView()
+                        .tint(.white)
+                    Text("Preparing Transaction...")
+                        .foregroundColor(.white)
+                        .padding(.top, 8)
+                    Spacer()
+                }
+            }
+        }
+    }
+}
+
+#Preview {
+    ContentView()
+}
+~~~
+
+### What it should look like
+
+![iOS Simulator running the offline pinpad test, showing the root account and the trigger button](/img/ios-offline-pinpad-test.png)
+
+</details>
+
 ## Alternative — build the SDK from source
 
 :::warning ⚠️ Not a supported use case at this stage
