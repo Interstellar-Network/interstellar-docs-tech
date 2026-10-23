@@ -301,6 +301,10 @@ command; `~/.cache` lives on a read-only mount is NOT an issue — Docusaurus ca
     Step 0 itself has not been tested end-to-end, but that the subsequent steps were tested
     on a VM image (`ghcr.io/cirruslabs/macos-tahoe-xcode:latest`, based on the `macos-26`
     image from actions/runner-images) which ships many dependencies pre-built.
+  - added the **symmetric** `:::warning` note in `developers/SDK/android/getting-started.md`
+    (Step 0 not tested end-to-end; subsequent steps tested on a **fresh Ubuntu 26.04 VM**
+    with Android Studio installed through the **App Manager** — the Ubuntu **snap** package,
+    `sudo snap install android-studio --classic`).
   Production build passes.
 ### [11] iOS Simulator has **no camera** → FauxCam (WalletConnect QR)
 - the iOS Simulator cannot scan the WalletConnect QR code; the workaround is

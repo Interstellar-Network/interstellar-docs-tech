@@ -38,6 +38,10 @@ repository.
 
 ## Step 0 — Install Android Studio and the Android SDK
 
+::::warning Step 0 has not been tested end-to-end
+The steps below describe a fresh-machine setup. The subsequent steps (creating the project, adding the SDK, running the app) have been tested on a **fresh Ubuntu 26.04 VM** with Android Studio installed through the **App Manager** (ie the Ubuntu **snap package**: `sudo snap install android-studio --classic`). That setup ships the SDK components the snap bundles, so your mileage on a clean machine may vary (the commands and links below are the canonical way).
+:::
+
 The iOS guide starts from "install Xcode + a simulator"; the Android equivalent is **Android Studio + the Android SDK**.
 
 ### 0.1 — Install Android Studio
