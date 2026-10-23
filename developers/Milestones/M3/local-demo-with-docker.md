@@ -154,7 +154,7 @@ While the app runs on Apple Silicon (M1–M4), emulator performance may vary due
 
 | Recommended Option             | Notes                                                                 |
 |-------------------------------|-----------------------------------------------------------------------|
-| Mid-to-high-end ARM device     | **Preferred**. e.g., Pixel 5–Pixel 8. Avoid Android 16 (API 36) for now. |
+| Mid-to-high-end ARM device     | **Preferred**. e.g., Pixel 5–Pixel 8. **Tested with Android 16 (API 36)** — the API 36 crash is emulator-only (see below). |
 | x86_64 emulator (Intel)        | Reliable with mid-range or better GPU.                                |
 | Apple Silicon (M3/M4) emulator | Acceptable if GPU is sufficient. Better than M1/M2 for rendering.     |
 | Apple Silicon (M1/M2) emulator | Works, but may show degraded performance or rendering issues.         |
@@ -187,19 +187,24 @@ Ensure that your device is configured for **english** language
 :::
 ### Option 2: Emulator
 
-1. [Create](https://developer.android.com/studio/run/managing-avds#createavd)  a `Pixel 7` or equivalent emulator `API 31+` - `API 35` 
-2. Edit the emulator and select an API 31+ below the default API 36 (API 34 more stable)
+1. [Create](https://developer.android.com/studio/run/managing-avds#createavd)  a `Pixel 7` or equivalent emulator with the **API 35** system image (`x86_64`)
+2. Edit the emulator and make sure the API level is **35 or lower** — API 36+ crashes in the emulator (see the note below)
 <img src="/img/API34.png" alt="API 34"  width="250"/>
 
 3. Launch the emulator
 4. Drag and drop the APK onto the emulator window to install
 
-:::info Compatibility Issue with API 36
-Our app currently crashes on Android API 36. The issue is **not caused by the new 16KB memory 
-page model**, as it runs correctly on API 35 with 16KB pages. 
-API 36 is a **very recent release** and may introduce subtle runtime or platform-level changes 
-that affect low-level Rust code (e.g., garbled circuit evaluator or frame renderer). 
-Until further investigation, **we recommend using API 34 (more stable on emulator) or earlier for testing.**
+:::info Compatibility: API 36 crashes in the **emulator**
+The app currently **crashes in the emulator with API 36+**. The issue is **not caused by the new
+16KB memory page model** — it runs correctly on API 35 with 16KB pages. API 36 is a **very
+recent release** and may introduce subtle runtime or platform-level changes that affect
+low-level Rust code (e.g. the garbled-circuit evaluator or the frame renderer).
+
+**Hardware devices are fine**: the app has been **tested with Android 16 (API 36)** on real
+phones — the problem is **specific to the emulator**.
+
+Until further investigation, **use API 35 (the current main dev image) or lower for the
+emulator**.
 :::
 
 :::note Software Rendering Required on Apple Silicon (M1/M2)
