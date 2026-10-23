@@ -81,11 +81,28 @@ adb devices            # your emulator/device must be listed
 
 ## Step 1 — Create a fresh project
 
-1. **Android Studio → New Project → Empty Views Activity** (Kotlin).
-2. Name it anything (e.g. `MyFirstInterstellarApp`), package `com.example.myfirstinterstellarapp`.
-3. **Minimum SDK: API 24** (the SDK requires `minSdk 24` or above).
+1. Launch **Android Studio**. From the landing page, click **New project** (you could also pick *Clone repository* to fetch an existing one, or *Open* to browse a local folder — we want a brand-new project here).
 
-> 📷 **[SCREENSHOT PLACEHOLDER]** — *Android Studio "New Project" dialog with Empty Views Activity selected (to be captured)*
+   ![Android Studio landing page with "New project", "Clone repository" and "Open"](/img/AS_LandingPage.png)
+
+2. Pick the **Empty Views Activity** template in the project-type picker (don't pick *No Activity* or *Empty Activity* — the *Views*-flavoured one gives us a classic layout to edit in step 4).
+
+   ![Project type picker with "Empty Views Activity" selected](/img/AS_ProjectTypePicker.png)
+
+3. Fill in the new-project form:
+   - **Name**: `My Application` (or anything you like, e.g. `MyFirstInterstellarApp`),
+   - **Package name**: `com.example.myapplication` (auto-derived from the name),
+   - **Language**: **Kotlin**,
+   - **Minimum SDK**: **API 24** (the SDK requires `minSdk 24` or above),
+   - leave everything else at its default.
+
+   Then click **Finish**.
+
+   ![New project dialog with default fields: "My Application", Kotlin, Min SDK 24](/img/AS_NewProjectConfig.png)
+
+4. Wait for the template to materialise: the editor opens and **Gradle sync** starts in the background (progress shown in the status bar / Build window at the bottom). Let it finish before touching anything else — the SDK dependency added in the next step only resolves once the sync machinery is warm.
+
+   ![Project template ready with Gradle sync in progress](/img/AS_GradleSync.png)
 
 ## Step 2 — Get access to the SDK
 
