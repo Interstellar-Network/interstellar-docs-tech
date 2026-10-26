@@ -801,6 +801,14 @@ the error in the status line and in Logcat; that is expected behaviour, not a bu
 
 ## Alternative — build the SDK from source
 
+:::warning ⚠️ Not a supported use case at this stage
+Building the SDK from source is **not supported** at this stage. It is a complex setup that
+requires **many dependencies** to be installed and configured: **Android Studio**, a **JVM**,
+**Rust** (nightly), the **Android NDK**, and the full build toolchain. Use the published Maven
+artifact as described in [Step 2](#step-2--get-access-to-the-sdk) unless you have a specific
+reason to build from source.
+:::
+
 If you have the `wallet-app-internal` repository checked out, you can consume the SDK **without**
 the private Maven registry at all. There are two ways — pick the one that fits what you are doing.
 
