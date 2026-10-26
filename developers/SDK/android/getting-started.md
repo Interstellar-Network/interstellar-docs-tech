@@ -449,13 +449,33 @@ What happens on first launch:
 2. Plug in a device (or start an x86_64 emulator) and expose the local ports to it (remember:
    `adb` is not on `PATH` by default — see [Step 0.4](#04--sanity-check)):
 
-```bash
-adb reverse tcp:2090 tcp:2090; adb reverse tcp:9944 tcp:9944; adb reverse tcp:5001 tcp:5001
-```
+   ```bash
+   adb reverse tcp:2090 tcp:2090; adb reverse tcp:9944 tcp:9944; adb reverse tcp:5001 tcp:5001
+   ```
+
+   ::::warning `adb reverse` needs a connected device — and can drop silently
+   The command **only works if a device or emulator is running** (with `adb` having detected it
+   — check `adb devices`); with no device it fails with *error: no devices/emulators found*.
+
+   The reverse forwards can also **stop working silently** (e.g. when the device reconnects,
+   after a device reboot, or when `adb` restarts) — so if the app suddenly shows
+   `SDK init failed: …`, the first thing to check is the forwards. Keep an eye on them: re-run
+   the command after any reconnect, or monitor it with
+   `watch -n5 'adb reverse --list'` (the list should show the three ports; re-run the command
+   above if it is empty).
+   ::::
 
 3. **Run ▶** the app.
 
-> 📷 **[SCREENSHOT PLACEHOLDER]** — *Emulator/phone running the hello-world app, screen showing "Root account ID:" followed by the 64-char hex id (to be captured)*
+> **What to expect:** While the app starts, watch the **Logcat** panel in Android Studio — you will see logs for the connection to the worker, key generation/registration in the Android Keystore, and the initial balance/account fetches. If everything works, the app first shows the **"Initializing Interstellar SDK…"** placeholder message, then the **64-character hex root account ID** after about **10–20 seconds**.
+
+The app starting — the placeholder message:
+
+![The app running, showing the "Initializing Interstellar SDK…" placeholder message](/img/Android_Running_InitPlaceholder.png)
+
+The app ready — the root account ID:
+
+![The app running, showing "Root account ID:" followed by the 64-character hex ID](/img/Android_Running_RootAccountID.png)
 
 The same device key + root account survive app restarts (and iOS reinstalls, see the [iOS guide](../ios/getting-started.md)); the account appears in the stack's chain state — you can inspect it with [Polkadot.js Apps](https://polkadot.js.org/apps/?rpc=ws://localhost:9944).
 
