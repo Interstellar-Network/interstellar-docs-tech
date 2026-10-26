@@ -417,6 +417,43 @@ command; `~/.cache` lives on a read-only mount is NOT an issue — Docusaurus ca
   (Packages for Android, Releases for iOS) on the same repository as the SDK sources; those registries are
   **scoped to the repository they live on**, so the read access is needed **for the registry/release** —
   being able to read the sources with the same access is a side effect, not the reason.
+### [17] Android getting-started: the user is testing it end-to-end on a fresh machine — fix what breaks
+- the user is following `developers/SDK/android/getting-started.md` on a fresh Ubuntu VM with
+  Android Studio; every failure encountered during the walkthrough is fixed in the docs immediately
+- status: **FIXED** (commits `61a7353` + `a5cf1e9`) — build **passes on the user's machine**, app
+  run **not tested yet** (hello-world screen + screenshot still pending, see below)
+  - AGP 9.0+ has **Kotlin built in** (2.2.x) and applying `org.jetbrains.kotlin.android` is
+    forbidden → the fix is a root `build.gradle.kts` `buildscript { dependencies { classpath(
+    "org.jetbrains.kotlin:kotlin-gradle-plugin:2.4.21") } }` override + stock app module plugins
+    block; `-Xskip-metadata-version-check` documented as fallback
+  - stock template files shown verbatim (settings.gradle.kts — only the GitHubPackages maven block
+    added; app/build.gradle.kts — only the version-catalog SDK dependency added; SDK dependency
+    via version catalog `libs.interstellar-sdk`)
+  - classic-PAT section now quotes the Gradle-registry docs;
+    `~/.gradle/gradle.properties` does **not** exist by default (`touch`); "quick check"
+    curl one-liner (200/401/404 meanings)
+  - `adb` not on `PATH` by default (§0.4 note, full path / PATH export); the three `adb reverse`
+    are a one-liner; a `::::important` on different-machine Docker stack/Android Studio port
+    forwarding (same warning added to the iOS getting-started Step 5)
+  - Gradle-sync screenshot added: `static/img/AS_SyncProjectWithGradleFiles.png` (after clicking
+    Sync Project with Gradle files; first sync may take a few minutes — the AAR is large)
+  - the SDK artifacts are **published** (roadmap #230/#231 CLOSED): `gg.interstellar.wallet:shared:
+    0.1.0` on GitHub Packages and `InterstellarSdk-0.1.0.zip` on the `m6-v1` release — the stale
+    "not there yet / PLACEHOLDER" warnings were dropped across intro.md, both getting-started
+    guides and the M6 interstellar_sdk.md (versions kept as `<version>` placeholders + one
+    "current version at the time of writing" line in intro.md)
+
+### [18] Android getting-started: run the hello-world and capture the remaining screenshot
+- the user has not yet **run** the demo app on the fresh machine; before that, the step-4
+  `MainActivity.kt` snippet and the expected runtime behaviour ("Root account ID:" + hex, the
+  ~10-20 s wait) should be double-checked against the actual run
+- pending items:
+  - [ ] user runs the app on the emulator/device → confirm the root-account screen works
+  - [ ] capture the Android screenshot: emulator/phone running the hello-world app showing
+    "Root account ID:" + 64-char hex (last remaining SDK screenshot placeholder)
+  - [ ] fold in any runtime issues surfaced by the run (registration, endpoints, `adb reverse`)
+- status: **OPEN** — blocked on the user running the app
+
 ## Screenshot placeholders (to be replaced with real captures)
 
 All placeholders are visible blockquotes in the pages (`📷 [SCREENSHOT PLACEHOLDER] — …`).
@@ -431,7 +468,10 @@ GUI sessions; a local hello-world build is also possible but heavy, ask first):
      `AS_SyncDone.png` (Gradle sync finished — added right after the "sync in progress" one));
      Step 1 prose rewritten around that flow ("pick a name" — Package name/Kotlin/Min SDK 24
      all default to the right values, everything else left as default)
-  2. Running app (emulator/device) showing "Root account ID:" + 64-char hex
+  2. [x] Android Studio "Sync Project with Gradle files" → **done** (`static/img/AS_SyncProjectWithGradleFiles.png`,
+     embedded at the end of Step 3; prose explains the first sync may take a few minutes)
+  3. [ ] Running app (emulator/device) showing "Root account ID:" + 64-char hex — the last remaining
+     Android screenshot; pending the user's run of the demo app (task [18])
 - [x] `developers/SDK/ios/getting-started.md`:
   1. ~Xcode "Choose a template" dialog (iOS App selected)~ → **done** (images: `Xcode_ChooseTemplate.png`,
      `Xcode_iOSAppTemplate.png`, `Xcode_NewProjectForm.png` added to `static/img/` and embedded in the guide)
