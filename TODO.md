@@ -480,8 +480,10 @@ command; `~/.cache` lives on a read-only mount is NOT an issue — Docusaurus ca
     public API); the honest caveat is "not production-ready", not "unsupported")
   - [ ] **run not attempted** — creating an above-threshold tx requires a **funded** SOL account;
     the user asked to build only (no run) for now. The pinpad cannot be reached without funding.
-  - [ ] screenshot placeholder added (`📷 [SCREENSHOT PLACEHOLDER]` in the hidden Step 6) — to be
-    replaced with a real capture when a funded run is possible.
+  - [x] screenshots added on user request — `static/img/android_mainactivity_full.png` (the
+    all-in-one "full basic app" main UI) and `static/img/android_pinpad_full.png` (the real VCA
+    pinpad rendered by the WGPU renderer) — embedded in the hidden Step 6 "What it should look
+    like" section.
 
 ## Screenshot placeholders (to be replaced with real captures)
 
@@ -503,9 +505,10 @@ GUI sessions; a local hello-world build is also possible but heavy, ask first):
      `static/img/Android_Running_InitPlaceholder.png` — the "Initializing Interstellar SDK…"
      placeholder while the app starts — and `static/img/Android_Running_RootAccountID.png` —
      "Root account ID:" + the 64-char hex ID when the app is ready)
-  4. [ ] Hidden Step 6 "full basic app" running in the Android emulator: the SOL address, the
-     "Send test transaction" button, and the real VCA pinpad full-screen. **BLOCKED on a funded
-     SOL account** (0.03 SOL above the 0.025 VCA threshold) + a real emulator/device run.
+  4. [x] Hidden Step 6 "full basic app" running in the Android emulator → **done** (two screenshots
+     provided by the user and added to `static/img/`: `android_mainactivity_full.png` — the main UI
+     with the SOL address and the "Send test transaction" button — and `android_pinpad_full.png` —
+     the real VCA pinpad rendered full-screen by the WGPU renderer)
 - [x] `developers/SDK/ios/getting-started.md`:
   1. ~Xcode "Choose a template" dialog (iOS App selected)~ → **done** (images: `Xcode_ChooseTemplate.png`,
      `Xcode_iOSAppTemplate.png`, `Xcode_NewProjectForm.png` added to `static/img/` and embedded in the guide)

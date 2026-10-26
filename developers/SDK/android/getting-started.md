@@ -762,10 +762,15 @@ class MainActivity : AppCompatActivity() {
 
 ### What it should look like
 
-> 📷 **[SCREENSHOT PLACEHOLDER]** — the all-in-one "full basic app" running in the Android
-> emulator: the SOL address at the top (tap to copy), the "Send test transaction" button, and —
-> after tapping it on a **funded** account — the real VCA pinpad rendered full-screen by the WGPU
-> renderer. Replace with a real capture when available (see `TODO.md`).
+The all-in-one "full basic app" running in the Android emulator — the SOL address at the top
+(tap to copy) and the "Send test transaction" button:
+
+![The all-in-one "full basic app" showing the SOL address and the "Send test transaction" button](/img/android_mainactivity_full.png)
+
+After tapping the button on a **funded** account, the real VCA pinpad renders full-screen (the
+WGPU renderer):
+
+![The real VCA pinpad rendered full-screen by the WGPU renderer](/img/android_pinpad_full.png)
 
 ### How to test it
 
