@@ -477,7 +477,7 @@ The app ready — the root account ID:
 
 ![The app running, showing "Root account ID:" followed by the 64-character hex ID](/img/Android_Running_RootAccountID.png)
 
-The same device key + root account survive app restarts (and iOS reinstalls, see the [iOS guide](../ios/getting-started.md)); the account appears in the stack's chain state — you can inspect it with [Polkadot.js Apps](https://polkadot.js.org/apps/?rpc=ws://localhost:9944).
+The same device key + root account survive app restarts (and iOS reinstalls, see the [iOS guide](../ios/getting-started.md)).
 
 ## Alternative — build the SDK from source
 
