@@ -472,9 +472,12 @@ command; `~/.cache` lives on a read-only mount is NOT an issue — Docusaurus ca
     with `JAVA_HOME=/snap/android-studio/current/jbr`) → `BUILD SUCCESSFUL` (the AAR's transitive
     Compose dependency makes `lightColors()` available without adding Compose explicitly)
   - [x] hidden **Step 6** added to `developers/SDK/android/getting-started.md` (mirrors the iOS
-    structure: `:::warning` "not an officially supported use case" +
+    structure: `:::warning` "reference example — not production-ready" +
     `<details><summary>▶ Show the hidden step 6</summary>` + "How to test it" + "Why self-send?" +
-    "Creating the tx requires funding" notes)
+    "Creating the tx requires funding" notes; the "not an officially supported use case" /
+    "no support if you use it" disclaimers were dropped on user request — on Android the pinpad
+    IS a supported SDK surface (`TxPinpadView`, `prepareCoinTransfer`, `navigateToPinpad` are all
+    public API); the honest caveat is "not production-ready", not "unsupported")
   - [ ] **run not attempted** — creating an above-threshold tx requires a **funded** SOL account;
     the user asked to build only (no run) for now. The pinpad cannot be reached without funding.
   - [ ] screenshot placeholder added (`📷 [SCREENSHOT PLACEHOLDER]` in the hidden Step 6) — to be

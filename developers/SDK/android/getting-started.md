@@ -479,18 +479,15 @@ The app ready — the root account ID:
 
 The same device key + root account survive app restarts (and iOS reinstalls, see the [iOS guide](../ios/getting-started.md)).
 
-## Step 6 — *(advanced, NOT supported)* Test the VCA pinpad with an all-in-one `MainActivity.kt`
+## Step 6 — *(advanced, not production-ready)* Test the VCA pinpad with an all-in-one `MainActivity.kt`
 
-:::warning ⚠️ Not an officially supported use case
+:::warning ⚠️ Reference example — not production-ready
 
-This hidden step is **NOT an officially supported use case**. The file below is an
-**all-in-one "full basic app"** that exercises the real VCA pinpad on Android: it creates a
-SOL keypair, shows the SOL address (with copy-to-clipboard), sends a **self-transfer** above
-the VCA threshold, and displays the **real WGPU-rendered pinpad** (`TxPinpadView`) when the
-SDK arms it. It is intended for testing the pinpad integration — **not** for production use.
-Using it requires knowledge of the internal SDK structure (`TxPinpadView`,
-`prepareCoinTransfer`, the VCA threshold configuration, etc.). **Do not expect any support if
-you use it.**
+The file below is an **all-in-one "full basic app"** that exercises the real VCA pinpad on
+Android: it creates a SOL keypair, shows the SOL address (with copy-to-clipboard), sends a
+**self-transfer** above the VCA threshold, and displays the **real WGPU-rendered pinpad**
+(`TxPinpadView`) when the SDK arms it. It is intended for testing the pinpad integration —
+**not** for production use.
 
 :::
 
