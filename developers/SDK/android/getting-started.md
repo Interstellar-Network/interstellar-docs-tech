@@ -24,16 +24,15 @@ One Activity, one `TextView`, one `InterstellarSdk.create(...)` call. No Compose
 
 :::info Which artifact?
 The SDK is published as a **private Maven package** on GitHub Packages:
-`gg.interstellar.wallet:shared:<version>` (the KMP root metadata + the Android AAR).
-The package inherits the visibility of the repository it is published from, so it stays private —
-see [SDK access](../intro.md#status--scope-please-read) for the full story.
+`gg.interstellar.wallet:shared:<version>` (the KMP root metadata + the Android AAR) — **published and
+verified end-to-end**: an external consumer resolves exactly this coordinate from GitHub Packages
+and builds an APK containing both ABIs. The package inherits the visibility of the repository it is
+published from, so it stays private — see [SDK access](../intro.md#status--scope-please-read) for
+the full story.
 
-:::warning ⚠️ The package is not there yet
-The publishing pipeline is implemented and CI-tested, but the package is published only when the
-M6 release is cut. The repository URL below is the **final** one; the `<version>` is the
-**planned** one — ask Interstellar for the current version and for the access to the private
-repository.
-:::
+The version changes with each SDK release — the current one is listed in the
+[SDK access section of the intro](../intro.md#status--scope-please-read) (`0.1.0` at the time of
+writing). Use the current one everywhere `<version>` appears below.
 :::
 
 ## Step 0 — Install Android Studio and the Android SDK
@@ -75,6 +74,28 @@ devices**. So pick the **API 35** system image — the current main dev image �
 
 ### 0.4 — Sanity check
 
+:::note `adb` is not on your `PATH` by default
+Android Studio installs the **platform-tools** (which contain `adb`) inside the SDK directory, but
+it does **not** add them to your shell `PATH` — so `adb devices` fails with *Command 'adb' not
+found* even on a working setup. Two options:
+
+- use the full path (the default SDK location is `$HOME/Android/Sdk/platform-tools/adb` —
+  your actual location is shown in Android Studio under *Settings → Languages & Frameworks →
+  Android SDK → Android SDK Location*):
+
+  ```bash
+  $HOME/Android/Sdk/platform-tools/adb devices
+  ```
+
+- or add the platform-tools directory to your `PATH` (in your `~/.bashrc` / `~/.zshrc`):
+
+  ```bash
+  export PATH="$PATH:$HOME/Android/Sdk/platform-tools"
+  ```
+
+The rest of this guide uses plain `adb`, assuming one of the two options above.
+:::
+
 ```bash
 adb devices            # your emulator/device must be listed
 ```
@@ -115,8 +136,11 @@ Why this repository? The Maven package could be published to **any** Maven regis
 
 ### 2.2 — A GitHub **classic** personal access token
 
-GitHub Packages only authenticates with a **classic** PAT — fine-grained tokens are *not* supported. The official instructions are in
-[Managing your personal access tokens](https://docs.github.com/en/authentication/keeping-your-account-and-data-secure/managing-your-personal-access-tokens); the short version:
+GitHub Packages only authenticates with a **classic** PAT — fine-grained tokens are *not* supported. From the official [Gradle registry](https://docs.github.com/en/packages/working-with-a-github-packages-registry/working-with-the-gradle-registry#authenticating-to-github-packages) documentation:
+
+> GitHub Packages only supports authentication using a personal access token (classic). For more information, see [Managing your personal access tokens](https://docs.github.com/en/authentication/keeping-your-account-and-data-secure/managing-your-personal-access-tokens).
+
+The short version:
 
 1. **GitHub → Settings → Developer settings → Personal access tokens → Tokens (classic) → Generate new token (classic)**.
 2. Select the **`read:packages`** scope (that is all a consumer needs).
@@ -125,7 +149,19 @@ GitHub Packages only authenticates with a **classic** PAT — fine-grained token
 
 ### 2.3 — Give the token to Gradle
 
-Put it in your **global** Gradle properties — `~/.gradle/gradle.properties` (never in the project, never in git):
+Put it in your **global** Gradle properties — `~/.gradle/gradle.properties` (never in the project, never in git).
+
+:::note The file does not exist yet
+On a fresh machine, `~/.gradle/gradle.properties` does **not** exist — Android Studio only creates
+the `~/.gradle` directory itself (with `caches/`, `daemon/`, `wrapper/`, …) on first use, and there
+is no `gradle.properties` in it. Create it first:
+
+```bash
+touch ~/.gradle/gradle.properties
+```
+:::
+
+Then add:
 
 ```properties
 gpr.user=<your-github-username>
@@ -136,24 +172,56 @@ gpr.key=ghp_…your-classic-token…
 
 > ⚠️ **The Maven URL owner is lowercase.** GitHub requires `maven.pkg.github.com/interstellar-network/…` even though the organisation is `Interstellar-Network`. See [Working with the Gradle registry](https://docs.github.com/en/packages/working-with-a-github-packages-registry/working-with-the-gradle-registry).
 
+#### Quick check (one-liner)
+
+Before touching Gradle, verify the credentials end-to-end — this fetches the SDK's
+`maven-metadata.xml` straight from the GitHub Packages registry using the two properties above:
+
+```bash
+curl -s -o /dev/null -w "%{http_code}\n" \
+  -u "$(awk -F= '$1 ~ /^gpr.user/ {print $2}' ~/.gradle/gradle.properties | tr -d ' \r'):$(awk -F= '$1 ~ /^gpr.key/ {print $2}' ~/.gradle/gradle.properties | tr -d ' \r')" \
+  https://maven.pkg.github.com/interstellar-network/wallet-app-internal/gg/interstellar/wallet/shared/maven-metadata.xml
+```
+
+| Code | Meaning |
+| --- | --- |
+| **200** | Success (Authenticated & Authorized) |
+| **401** | Token invalid / expired / missing `read:packages` |
+| **404** | Repository not found, no repo permissions, or token needs SAML SSO authorization |
+
 ## Step 3 — Wire up Gradle
 
-**`settings.gradle.kts`** — add the GitHub Packages repository (it is the only extra one; the SDK's own dependencies come from `google()` and `mavenCentral()`):
+**`settings.gradle.kts`** — the only change is to add the GitHub Packages repository to the
+`dependencyResolutionManagement` block (it is the only extra one; the SDK's own dependencies come
+from `google()` and `mavenCentral()`).
+
+Android Studio's template file looks like this — **do not rewrite it**, just add the `maven { … }`
+block to `dependencyResolutionManagement` (the template's `pluginManagement` block with its
+`includeGroupByRegex` filters and the `foojay-resolver-convention` plugin are fine as-is):
 
 ```kotlin
 pluginManagement {
     repositories {
-        google()
-        gradlePluginPortal()
+        google {
+            content {
+                includeGroupByRegex("com\\.android.*")
+                includeGroupByRegex("com\\.google.*")
+                includeGroupByRegex("androidx.*")
+            }
+        }
         mavenCentral()
+        gradlePluginPortal()
     }
+}
+plugins {
+    id("org.gradle.toolchains.foojay-resolver-convention") version "1.0.0"
 }
 dependencyResolutionManagement {
     repositoriesMode.set(RepositoriesMode.FAIL_ON_PROJECT_REPOS)
     repositories {
         google()
         mavenCentral()
-        maven {
+        maven {                                          // ← ADD THIS BLOCK (the only change)
             name = "GitHubPackages"
             // NOTE: the owner MUST be lowercase, even though the org is "Interstellar-Network"
             // The final URL of the (private) GitHub Packages registry of the repo.
@@ -167,37 +235,126 @@ dependencyResolutionManagement {
         }
     }
 }
-rootProject.name = "MyFirstInterstellarApp"
+rootProject.name = "My Application"
 include(":app")
 ```
 
-**`app/build.gradle.kts`** — depend on the SDK:
+**`build.gradle.kts`** (root) — the new templates declare the plugin **versions** here with `apply false`.
+The only change is the **buildscript classpath override** (see the warning below the catalog):
 
 ```kotlin
+// Top-level build file where you can add configuration options common to all sub-projects/modules.
+buildscript {
+    dependencies {
+        // AGP 9.0+ ships its own Kotlin compiler (2.2.x) — but the SDK is compiled with Kotlin 2.4.
+        // This classpath entry forces AGP's built-in Kotlin to use 2.4.21 instead.
+        classpath("org.jetbrains.kotlin:kotlin-gradle-plugin:2.4.21")
+    }
+}
+plugins {
+    alias(libs.plugins.android.application) apply false
+}
+```
+
+**`app/build.gradle.kts`** — here too, the stock template already has everything needed (`compileSdk 37`,
+`minSdk 24` — exactly what the SDK requires). The **only change** is the SDK dependency line at the
+end of the `dependencies` block (the `plugins` block stays exactly as the template has it — see the
+warning below: do **not** apply `org.jetbrains.kotlin.android` on AGP 9):
+
+```kotlin
+plugins {
+    alias(libs.plugins.android.application)
+}
+
 android {
-    namespace = "com.example.myfirstinterstellarapp"
-    compileSdk = 37
+    namespace = "com.example.myapplication"
+    compileSdk {
+        version = release(37)
+    }
 
     defaultConfig {
-        applicationId = "com.example.myfirstinterstellarapp"
+        applicationId = "com.example.myapplication"
         minSdk = 24
         targetSdk = 37
+        versionCode = 1
+        versionName = "1.0"
+
+        testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
+    }
+
+    buildTypes {
+        release {
+            optimization {
+                enable = true
+                packageScope = setOf("androidx.**", "kotlin.**", "kotlinx.**")
+            }
+        }
     }
     compileOptions {
-        sourceCompatibility = JavaVersion.VERSION_17
-        targetCompatibility = JavaVersion.VERSION_17
+        sourceCompatibility = JavaVersion.VERSION_11
+        targetCompatibility = JavaVersion.VERSION_11
     }
-    kotlinOptions { jvmTarget = "17" }
 }
 
 dependencies {
-    implementation("androidx.core:core-ktx:1.19.1")
-    implementation("androidx.appcompat:appcompat:1.8.0")
-    implementation("androidx.lifecycle:lifecycle-runtime-ktx:2.11.0")
-    // ⚠️ the version is the planned one — ask Interstellar for the current one.
-    implementation("gg.interstellar.wallet:shared:<version>")   // ← the Interstellar SDK
+    implementation(libs.androidx.activity.ktx)
+    implementation(libs.androidx.appcompat)
+    implementation(libs.androidx.constraintlayout)
+    implementation(libs.androidx.core.ktx)
+    implementation(libs.androidx.material)
+    implementation(libs.interstellar.sdk)   // ← ADD THIS LINE — the Interstellar SDK
+    testImplementation(libs.junit)
+    androidTestImplementation(libs.androidx.espresso.core)
+    androidTestImplementation(libs.androidx.junit)
 }
 ```
+
+That single `implementation(libs.interstellar.sdk)` line pulls the SDK in: the GitHub Packages
+repository added above resolves it, and its POM carries the transitive dependencies (JNA,
+Compose, …), so nothing else has to be declared.
+
+The SDK is declared through the **version catalog** (`gradle/libs.versions.toml`) like every other
+dependency in the file — add to the catalog:
+
+```toml
+[versions]
+interstellarSdk = "<version>"   # current version: see ../intro.md#status--scope-please-read
+
+[libraries]
+interstellar-sdk = { group = "gg.interstellar.wallet", name = "shared", version.ref = "interstellarSdk" }
+```
+
+:::warning The Kotlin compiler version MUST match the SDK's
+The SDK is compiled with **Kotlin 2.4** (its `shared` classes and the bundled
+`kotlin-stdlib-2.4.21` carry metadata version 2.4.0). The stock template compiles with the
+**Kotlin built into AGP 9.0+** (2.2.x — Kotlin support is part of AGP itself, and applying the
+`org.jetbrains.kotlin.android` plugin is **forbidden** and fails the build) — that compiler can
+only read metadata up to 2.3, so `:app:compileDebugKotlin` fails with a wall of
+"*Incompatible classes were found in dependencies / Module was compiled with an incompatible
+version of Kotlin (2.4.0, expected 2.2.0)*" errors on `kotlin.Unit`, the stdlib and every
+`gg.interstellar.wallet.*` class.
+
+The fix is to force AGP's built-in Kotlin to use **2.4.21**: add the
+`buildscript { dependencies { classpath("org.jetbrains.kotlin:kotlin-gradle-plugin:2.4.21") } }`
+block to the **root** `build.gradle.kts` (snippet above) — **do not** apply
+`org.jetbrains.kotlin.android` in either file.
+
+If AGP still complains about metadata versions for any reason, the fallback is to suppress the
+check at the bottom of `app/build.gradle.kts`:
+
+```kotlin
+kotlin {
+    compilerOptions {
+        freeCompilerArgs.add("-Xskip-metadata-version-check")
+    }
+}
+```
+
+Then clean and rebuild: `./gradlew clean compileDebugKotlin`.
+
+In general: **the app's Kotlin compiler version must be ≥ the SDK's** (bump the
+`kotlin-gradle-plugin` classpath version when a newer SDK release requires it).
+:::
 
 **`gradle.properties`** (project level) — the AAR is big (it embeds two native ABIs), so give the Gradle daemon enough heap:
 
@@ -209,14 +366,21 @@ org.gradle.jvmargs=-Xmx2048M
 The published AAR contains **both** `arm64-v8a` (real devices) and `x86_64` (emulators), so there is no `missingDimensionStrategy("abi", …)` to set — the same APK runs everywhere.
 :::
 
-Let Gradle **sync** — the first sync downloads the SDK and its dependencies.
+Then **sync the project with Gradle files** (the elephant-with-arrow icon in the toolbar, or *File → Sync Project with Gradle Files*): this triggers the SDK download. The first sync **may take a few minutes** depending on your connection — the AAR is large (it embeds the native libraries for both ABIs).
+
+![After clicking "Sync Project with Gradle files" — Gradle syncs and downloads the SDK](/img/AS_SyncProjectWithGradleFiles.png)
 
 ## Step 4 — Initialize the SDK and show the root account ID
 
-Replace `app/src/main/java/…/MainActivity.kt` with:
+Replace the **whole content** of `app/src/main/java/…/MainActivity.kt` with the code below. The
+template's boilerplate (`enableEdgeToEdge()`, the `R.layout.activity_main` + insets listener) is not
+needed — this hello world builds its own single `TextView` in code. Keep the file at the same path;
+only adjust the `package` line if you named your project something other than the default
+`My Application` (= package `com.example.myapplication`). `activity_main.xml` becomes unused and
+can be deleted.
 
 ```kotlin
-package com.example.myfirstinterstellarapp
+package com.example.myapplication
 
 import android.os.Bundle
 import android.widget.TextView
@@ -273,12 +437,20 @@ What happens on first launch:
 ## Step 5 — Run it against the local stack
 
 1. Start the Docker stack (node `9944`, worker `2090`, IPFS `5001`) — see the [M6 tutorial](../../Milestones/M6/local-demo-with-docker.md).
-2. Plug in a device (or start an x86_64 emulator) and expose the local ports to it:
+
+   ::::important Docker stack and Android Studio on different machines
+   The `adb reverse` commands below only forward the ports of the machine running **Android Studio**
+   (the `adb` host). If you run the compose stack on a **different machine**, you **MUST handle port
+   forwarding yourself** (e.g. `ssh -L` tunnels from the Android Studio machine to the stack machine,
+   or any equivalent) so that `127.0.0.1:2090/9944/5001` on the Android Studio machine actually reach
+   the stack.
+   ::::
+
+2. Plug in a device (or start an x86_64 emulator) and expose the local ports to it (remember:
+   `adb` is not on `PATH` by default — see [Step 0.4](#04--sanity-check)):
 
 ```bash
-adb reverse tcp:2090 tcp:2090
-adb reverse tcp:9944 tcp:9944
-adb reverse tcp:5001 tcp:5001
+adb reverse tcp:2090 tcp:2090; adb reverse tcp:9944 tcp:9944; adb reverse tcp:5001 tcp:5001
 ```
 
 3. **Run ▶** the app.
@@ -308,7 +480,8 @@ includeBuild("<path-to>/wallet-app-internal") {
 }
 ```
 
-**`app/build.gradle.kts`** — the dependency stays the same:
+**`app/build.gradle.kts`** — the dependency stays the same (`<version>` is arbitrary here — the
+composite build substitutes **any** requested version with the local `:shared` project):
 
 ```kotlin
 dependencies {
@@ -326,8 +499,9 @@ The other way is to let the SDK publish **itself** to a local Maven folder, and 
 exactly like the published artifact (same coordinates, same POM, same transitive dependencies):
 
 ```bash
-# in the wallet-app-internal checkout
-./gradlew :shared:publishSdkToLocalTest -Psdk.version=0.1.0-local
+# in the wallet-app-internal checkout — any version works as long as the two
+# occurrences below match (a `-local` suffix avoids clashing with real releases)
+./gradlew :shared:publishSdkToLocalTest -Psdk.version=<version>-local
 # → shared/build/local-maven/gg/interstellar/wallet/shared/…
 ```
 
@@ -346,7 +520,7 @@ repositories {
 
 ```kotlin
 dependencies {
-    implementation("gg.interstellar.wallet:shared:0.1.0-local")
+    implementation("gg.interstellar.wallet:shared:<version>-local")  // same as the publish above
 }
 ```
 
