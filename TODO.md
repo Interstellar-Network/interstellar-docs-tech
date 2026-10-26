@@ -457,6 +457,29 @@ command; `~/.cache` lives on a read-only mount is NOT an issue — Docusaurus ca
   - [ ] fold in any runtime issues surfaced by the run (registration, endpoints, `adb reverse`)
     — none reported so far
 
+### [19] Android getting-started: hidden Step 6 — all-in-one "full basic app" (VCA pinpad test)
+- the user asked for the Android equivalent of the iOS hidden Step 6: an **all-in-one**
+  `MainActivity.kt` that creates a SOL keypair, shows the SOL address (TextView + Logcat,
+  tap-to-copy with a Toast), sends a **self-transfer** of **0.03 SOL** (above the 0.025 VCA
+  threshold), and displays the **real VCA pinpad** (`TxPinpadView`) — the goal is to test the
+  pinpad integration, not to broadcast a tx.
+- status: **FIXED** (this commit) →
+  - [x] all-in-one `MainActivity.kt` written (single file: UI built in code, SDK init, SOL
+    keypair/address handling, test-tx trigger, `TxPinpadView` overlay) — matches the
+    `wallet-app-internal` reference API (`InterstellarSdk`, `CoinType`, `JniTxAmount`,
+    `TxPinpadView`, `prepareCoinTransfer`, `navigateToPinpad`, `pendingCircuitsPackage`)
+  - [x] **BUILD VERIFIED** on the test machine (`dev@192.168.122.14`, `./gradlew assembleDebug`
+    with `JAVA_HOME=/snap/android-studio/current/jbr`) → `BUILD SUCCESSFUL` (the AAR's transitive
+    Compose dependency makes `lightColors()` available without adding Compose explicitly)
+  - [x] hidden **Step 6** added to `developers/SDK/android/getting-started.md` (mirrors the iOS
+    structure: `:::warning` "not an officially supported use case" +
+    `<details><summary>▶ Show the hidden step 6</summary>` + "How to test it" + "Why self-send?" +
+    "Creating the tx requires funding" notes)
+  - [ ] **run not attempted** — creating an above-threshold tx requires a **funded** SOL account;
+    the user asked to build only (no run) for now. The pinpad cannot be reached without funding.
+  - [ ] screenshot placeholder added (`📷 [SCREENSHOT PLACEHOLDER]` in the hidden Step 6) — to be
+    replaced with a real capture when a funded run is possible.
+
 ## Screenshot placeholders (to be replaced with real captures)
 
 All placeholders are visible blockquotes in the pages (`📷 [SCREENSHOT PLACEHOLDER] — …`).
@@ -477,6 +500,9 @@ GUI sessions; a local hello-world build is also possible but heavy, ask first):
      `static/img/Android_Running_InitPlaceholder.png` — the "Initializing Interstellar SDK…"
      placeholder while the app starts — and `static/img/Android_Running_RootAccountID.png` —
      "Root account ID:" + the 64-char hex ID when the app is ready)
+  4. [ ] Hidden Step 6 "full basic app" running in the Android emulator: the SOL address, the
+     "Send test transaction" button, and the real VCA pinpad full-screen. **BLOCKED on a funded
+     SOL account** (0.03 SOL above the 0.025 VCA threshold) + a real emulator/device run.
 - [x] `developers/SDK/ios/getting-started.md`:
   1. ~Xcode "Choose a template" dialog (iOS App selected)~ → **done** (images: `Xcode_ChooseTemplate.png`,
      `Xcode_iOSAppTemplate.png`, `Xcode_NewProjectForm.png` added to `static/img/` and embedded in the guide)

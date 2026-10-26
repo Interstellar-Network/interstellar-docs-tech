@@ -479,6 +479,324 @@ The app ready — the root account ID:
 
 The same device key + root account survive app restarts (and iOS reinstalls, see the [iOS guide](../ios/getting-started.md)).
 
+## Step 6 — *(advanced, NOT supported)* Test the VCA pinpad with an all-in-one `MainActivity.kt`
+
+:::warning ⚠️ Not an officially supported use case
+
+This hidden step is **NOT an officially supported use case**. The file below is an
+**all-in-one "full basic app"** that exercises the real VCA pinpad on Android: it creates a
+SOL keypair, shows the SOL address (with copy-to-clipboard), sends a **self-transfer** above
+the VCA threshold, and displays the **real WGPU-rendered pinpad** (`TxPinpadView`) when the
+SDK arms it. It is intended for testing the pinpad integration — **not** for production use.
+Using it requires knowledge of the internal SDK structure (`TxPinpadView`,
+`prepareCoinTransfer`, the VCA threshold configuration, etc.). **Do not expect any support if
+you use it.**
+
+:::
+
+<details>
+<summary>▶ Show the hidden step 6</summary>
+
+Replace the **whole content** of your hello-world `MainActivity.kt` with the file below — it is
+self-contained: the UI (built in code), the SDK initialization, the SOL keypair/address handling,
+the test-transaction trigger, and the pinpad overlay are all in this single file. The comments at
+the top explain what it does and why each piece exists. Keep the file at the same path
+(`app/src/main/java/com/example/myapplication/MainActivity.kt`).
+
+:::info What it does — in order
+1. **Creates the SOL keypair if it does not exist.** Registration already creates keypairs; the
+   `extrinsicClientAddKeypair(CoinType.Sol)` call is idempotent (no-op when the keypair exists),
+   so it is safe on every launch.
+2. **Shows the SOL address** in a `TextView` **and** in **Logcat** (`MainActivity` tag).
+3. **Copies the address to the clipboard** when you tap it — with the same "Address copied"
+   Toast as the main app.
+4. **"Send test transaction" button**: initializes a **self-send** of **0.03 SOL** (above the
+   dev-stack VCA threshold of **0.025 SOL**), polls the pending tx, and calls
+   `prepareCoinTransfer(CoinType.Sol)` to arm the pinpad.
+5. **Displays the real VCA pinpad** (`TxPinpadView`) full-screen when the SDK signals
+   `navigateToPinpad = true`. Entering enough digits triggers the real WGPU-rendered pinpad
+   flow; the callback returns the broadcasted tx hash (or `null` for a rejection).
+:::
+
+~~~kotlin title="MainActivity.kt" collapse
+package com.example.myapplication
+
+import android.content.ClipData
+import android.content.ClipboardManager
+import android.content.Context
+import android.os.Bundle
+import android.util.Log
+import android.widget.Button
+import android.widget.FrameLayout
+import android.widget.LinearLayout
+import android.widget.TextView
+import android.widget.Toast
+import androidx.appcompat.app.AppCompatActivity
+import androidx.compose.material.lightColors
+import androidx.lifecycle.lifecycleScope
+import gg.interstellar.wallet.CoinType
+import gg.interstellar.wallet.InterstellarFileSharer
+import gg.interstellar.wallet.InterstellarSdk
+import gg.interstellar.wallet.JniTxAmount
+import gg.interstellar.wallet.SdkInitListener
+import gg.interstellar.wallet.TxPinpadView
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.launch
+
+/**
+ * ALL-IN-ONE "Full Basic App" — the Android equivalent of the iOS hidden Step 6.
+ *
+ * Demonstrates, in a single file:
+ *  1. creating a SOL keypair if it does not exist,
+ *  2. displaying the SOL address in a TextView AND in Logcat,
+ *  3. copy-to-clipboard on tapping the address (with a Toast),
+ *  4. a "Send test transaction" button (SOL, 0.03 = ABOVE the 0.025 VCA threshold),
+ *  5. arming and displaying the REAL VCA pinpad (WGPU-rendered TxPinpadView).
+ *
+ * The transaction is a SELF-SEND (recipient = our own SOL address), so the goal is to
+ * exercise the pinpad — not to move funds. The tx only broadcasts if the correct digits
+ * are entered; the pinpad itself works offline once the VCA circuits have been armed.
+ */
+class MainActivity : AppCompatActivity() {
+    private var sdk: InterstellarSdk? = null
+    private lateinit var addressTextView: TextView
+    private lateinit var statusTextView: TextView
+    private lateinit var sendButton: Button
+    private var pinpadView: TxPinpadView? = null
+    private var rootLayout: FrameLayout? = null
+
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+
+        // Build the UI in code — a single all-in-one Activity, no layout XML.
+        val root = FrameLayout(this)
+        rootLayout = root
+        val content = LinearLayout(this).apply {
+            orientation = LinearLayout.VERTICAL
+            setPadding(48, 96, 48, 48)
+        }
+
+        addressTextView = TextView(this).apply {
+            text = "Initializing Interstellar SDK…"
+            setTextIsSelectable(true)
+            setOnClickListener { copyAddressToClipboard() }
+        }
+
+        statusTextView = TextView(this).apply {
+            text = ""
+            setPadding(0, 24, 0, 24)
+        }
+
+        sendButton = Button(this).apply {
+            text = "Send test transaction (0.03 SOL to self)"
+            isEnabled = false
+            setOnClickListener { sendTestTransaction() }
+        }
+
+        content.addView(addressTextView)
+        content.addView(statusTextView)
+        content.addView(sendButton)
+        root.addView(content)
+        setContentView(root)
+
+        // 1. Initialize the SDK.
+        lifecycleScope.launch {
+            try {
+                val newSdk = InterstellarSdk.create(
+                    context = applicationContext,
+                    fileSharer = object : InterstellarFileSharer {
+                        // Only used by recovery-token export — not exercised here.
+                        override fun shareData(
+                            data: ByteArray, fileName: String, mimeType: String, shareTitle: String,
+                        ) { /* no-op */ }
+                    },
+                    listener = SdkInitListener {
+                        // Server reset detected — a real app shows a blocking dialog here.
+                    },
+                )
+                sdk = newSdk
+
+                // 2. Create the SOL keypair if it does not exist. Registration already creates
+                // keypairs; this call is idempotent (no-op when the keypair exists), so it is
+                // safe to call on every launch.
+                newSdk.extrinsicClientAddKeypair(CoinType.Sol)
+
+                // 3. Fetch the SOL address and show it in the TextView + Logcat.
+                val solAddress = newSdk.getterClientGetAccount(CoinType.Sol)
+                if (solAddress == null) {
+                    addressTextView.text = "ERROR: getterClientGetAccount(SOL) returned null"
+                } else {
+                    addressTextView.text = "SOL address:\n$solAddress\n\n(tap to copy)"
+                    Log.i(TAG, "SOL address: $solAddress")
+                    sendButton.isEnabled = true
+                }
+            } catch (e: Exception) {
+                addressTextView.text = "SDK init failed: $e"
+                Log.e(TAG, "SDK init failed", e)
+            }
+        }
+
+        // 5. Observe the SDK's pinpad state — the SDK arms it when an above-threshold tx
+        // needs VCA confirmation. TxPinpadView renders the real WGPU pinpad.
+        lifecycleScope.launch {
+            while (sdk == null) delay(100)
+            sdk!!.navigateToPinpad.collect { show ->
+                if (show && sdk?.pendingCircuitsPackage?.value != null) {
+                    showPinpad()
+                }
+            }
+        }
+    }
+
+    /** Copy the SOL address to the clipboard, mirroring the main app's "Address copied" Toast. */
+    private fun copyAddressToClipboard() {
+        val text = addressTextView.text.toString()
+        if (!text.contains("SOL address")) return
+        val clipboard = getSystemService(Context.CLIPBOARD_SERVICE) as ClipboardManager
+        clipboard.setPrimaryClip(ClipData.newPlainText("SOL address", text))
+        Toast.makeText(this, "Address copied", Toast.LENGTH_SHORT).show()
+    }
+
+    /**
+     * 4. "Send test transaction": initialize a SELF-SEND of 0.03 SOL (above the 0.025 VCA
+     * threshold), poll the pending tx, then arm the pinpad via prepareCoinTransfer().
+     *
+     * NOTE: creating an above-threshold tx requires a funded account. On an unfunded account
+     * the worker rejects the init extrinsic and the SDK surfaces InterstellarException —
+     * the pinpad therefore cannot be reached without funding. That is expected.
+     */
+    private fun sendTestTransaction() {
+        val currentSdk = sdk ?: return
+        sendButton.isEnabled = false
+        statusTextView.text = "Creating tx…"
+        lifecycleScope.launch {
+            try {
+                // Self-send: recipient = our own SOL address.
+                val recipient = currentSdk.getterClientGetAccount(CoinType.Sol)
+                if (recipient == null) {
+                    statusTextView.text = "ERROR: SOL address not available"
+                    sendButton.isEnabled = true
+                    return@launch
+                }
+
+                currentSdk.extrinsicClientInitializeTransaction(
+                    recipient = recipient,
+                    txAmount = JniTxAmount.fixed(0.03),
+                    coinType = CoinType.Sol,
+                )
+                Log.i(TAG, "initialize tx sent; polling for pending tx…")
+
+                // Poll for the pending tx — the worker processes the init asynchronously.
+                var pending = currentSdk.getterClientGetPendingTx()
+                var tries = 0
+                while (pending == null && tries < 30) {
+                    delay(1_000)
+                    pending = currentSdk.getterClientGetPendingTx()
+                    tries++
+                }
+
+                when (pending?.status) {
+                    0 -> {
+                        // RequiresVca: arm the pinpad. The navigateToPinpad collector shows it.
+                        statusTextView.text = "Above threshold → pinpad required"
+                        Log.i(TAG, "RequiresVca: arming pinpad via prepareCoinTransfer")
+                        currentSdk.prepareCoinTransfer(CoinType.Sol)
+                    }
+                    1 -> {
+                        // AutoSent: below threshold — no pinpad. Should not happen for 0.03 SOL.
+                        statusTextView.text = "Auto-sent: txHash=${pending.txHash}"
+                        Log.i(TAG, "AutoSent txHash=${pending.txHash}")
+                        sendButton.isEnabled = true
+                    }
+                    else -> {
+                        statusTextView.text = "No pending tx (status=${pending?.status})"
+                        sendButton.isEnabled = true
+                    }
+                }
+            } catch (e: Exception) {
+                // An unfunded account makes the worker reject the init extrinsic:
+                // the SDK surfaces InterstellarException instead of hanging.
+                statusTextView.text = "Send failed: $e"
+                Log.e(TAG, "Send failed", e)
+                sendButton.isEnabled = true
+            }
+        }
+    }
+
+    /** 5. Display the real VCA pinpad as a full-screen overlay. */
+    private fun showPinpad() {
+        val currentSdk = sdk ?: return
+        val root = rootLayout ?: return
+        pinpadView?.let { root.removeView(it) }
+        val pinpad = TxPinpadView(this)
+        pinpad.setup(
+            currentSdk,
+            lightColors(),
+        ) { txHash ->
+            Log.i(TAG, "pinpad callback txHash=$txHash")
+            runOnUiThread {
+                root.removeView(pinpad)
+                pinpadView = null
+                sendButton.isEnabled = true
+                statusTextView.text =
+                    if (txHash != null) "Broadcasted: $txHash" else "Pinpad rejected (nothing broadcast)"
+                Toast.makeText(
+                    this@MainActivity,
+                    if (txHash != null) "Transaction sent!" else "Transaction rejected",
+                    Toast.LENGTH_LONG,
+                ).show()
+            }
+        }
+        pinpadView = pinpad
+        root.addView(
+            pinpad,
+            FrameLayout.LayoutParams(
+                FrameLayout.LayoutParams.MATCH_PARENT,
+                FrameLayout.LayoutParams.MATCH_PARENT,
+            ),
+        )
+    }
+
+    companion object {
+        private const val TAG = "MainActivity"
+    }
+}
+~~~
+
+### What it should look like
+
+> 📷 **[SCREENSHOT PLACEHOLDER]** — the all-in-one "full basic app" running in the Android
+> emulator: the SOL address at the top (tap to copy), the "Send test transaction" button, and —
+> after tapping it on a **funded** account — the real VCA pinpad rendered full-screen by the WGPU
+> renderer. Replace with a real capture when available (see `TODO.md`).
+
+### How to test it
+
+1. **Fund the SOL address** the app shows (it is also printed to Logcat with the `MainActivity`
+   tag). The balance must be **above the VCA threshold** — the dev stack's SOL threshold is
+   **0.025 SOL**, so `0.03 SOL` is above it and the pinpad **must** appear. Any smaller amount
+   auto-sends without a pinpad.
+2. Build and install the app (Android Studio's **Run ▶**, or `./gradlew installDebug`).
+3. Tap **"Send test transaction (0.03 SOL to self)"**.
+4. Watch **Logcat**: the SDK sends the init extrinsic, polls the pending tx, and — for an
+   above-threshold amount — arms the pinpad (`RequiresVca`). The full-screen WGPU pinpad appears.
+5. Enter the correct digits (if you know them) to broadcast the self-send, or wrong digits to see
+   the rejection path (nothing is broadcast).
+
+:::note Why "self-send"?
+The recipient is the app's **own SOL address**, so the test exercises the whole
+threshold → VCA → pinpad → signature → broadcast path without needing a second funded account.
+The funds only move if the correct digits are entered.
+:::
+
+:::warning Creating the tx requires funding
+On an **unfunded** account the worker rejects the init extrinsic and the SDK surfaces
+`InterstellarException` — the pinpad therefore cannot be reached without funding. The app shows
+the error in the status line and in Logcat; that is expected behaviour, not a bug.
+:::
+
+</details>
+
 ## Alternative — build the SDK from source
 
 If you have the `wallet-app-internal` repository checked out, you can consume the SDK **without**
