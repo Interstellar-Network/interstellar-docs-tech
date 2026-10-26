@@ -102,11 +102,13 @@ Because the repository is private, the release is private too: the download need
 
 Why this repository? The SDK package could be distributed from **anywhere** (any release host, any Maven-style registry); for simplicity we chose **GitHub's built-in release mechanism** on the same repository as the SDK sources. GitHub Releases are **scoped to the repository they live on**, and the repo is private → the release (and its asset) is private too, only visible to accounts that have read access to `wallet-app-internal`. The read access is needed **for the release** — being able to read the sources with the same access is a side effect, not the reason.
 
-:::warning ⚠️ The release exists, the asset is not there yet
-The publishing pipeline is implemented and CI-tested, but the asset is attached only when the
-M6 release is cut — the [`m6-v1` release](https://github.com/Interstellar-Network/wallet-app-internal/releases/tag/m6-v1)
-exists but is **empty for now**. The version in the file name (`<version>`) is the **planned**
-one — ask Interstellar for the current version and for the access to the private repository.
+:::info The release is live
+The asset is **published and verified end-to-end**: the [`m6-v1` release](https://github.com/Interstellar-Network/wallet-app-internal/releases/tag/m6-v1)
+ships the SDK zip, which the CI consumer smoke test downloads, unzips, builds and
+**runs in the simulator**. The current version is **`0.1.0`** (`InterstellarSdk-0.1.0.zip`);
+new versions follow each SDK release — check the
+[releases page](https://github.com/Interstellar-Network/wallet-app-internal/releases) for the
+latest and use its zip below.
 :::
 
 **In the browser** — open the release and download the asset:
@@ -248,6 +250,14 @@ The Keychain key is **NOT deleted when the app is uninstalled** — reinstalling
 ## Step 5 — Run it against the local stack
 
 1. Start the Docker stack (node `9944`, worker `2090`, IPFS `5001`) — see the [M6 tutorial](../../Milestones/M6/local-demo-with-docker.md).
+
+   ::::important Docker stack and Xcode on different machines
+   The Simulator reaches host `127.0.0.1` ports **of the machine running Xcode** only. If you run
+   the compose stack on a **different machine**, you **MUST handle port forwarding yourself**
+   (e.g. `ssh -L` tunnels from the Xcode machine to the stack machine, or any equivalent) so that
+   `127.0.0.1:2090/9944/5001` on the Xcode machine actually reach the stack.
+   ::::
+
 2. Pick an **iOS Simulator** and **Run ▶** — simulators reach host `127.0.0.1` ports natively (no `adb reverse` needed).
 
 > **What to expect:** While the app starts, watch the **Xcode console** — you will see logs for the connection to the worker, key generation/registration in the Keychain, and the initial balance/account fetches. If everything works, the app shows the **64-character hex root account ID** after about **10–20 seconds**.

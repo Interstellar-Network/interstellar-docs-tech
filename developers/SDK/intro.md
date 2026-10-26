@@ -63,15 +63,17 @@ Because the two platform APIs are *independent codebases* (Kotlin vs Swift), the
 
 ## Status & scope (please read)
 
-:::warning Not public (yet) — private distribution, and the artifacts are not there yet
+:::warning Not public (yet) — private distribution
 The SDK is **not public**: it lives in the private **`wallet-app-internal`** repository and is distributed to **reviewers and testers only**, through that repository's access control. There is no open-source release.
 
-The **publishing pipelines are implemented and continuously verified by the CI** (see [below](#the-artifacts-are-proved-by-the-ci)), but the artifacts are attached only when the M6 release is cut — the release links below already exist but are **empty for now**. The versions marked ⚠️ **PLACEHOLDER** are the *planned* ones — ask us for the current version and for access.
+The **publishing pipelines are implemented and continuously verified by the CI** (see [below](#the-artifacts-are-proved-by-the-ci)), and the artifacts **are published** — the **M6 release is cut**: `m6-v1`. The versions below are the **current** ones; new versions follow each SDK release.
 
-| Platform | Distribution mechanism | Planned coordinate (⚠️ PLACEHOLDER) |
+| Platform | Distribution mechanism | Coordinate |
 | --- | --- | --- |
-| **Android** | **GitHub Packages** (a Maven registry) — repository-scoped, so the package inherits the repo's visibility and stays **private** | ⚠️ `gg.interstellar.wallet:shared:<version>` from `https://maven.pkg.github.com/interstellar-network/wallet-app-internal` |
-| **iOS** | **GitHub Releases** — SPM has no Maven; a release asset *is* the registry. One zip contains the complete Swift package | ⚠️ `InterstellarSdk-<version>.zip` from the [`m6-v1` release](https://github.com/Interstellar-Network/wallet-app-internal/releases/tag/m6-v1) |
+| **Android** | **GitHub Packages** (a Maven registry) — repository-scoped, so the package inherits the repo's visibility and stays **private** | `gg.interstellar.wallet:shared:<version>` from `https://maven.pkg.github.com/interstellar-network/wallet-app-internal` |
+| **iOS** | **GitHub Releases** — SPM has no Maven; a release asset *is* the registry. One zip contains the complete Swift package | `InterstellarSdk-<version>.zip` from the [`m6-v1` release](https://github.com/Interstellar-Network/wallet-app-internal/releases/tag/m6-v1) |
+
+At the time of writing the current version is **`0.1.0`** (Android: the `shared` package; iOS: the `InterstellarSdk-0.1.0.zip` asset of `m6-v1`). New versions follow each SDK release — check the [releases page](https://github.com/Interstellar-Network/wallet-app-internal/releases) for the latest.
 :::
 
 ### How a tester gets access
@@ -79,7 +81,7 @@ The **publishing pipelines are implemented and continuously verified by the CI**
 1. **Repository access** — ask Interstellar for read access to the private [`wallet-app-internal`](https://github.com/Interstellar-Network/wallet-app-internal) repository. **The access is needed for the registry, not for the sources.** The SDK artifacts could be published/hosted anywhere; for simplicity we chose GitHub's **built-in** registry mechanisms (GitHub Packages for Android, GitHub Releases for iOS) on the same repository as the SDK sources. Those GitHub registries are **scoped to the repository they live on**, so the artifacts are only visible to accounts that can read `wallet-app-internal` — reading the sources with the same access is a side effect.
 2. **Android — GitHub Packages (Maven)**:
    - create a **classic** personal access token with the **`read:packages`** scope (GitHub Packages does **not** support fine-grained tokens) and, if the organisation enforces SAML SSO, authorize it for `Interstellar-Network`;
-   - put the credentials in your **global** `~/.gradle/gradle.properties` (`gpr.user` = your GitHub username, `gpr.key` = the token) — never in the project;
+   - put the credentials in your **global** `~/.gradle/gradle.properties` (`gpr.user` = your GitHub username, `gpr.key` = the token) — never in the project (the file does not exist by default: create it with `touch ~/.gradle/gradle.properties`);
    - add the repository to `settings.gradle.kts` (the **owner must be lowercase**).
    - Full walkthrough: [Android — Getting Started](./android/getting-started.md#step-2--get-access-to-the-sdk).
 3. **iOS — the private GitHub release**:
