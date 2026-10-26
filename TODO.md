@@ -444,15 +444,18 @@ command; `~/.cache` lives on a read-only mount is NOT an issue — Docusaurus ca
     "current version at the time of writing" line in intro.md)
 
 ### [18] Android getting-started: run the hello-world and capture the remaining screenshot
-- the user has not yet **run** the demo app on the fresh machine; before that, the step-4
-  `MainActivity.kt` snippet and the expected runtime behaviour ("Root account ID:" + hex, the
-  ~10-20 s wait) should be double-checked against the actual run
-- pending items:
-  - [ ] user runs the app on the emulator/device → confirm the root-account screen works
-  - [ ] capture the Android screenshot: emulator/phone running the hello-world app showing
-    "Root account ID:" + 64-char hex (last remaining SDK screenshot placeholder)
+- the user has run the app on the fresh machine; the runtime behaviour is confirmed and the
+  screenshots are captured
+- status: **FIXED** (commits `1e5748a` for the guide + this commit) →
+  - [x] user runs the app on the emulator → the root-account screen works
+  - [x] two screenshots captured and embedded in Step 5: `static/img/Android_Running_InitPlaceholder.png`
+    (app starting — the "Initializing Interstellar SDK…" placeholder) and
+    `static/img/Android_Running_RootAccountID.png` (app ready — "Root account ID:" + hex)
+  - [x] a "What to expect" note added to Step 5 (Logcat logs: worker connection, Keystore
+    key generation/registration, balance/account fetches; placeholder → hex root account ID
+    after ~10–20 s) — mirroring the iOS guide
   - [ ] fold in any runtime issues surfaced by the run (registration, endpoints, `adb reverse`)
-- status: **OPEN** — blocked on the user running the app
+    — none reported so far
 
 ## Screenshot placeholders (to be replaced with real captures)
 
@@ -470,8 +473,10 @@ GUI sessions; a local hello-world build is also possible but heavy, ask first):
      all default to the right values, everything else left as default)
   2. [x] Android Studio "Sync Project with Gradle files" → **done** (`static/img/AS_SyncProjectWithGradleFiles.png`,
      embedded at the end of Step 3; prose explains the first sync may take a few minutes)
-  3. [ ] Running app (emulator/device) showing "Root account ID:" + 64-char hex — the last remaining
-     Android screenshot; pending the user's run of the demo app (task [18])
+  3. [x] Running app (emulator/device) → **done** (two screenshots embedded in Step 5:
+     `static/img/Android_Running_InitPlaceholder.png` — the "Initializing Interstellar SDK…"
+     placeholder while the app starts — and `static/img/Android_Running_RootAccountID.png` —
+     "Root account ID:" + the 64-char hex ID when the app is ready)
 - [x] `developers/SDK/ios/getting-started.md`:
   1. ~Xcode "Choose a template" dialog (iOS App selected)~ → **done** (images: `Xcode_ChooseTemplate.png`,
      `Xcode_iOSAppTemplate.png`, `Xcode_NewProjectForm.png` added to `static/img/` and embedded in the guide)
