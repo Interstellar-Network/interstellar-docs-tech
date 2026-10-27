@@ -337,7 +337,8 @@ struct ContentView: View {
     @State private var initError: String?
     @State private var sendDisabled = true
     @State private var showPinpad = false          // drives the pinpad .fullScreenCover
-    @State private var toastMessage: String?       // "Address copied" / tx result toasts
+    @State private var showToast = false           // toast visibility (drives the overlay)
+    @State private var toastText = ""              // the current toast message
 
     var body: some View {
         ZStack {
@@ -381,23 +382,26 @@ struct ContentView: View {
                     showPinpad = false
                     if sdk.showTxFailed {
                         statusText = "Pinpad rejected (nothing broadcast)"
-                        toastMessage = "Transaction rejected"
+                        presentToast("Transaction rejected")
                     } else if let hash {
                         statusText = "Broadcasted: \(hash)"
-                        toastMessage = "Transaction sent!"
+                        presentToast("Transaction sent!")
                     }
                     sendDisabled = false
                 }
             }
         }
         // The minimal toast — mirrors the reference app's `ToastView` (auto-hides after 2s).
+        // NOTE: `toastText` + `showToast` are SEPARATE @State vars on purpose. Do NOT merge
+        // them into an optional (`@State private var toastText: String?`) shown via
+        // `if let toastText { ToastView(message: toastText, isPresented: Binding(get:set:)) }`:
+        // inside the `if let`, the property is SHADOWED by an immutable local — and the
+        // Binding's escaping `set` closure then fails with "'toastText' is a 'let' constant"
+        // / "nil cannot be assigned to type String".
         .overlay(alignment: .bottom) {
-            if let toastMessage {
-                ToastView(message: toastMessage, isPresented: Binding(
-                    get: { toastMessage != nil },
-                    set: { if !$0 { toastMessage = nil } }
-                ))
-                .padding(.bottom, 60)
+            if showToast {
+                ToastView(message: toastText, isPresented: $showToast)
+                    .padding(.bottom, 60)
             }
         }
     }
@@ -438,7 +442,14 @@ struct ContentView: View {
     private func copyAddressToClipboard() {
         guard let solAddress else { return }
         UIPasteboard.general.string = solAddress
-        toastMessage = "Address copied"
+        presentToast("Address copied")
+    }
+
+    /// Show a toast — the same pattern as the main app (`showCopiedToast` +
+    /// `ToastView` in `PortfolioScreen.swift`).
+    private func presentToast(_ message: String) {
+        toastText = message
+        showToast = true
     }
 
     // MARK: - 4–6: the test transaction + the real pinpad

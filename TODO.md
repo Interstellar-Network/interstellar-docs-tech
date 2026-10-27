@@ -96,8 +96,15 @@ iOS mirror of the Android hidden Step 6 (`developers/SDK/android/getting-started
 - [x] screenshot placeholders added (2, in `What it should look like`) + listed below
 - [x] the Android hidden Step 6's code comment that pointed at the OLD iOS step updated
   ("the iOS equivalent lives in the iOS guide's hidden Step 6")
-- [ ] BUILD + run on the tart VM **not attempted yet** (out of scope this turn — next session:
-  apply the new `ContentView.swift` on the VM, xcodebuild, simulator run, capture the 2 screenshots)
+- [x] BUILD confirmed on the tart VM (`test-run-02`, Xcode 27.1 / Swift 6.4,
+  `xcodebuild … -destination 'platform=iOS Simulator,name=iPhone 17e' build`) → **BUILD SUCCEEDED**
+  with the EXACT docs file content (md5 match). One compile error found & fixed during that
+  build: the first draft showed the toast via `if let toastText { ToastView(…: Binding(get:set:))
+  }` — inside the `if let` the `@State` property is SHADOWED by an immutable local, and the
+  Binding's escaping `set` closure failed with "'toastText' is a 'let' constant" /
+  "nil cannot be assigned to type String" (a swift-frontend assertion crash on top). Fix:
+  SEPARATE `showToast: Bool` + `toastText: String` @State vars + a `presentToast(_:)` helper,
+  and a WARNING comment in the code so nobody reintroduces the optional-binding shadowing.
 
 ## Screenshot placeholders (to be replaced with real captures)
 
