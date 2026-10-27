@@ -68,8 +68,8 @@ You only need the **NDK** if you build the SDK **from source** — see [Alternat
 :::warning Emulator: use **API 35** or lower
 The app **crashes in the emulator with API 36+** (it is not the 16KB page model — API 35 runs
 fine with 16KB pages; API 36 may change low-level runtime behaviour for the Rust code). The
-problem is **emulator-only**: the app has been **tested with Android 16 (API 36) on real
-devices**. So pick the **API 35** system image — the current main dev image — for the emulator.
+problem is **emulator-only**: the app has been **tested with Android 17 (API 37) on real
+devices** (e.g. **Pixel 9a**). So pick the **API 35** system image for the emulator.
 :::
 
 ### 0.4 — Sanity check
