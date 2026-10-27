@@ -56,3 +56,55 @@ If the server dies (log shows "compiled successfully" but process gone), restart
 command; `~/.cache` lives on a read-only mount is NOT an issue — Docusaurus cache is in-repo
 (`.docusaurus/`, gitignored).
 
+## iOS test VM notes (double tunnel: ssh mac-scaleway → ssh admin@$(tart ip test-run-02))
+
+- the tart VM (`test-run-02`) holds the iOS project in `~/Documents/interstellargettingstarted`
+- the VM's `ContentView.swift` previously contained the **offline pinpad test** (the "bad idea"
+  old hidden Step 6) — it was **RESET to the Step 5 hello-world** (`InterstellarSdk.create` +
+  `getterRootAccount`) BEFORE starting the Step 6 rewrite, as required
+- build there: `xcodebuild -project ~/Documents/interstellargettingstarted/InterstellarGettingStarted.xcodeproj \
+  -scheme InterstellarGettingStarted -destination 'platform=iOS Simulator,name=iPhone 17e' build`
+
+## Tasks
+
+### [20] iOS getting-started: pivot hidden "Step 6" from the offline internal test to the all-in-one "full basic app" (mirror of the Android hidden Step 6)
+
+The old hidden Step 6 ("*(advanced, NOT supported)* Test the pinpad offline with the internal
+`ContentView.swift`" — offline circuits blob, SCALE encoding, python generator) is REPLACED by the
+iOS mirror of the Android hidden Step 6 (`developers/SDK/android/getting-started.md#step-6--advanced-not-production-ready-test-the-vca-pinpad-with-an-all-in-one-mainactivitykt`):
+
+- [x] heading style matched: `## Step 6 — *(advanced, not production-ready)* Test the VCA pinpad
+  with an all-in-one \`ContentView.swift\`` + `<details><summary>▶ Show the hidden step 6</summary>`
+- [x] all-in-one `ContentView.swift`: creates the SOL keypair if it does not exist
+  (`extrinsicClientAddKeypair(coinTypeIdx:)` — idempotent), displays the SOL address BOTH in a
+  `Text` AND the Xcode console (iOS counterpart of Logcat), tap-to-copy with the same
+  "Address copied" toast as the main app (`UIPasteboard` + a minimal local `ToastView`,
+  cf the reference app's `Components/CommonUI.swift` + `PortfolioScreen.swift`)
+- [x] "Send test transaction" button: SOL self-send, hardcoded 0.03 SOL — above the VCA
+  threshold (0.025 SOL, double-checked in `shared/.../tests/CoinTransferSdkTest.kt:
+  "SOL 0.025 (auto-send below, pinpad above)"`). iOS API differences documented in the code:
+  `TxAmount.fixed(amountInAtomicUnits:)` is ATOMIC units (use `convertCoinToAtomic` — Android's
+  `JniTxAmount.fixed` takes a Double), `getterClientGetAccount` is cache-only (refresh via
+  `updateBalance` first — Android's getter falls back to the network itself),
+  `extrinsicClientInitializeTransaction` returns `""` on failure (no throw), and the
+  `requiresVca`/`autoSent` result is a Swift enum (`PendingTxResult`)
+- [x] displays and handles the VCA pinpad: `prepareCoinTransfer(coinTypeIdx:)` arms it
+  (`navigateToPinpad = true` + `pendingCircuitsPackage`), the overlay presents the REAL
+  `TxPinpadScreen(circuits:sdk:onTxDone:)` (Metal/WGPU renderer) — same `PinpadContent` pattern
+  as the reference app's `TabBarView.swift`; tx actually broadcasting is NOT the goal, testing
+  the pad is (hash handling + `showTxFailed` documented, mirroring the [pinpad guide](developers/SDK/ios/pinpad.md))
+- [x] screenshot placeholders added (2, in `What it should look like`) + listed below
+- [x] the Android hidden Step 6's code comment that pointed at the OLD iOS step updated
+  ("the iOS equivalent lives in the iOS guide's hidden Step 6")
+- [ ] BUILD + run on the tart VM **not attempted yet** (out of scope this turn — next session:
+  apply the new `ContentView.swift` on the VM, xcodebuild, simulator run, capture the 2 screenshots)
+
+## Screenshot placeholders (to be replaced with real captures)
+
+All placeholders are visible blockquotes in the pages (`📷 [SCREENSHOT PLACEHOLDER] — …`).
+
+1. `developers/SDK/ios/getting-started.md` hidden Step 6 — `static/img/ios_full_basic_app.png`:
+   the all-in-one "full basic app" in the iOS Simulator (SOL address + "Send test transaction" button)
+2. `developers/SDK/ios/getting-started.md` hidden Step 6 — `static/img/ios_pinpad_full.png`:
+   the real VCA pinpad (`TxPinpadScreen`) rendered full-screen by the Metal renderer
+

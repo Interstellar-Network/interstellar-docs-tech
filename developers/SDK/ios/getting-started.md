@@ -264,270 +264,258 @@ The Keychain key is **NOT deleted when the app is uninstalled** — reinstalling
 
 ![iOS Simulator running the hello-world app, showing the root account ID](/img/ios-simulator-root-account.png)
 
-## Step 6 — *(advanced, NOT supported)* Test the pinpad offline with the internal `ContentView.swift`
+## Step 6 — *(advanced, not production-ready)* Test the VCA pinpad with an all-in-one `ContentView.swift`
 
-:::warning ⚠️ Not an officially supported use case
+:::warning ⚠️ Reference example — not production-ready
 
-This hidden step is **NOT an officially supported use case**. The file below is the
-**all-in-one offline pinpad test** `ContentView.swift` taken from the **internal**
-[`wallet-app-internal`](https://github.com/Interstellar-Network/wallet-app-internal/blob/main/ContentView.swift)
-repo (repo root). Using it requires **knowledge of the internal file structures** — the
-test circuits `.bin` files, the SCALE-encoded `offline_circuits_package.bin` blob format,
-how the reference app wires the pinpad, etc. **Do not expect any support if you use it.**
+The file below is an **all-in-one "full basic app"** that exercises the real VCA pinpad on iOS:
+it creates a SOL keypair, shows the SOL address (with copy-to-clipboard), sends a **self-transfer**
+above the VCA threshold, and displays the **real Metal-rendered pinpad** (`TxPinpadScreen`) when
+the SDK arms it. It is intended for testing the pinpad integration — **not** for production use.
 
 :::
 
 <details>
 <summary>▶ Show the hidden step 6</summary>
 
-Replace your hello-world `ContentView.swift` with the file below — it is self-documented:
-the Swift code, the full workflow, and the embedded Python generator script that produces
-the `offline_circuits_package.bin` blob are all in this single file. Follow the
-`WORKFLOW FOR AN LLM / DEVELOPER` comment at the top of the file.
+Replace the **whole content** of your hello-world `ContentView.swift` with the file below — it is
+self-contained: the SDK initialization, the SOL keypair/address handling, the test-transaction
+trigger, the pinpad overlay and the small toast view are all in this single file. The comments
+at the top explain what it does and why each piece exists. Keep the file at the same path
+(`InterstellarGettingStarted/ContentView.swift`).
+
+:::info What it does — in order
+1. **Initializes the SDK** — `InterstellarSdk.create(onServerResetDetected:)` (registration +
+   balance caching happen inside).
+2. **Creates the SOL keypair if it does not exist.** Registration already creates keypairs; the
+   `extrinsicClientAddKeypair(coinTypeIdx:)` call is idempotent (no-op when the keypair exists),
+   so it is safe on every launch.
+3. **Fetches the SOL address** — `updateBalance(coinTypeIdx:)` **refreshes the cache**, then
+   `getterClientGetAccount(coinTypeIdx:)` reads it. **iOS API difference**: the iOS
+   `getterClientGetAccount` is **cache-only** — Android's falls back to the network itself — so
+   the refresh must be explicit.
+4. **Shows the SOL address** in a `Text` **and** in the **Xcode console** (`print`, the iOS
+   counterpart of Android's Logcat).
+5. **Copies the address to the clipboard** when you tap it — with the same "Address copied"
+   toast as the main app (`UIPasteboard` + a minimal `ToastView`, the one in the reference
+   app's `Components/CommonUI.swift`).
+6. **"Send test transaction" button**: initializes a **self-send** of **0.03 SOL** (above the
+   dev-stack VCA threshold of **0.025 SOL**) — note the iOS API difference: `TxAmount` is in
+   **atomic units** (`lamports`, 9 decimals for SOL), not a human-readable `Double` like
+   Android's `JniTxAmount.fixed(0.03)`; `convertCoinToAtomic(coinType:amount:)` does the
+   conversion. The button then polls `getterClientGetPendingTx()` and arms the pinpad with
+   `prepareCoinTransfer(coinTypeIdx:)` when the pending tx is `.requiresVca`.
+7. **Displays the real VCA pinpad** (`TxPinpadScreen`) full-screen in a `.fullScreenCover` when
+   the SDK arms the flow (`navigateToPinpad = true` + `pendingCircuitsPackage` set) — the same
+   `PinpadOverlay` pattern as the reference app's `TabBarView.swift`. Entering enough digits
+   triggers the real Metal-rendered pinpad flow; `onTxDone` hands you the broadcasted tx hash
+   (or `nil` — check `showTxFailed` for the rejection).
+:::
 
 ~~~swift title="ContentView.swift" collapse
-/*
- * ============================================================================
- * ALL-IN-ONE OFFLINE PINPAD TEST — ContentView.swift
- * ============================================================================
- *
- * This single file contains EVERYTHING needed to test the full VCA pinpad
- * screen offline (no network/IPFS/worker required for the pinpad itself).
- *
- * It is self-contained: the Swift app code + the workflow instructions + the
- * Python generator script that produces the `offline_circuits_package.bin`
- * blob are all in this file.
- *
- * ============================================================================
- * WORKFLOW FOR AN LLM / DEVELOPER
- * ============================================================================
- *
- * STEP 1 — GET THE SOURCE .bin FILES
- *   From the wallet-app-internal repo:
- *     shared/rust/circuit_evaluate/tests/data/display_message_640x360_2digits.garbled.pb.bin  (~15.8 MB)
- *     shared/rust/circuit_evaluate/tests/data/display_pinpad_590x50.garbled.pb.bin            (~4.2 MB)
- *
- * STEP 2 — RUN THE PYTHON GENERATOR (embedded below)
- *   Copy the script between the "BEGIN PYTHON GENERATOR SCRIPT" and "END PYTHON
- *   GENERATOR SCRIPT" markers to a file named `gen_circuits.py`, then run:
- *
- *     python3 gen_circuits.py \
- *       <path>/display_message_640x360_2digits.garbled.pb.bin \
- *       <path>/display_pinpad_590x50.garbled.pb.bin \
- *       offline_circuits_package.bin \
- *       2
- *
- *   Expected output:
- *     Wrote 20027832 bytes to offline_circuits_package.bin
- *       msg: 15855080 bytes, pinpad: 4172674 bytes, nb_digits: 2
- *
- * STEP 3 — PLACE THE OUTPUT IN THE APP SOURCE DIRECTORY
- *   Copy `offline_circuits_package.bin` next to this ContentView.swift.
- *   The Xcode project uses PBXFileSystemSynchronizedRootGroup, so the file is
- *   automatically bundled — no manual "Copy Bundle Resources" step needed.
- *
- * STEP 4 — BUILD AND RUN
- *     xcodebuild -project InterstellarGettingStarted.xcodeproj \
- *       -scheme InterstellarGettingStarted \
- *       -destination "platform=iOS Simulator,name=iPhone 17e" build
- *
- *   The app shows the root account, loads the offline circuits from the
- *   bundle, and auto-triggers the pinpad after 2 seconds. Tap
- *   "Trigger Offline Pinpad Test" to re-trigger it manually.
- *
- * ============================================================================
- * WHAT THE BLOB IS
- * ============================================================================
- *
- * `offline_circuits_package.bin` is a SCALE-encoded
- * `DisplayStrippedCircuitsPackageBuffers` struct (the same wire format the Rust
- * worker uses when it sends a `CircuitsPackage` to the client). It is NOT a
- * protobuf or raw binary.
- *
- * SCALE layout:
- *   [compact_u32 len][message_pgarbled_buf bytes]
- *   [compact_u32 len][pinpad_pgarbled_buf bytes]
- *   [compact_u32 len][message_pgarbled_cid bytes]   (dummy 32-byte zeros)
- *   [compact_u32 len][pinpad_pgarbled_cid bytes]    (dummy 32-byte zeros)
- *   [u32 LE][message_nb_digits]                     (2 for "2digits" circuit)
- *
- * The CIDs are tx identifiers only — dummy zeros are fine for offline
- * rendering. The resulting blob is ~20 MB.
- */
-
-/* ============================================================================
-  * BEGIN PYTHON GENERATOR SCRIPT (gen_circuits.py)
-  * ============================================================================
- #!/usr/bin/env python3
- """Generate a SCALE-encoded DisplayStrippedCircuitsPackageBuffers blob."""
- import struct
- import sys
-
- def compact_u32(n):
-     """Parity SCALE compact encoding for u32."""
-     if n < 64:
-         return bytes([n << 2])
-     elif n < 16384:
-         v = (n << 2) | 0b01
-         return struct.pack('<H', v)
-     elif n < 2**30:
-         v = (n << 2) | 0b10
-         return struct.pack('<I', v)
-     else:
-         # Big-integer mode: first byte lower 2 bits = 0b11,
-         # upper 6 bits = number of bytes - 4
-         b = n.to_bytes((n.bit_length() + 7) // 8, 'little')
-         nb = len(b)
-         first = ((nb - 4) << 2) | 0b11
-         return bytes([first]) + b
-
- def read_bin(path):
-     with open(path, 'rb') as f:
-         return f.read()
-
- def main():
-     msg_path = sys.argv[1]
-     pinpad_path = sys.argv[2]
-     out_path = sys.argv[3]
-     nb_digits = int(sys.argv[4]) if len(sys.argv) > 4 else 2
-
-     msg = read_bin(msg_path)
-     pinpad = read_bin(pinpad_path)
-
-     # Dummy CIDs (32 bytes each) - fine for offline rendering
-     msg_cid = b'\x00' * 32
-     pinpad_cid = b'\x00' * 32
-
-     # Encode DisplayStrippedCircuitsPackageBuffers
-     blob = b''
-     # 1. message_pgarbled_buf: Vec<u8>
-     blob += compact_u32(len(msg)) + msg
-     # 2. pinpad_pgarbled_buf: Vec<u8>
-     blob += compact_u32(len(pinpad)) + pinpad
-     # 3. package: DisplayStrippedCircuitsPackage
-     #    a. message_pgarbled_cid: BoundedVec<u8, 64>
-     blob += compact_u32(len(msg_cid)) + msg_cid
-     #    b. pinpad_pgarbled_cid: BoundedVec<u8, 64>
-     blob += compact_u32(len(pinpad_cid)) + pinpad_cid
-     #    c. message_nb_digits: u32 LE
-     blob += struct.pack('<I', nb_digits)
-
-     with open(out_path, 'wb') as f:
-         f.write(blob)
-
-     print(f"Wrote {len(blob)} bytes to {out_path}")
-     print(f"  msg: {len(msg)} bytes, pinpad: {len(pinpad)} bytes, nb_digits: {nb_digits}")
-
- if __name__ == '__main__':
-     main()
-  * ============================================================================
-  * END PYTHON GENERATOR SCRIPT
-  * ============================================================================
-  */
-
-import InterstellarSdk
 import SwiftUI
+import InterstellarSdk
 
+/**
+ * ALL-IN-ONE "Full Basic App" — the iOS mirror of the Android hidden Step 6.
+ *
+ * Demonstrates, in a single file:
+ *  1. creating the SOL keypair if it does not exist (idempotent),
+ *  2. displaying the SOL address in a Text AND in the Xcode console,
+ *  3. copy-to-clipboard on tapping the address (with a "Address copied" toast),
+ *  4. a "Send test transaction" button (SOL, 0.03 = ABOVE the 0.025 VCA threshold),
+ *  5. arming and displaying the REAL VCA pinpad (Metal-rendered TxPinpadScreen).
+ *
+ * The transaction is a SELF-SEND (recipient = our own SOL address), so the goal is to
+ * exercise the pinpad — not to move funds. The tx only broadcasts if the correct digits
+ * are entered; the pinpad itself works offline once the VCA circuits have been armed.
+ */
 struct ContentView: View {
-    @State private var rootAccountHex: String = "Initializing..."
     @State private var sdk: InterstellarSdk?
-    @State private var errorText: String?
-    @State private var offlineCircuits: CircuitsPackage?
-    @State private var showPinpad = false
-    @State private var rendererKey = 0
-    @State private var autoTriggered = false
+    @State private var solAddress: String?
+    @State private var statusText = ""
+    @State private var initError: String?
+    @State private var sendDisabled = true
+    @State private var showPinpad = false          // drives the pinpad .fullScreenCover
+    @State private var toastMessage: String?       // "Address copied" / tx result toasts
 
     var body: some View {
-        VStack(spacing: 16) {
-            Image(systemName: "globe")
-                .imageScale(.large)
-                .foregroundStyle(.tint)
+        ZStack {
+            VStack(spacing: 16) {
+                Image(systemName: "globe")
+                    .imageScale(.large)
+                    .foregroundStyle(.tint)
 
-            Text("Account: \(rootAccountHex)")
-                .font(.headline)
-                .textSelection(.enabled)
-
-            if let errorText {
-                Text("Error: \(errorText)")
-                    .foregroundColor(.red)
-                    .font(.caption)
-            }
-
-            Button("Trigger Offline Pinpad Test") {
-                Task { await triggerOfflinePinpad() }
-            }
-            .disabled(sdk == nil)
-        }
-        .padding()
-        // Use fullScreenCover driven by a local @State boolean, mirroring the
-        // reference app's `.fullScreenCover(isPresented: $viewModel.navigateToPinpad)`.
-        // The parent view does NOT observe the SDK, so checking sdk.navigateToPinpad
-        // directly in .overlay would never re-evaluate when the SDK mutates it.
-        .fullScreenCover(isPresented: $showPinpad, onDismiss: {
-            rendererKey += 1
-        }) {
-            if let sdk {
-                PinpadOverlay(sdk: sdk, rendererKey: rendererKey)
-            }
-        }
-        .task {
-            // Load the hardcoded offline circuits from the app bundle.
-            // This blob is a SCALE-encoded DisplayStrippedCircuitsPackageBuffers
-            // generated from the Rust desktop_offline example's .bin files.
-            if let url = Bundle.main.url(forResource: "offline_circuits_package", withExtension: "bin"),
-               let blobData = try? Data(contentsOf: url)
-            {
-                offlineCircuits = CircuitsPackage(
-                    circuitsPackage: blobData,
-                    txId: Data(repeating: 0, count: 32),
-                    nbMessageDigits: 2
-                )
-                print("[ContentView] Loaded offline circuits: \(blobData.count) bytes")
-            } else {
-                print("[ContentView] WARNING: offline_circuits_package.bin not found in bundle")
-            }
-
-            do {
-                let newSdk = try await InterstellarSdk.create(onServerResetDetected: {})
-                sdk = newSdk
-                let rootData = await newSdk.getterRootAccount()
-                rootAccountHex = rootData.map { String(format: "%02hhx", $0) }.joined()
-                print("[ContentView] SDK ready, root account loaded")
-
-                // Auto-trigger the offline pinpad after a short delay so the
-                // full pinpad screen appears without a manual tap.
-                if !autoTriggered, offlineCircuits != nil {
-                    autoTriggered = true
-                    try? await Task.sleep(nanoseconds: 2_000_000_000)
-                    print("[ContentView] Auto-triggering offline pinpad")
-                    await triggerOfflinePinpad()
+                if let solAddress {
+                    // Tap to copy — the same "Address copied" toast as the main app.
+                    Text("SOL address:\n\(solAddress)\n\n(tap to copy)")
+                        .font(.headline)
+                        .multilineTextAlignment(.center)
+                        .onTapGesture { copyAddressToClipboard() }
+                } else if let initError {
+                    Text(initError).foregroundColor(.red)
+                } else {
+                    Text("Initializing Interstellar SDK…")
                 }
-            } catch {
-                rootAccountHex = "Error"
-                errorText = error.localizedDescription
-                print("[ContentView] SDK init failed: \(error.localizedDescription)")
+
+                if !statusText.isEmpty {
+                    Text(statusText).font(.caption).foregroundColor(.secondary)
+                }
+
+                Button("Send test transaction (0.03 SOL to self)") {
+                    Task { await sendTestTransaction() }
+                }
+                .disabled(sendDisabled)
+            }
+            .padding()
+            .task { await initializeSdk() }
+        }
+        // The pinpad overlay — the same pattern as the reference app's
+        // `.fullScreenCover(isPresented: $viewModel.navigateToPinpad)`: our view does not
+        // observe the SDK directly, so we mirror the SDK's `navigateToPinpad` into this
+        // local flag (set when `prepareCoinTransfer` arms the flow, cleared in onTxDone —
+        // the SDK has already cleared its own state by then).
+        .fullScreenCover(isPresented: $showPinpad) {
+            if let sdk {
+                PinpadOverlay(sdk: sdk) { hash in
+                    showPinpad = false
+                    if sdk.showTxFailed {
+                        statusText = "Pinpad rejected (nothing broadcast)"
+                        toastMessage = "Transaction rejected"
+                    } else if let hash {
+                        statusText = "Broadcasted: \(hash)"
+                        toastMessage = "Transaction sent!"
+                    }
+                    sendDisabled = false
+                }
+            }
+        }
+        // The minimal toast — mirrors the reference app's `ToastView` (auto-hides after 2s).
+        .overlay(alignment: .bottom) {
+            if let toastMessage {
+                ToastView(message: toastMessage, isPresented: Binding(
+                    get: { toastMessage != nil },
+                    set: { if !$0 { toastMessage = nil } }
+                ))
+                .padding(.bottom, 60)
             }
         }
     }
 
-    private func triggerOfflinePinpad() async {
-        guard let sdk, let offlineCircuits else {
-            print("[ContentView] Cannot trigger pinpad: sdk or offlineCircuits is nil")
-            return
+    // MARK: - 1–5: SDK init, SOL keypair, address display + copy
+
+    private func initializeSdk() async {
+        do {
+            let newSdk = try await InterstellarSdk.create(onServerResetDetected: {})
+            sdk = newSdk
+
+            // 1. Create the SOL keypair if it does not exist. Registration already creates
+            // keypairs; this call is idempotent (no-op when the keypair exists), so it is
+            // safe to call on every launch.
+            await newSdk.extrinsicClientAddKeypair(coinTypeIdx: CoinType.sol.intIndex)
+
+            // 2. Fetch the SOL address. iOS API difference: `getterClientGetAccount` reads
+            // the SDK's CACHE only — refresh it first (Android's getter hits the network
+            // itself when the cache is empty).
+            await newSdk.updateBalance(coinTypeIdx: CoinType.sol.intIndex)
+            let address = newSdk.getterClientGetAccount(coinTypeIdx: CoinType.sol.intIndex)
+            if let address {
+                solAddress = address
+                // 3. Show the address in the Xcode console too (iOS' Logcat).
+                print("[ContentView] SOL address: \(address)")
+                sendDisabled = false
+            } else {
+                initError = "ERROR: getterClientGetAccount(SOL) returned nil"
+                print("[ContentView] \(initError!)")
+            }
+        } catch {
+            initError = "SDK init failed: \(error.localizedDescription)"
+            print("[ContentView] SDK init failed: \(error)")
         }
-        print("[ContentView] Injecting offline circuits into SDK state")
-        await MainActor.run {
-            sdk.pendingCircuitsPackage = offlineCircuits
-            sdk.navigateToPinpad = true
-            showPinpad = true
+    }
+
+    /// Copy the SOL address to the clipboard, mirroring the main app's "Address copied" toast.
+    private func copyAddressToClipboard() {
+        guard let solAddress else { return }
+        UIPasteboard.general.string = solAddress
+        toastMessage = "Address copied"
+    }
+
+    // MARK: - 4–6: the test transaction + the real pinpad
+
+    /// "Send test transaction": initialize a SELF-SEND of 0.03 SOL (above the 0.025 VCA
+    /// threshold), poll the pending tx, then arm the pinpad via prepareCoinTransfer().
+    ///
+    /// NOTE: creating an above-threshold tx requires a funded account. On an unfunded account
+    /// the worker rejects the init extrinsic — on iOS `extrinsicClientInitializeTransaction`
+    /// returns "" (it does NOT throw like Android's `InterstellarException`) — and the pinpad
+    /// therefore cannot be reached without funding. That is expected.
+    private func sendTestTransaction() async {
+        guard let sdk, let recipient = solAddress else { return }
+        sendDisabled = true
+        statusText = "Creating tx…"
+
+        do {
+            // Self-send: recipient = our own SOL address.
+            // iOS API difference: TxAmount is in ATOMIC units (lamports, 9 decimals for
+            // SOL) — Android takes a human-readable Double. 0.03 SOL = 30,000,000 lamports.
+            let atomicAmount = sdk.convertCoinToAtomic(coinType: .sol, amount: 0.03)
+            let initResult = await sdk.extrinsicClientInitializeTransaction(
+                recipient: recipient,
+                txAmount: .fixed(amountInAtomicUnits: UInt64(atomicAmount)),
+                coinTypeIdx: CoinType.sol.intIndex
+            )
+            guard !initResult.isEmpty else {
+                statusText = "ERROR: initializeTransaction failed (unfunded account?)"
+                print("[ContentView] \(statusText)")
+                sendDisabled = false
+                return
+            }
+            print("[ContentView] initialize tx sent; polling for pending tx…")
+
+            // Poll for the pending tx — the worker processes the init asynchronously.
+            var pending: PendingTxResult?
+            var tries = 0
+            while pending == nil && tries < 30 {
+                try await Task.sleep(nanoseconds: 1_000_000_000)
+                pending = await sdk.getterClientGetPendingTx()
+                tries += 1
+            }
+
+            switch pending {
+            case .requiresVca:
+                // Above threshold → arm the pinpad. `prepareCoinTransfer` fetches the pending
+                // tx again, sets `navigateToPinpad = true` + `pendingCircuitsPackage`, and
+                // returns nil — the .fullScreenCover shows the REAL pad.
+                statusText = "Above threshold → pinpad required"
+                print("[ContentView] RequiresVca: arming pinpad via prepareCoinTransfer")
+                _ = try await sdk.prepareCoinTransfer(coinTypeIdx: CoinType.sol.intIndex)
+                showPinpad = true
+            case .autoSent(let txHash):
+                // Below threshold — no pinpad. Should not happen for 0.03 SOL.
+                statusText = "Auto-sent: txHash=\(txHash)"
+                print("[ContentView] AutoSent txHash=\(txHash)")
+                sendDisabled = false
+            case nil:
+                statusText = "No pending tx after 30s"
+                sendDisabled = false
+            }
+        } catch {
+            // An unfunded account makes the worker reject the init extrinsic.
+            statusText = "Send failed: \(error.localizedDescription)"
+            print("[ContentView] Send failed: \(error)")
+            sendDisabled = false
         }
     }
 }
 
-/// Overlay shown when the SDK has armed the pinpad.
+/// Full-screen overlay shown when the SDK has armed the pinpad — the same `PinpadContent`
+/// pattern as the reference app's `TabBarView.swift` (and the [pinpad guide](./pinpad.md)):
+/// a "Preparing Transaction…" placeholder while `pendingCircuitsPackage` is nil, then the
+/// real `TxPinpadScreen`.
 struct PinpadOverlay: View {
-    @ObservedObject var sdk: InterstellarSdk
-    let rendererKey: Int
+    @ObservedObject var sdk: InterstellarSdk   // observes the @Published pinpad state
+    let onTxDone: (String?) -> Void
 
     var body: some View {
         ZStack {
@@ -538,27 +526,44 @@ struct PinpadOverlay: View {
                     circuits: circuits,
                     sdk: sdk,
                     onTxDone: { hash in
-                        if sdk.showTxFailed {
-                            // Coin transfer rejected
-                        } else if let hash {
-                            // Coin transfer accepted — `hash` is the tx hash
-                            _ = hash
-                        }
-                        // SDK clears navigateToPinpad/pendingCircuitsPackage
+                        // The SDK has ALREADY cleared navigateToPinpad /
+                        // pendingCircuitsPackage (clearPinpad) when this fires.
+                        onTxDone(hash)
                     }
                 )
-                .id(rendererKey)
             } else {
                 VStack {
                     Spacer()
-                    ProgressView()
-                        .tint(.white)
+                    ProgressView().tint(.white)
                     Text("Preparing Transaction...")
                         .foregroundColor(.white)
                         .padding(.top, 8)
                     Spacer()
                 }
             }
+        }
+    }
+}
+
+/// Minimal copy of the reference app's `ToastView` (Components/CommonUI.swift):
+/// a capsule that auto-hides after 2 seconds. iOS has no Android-style Toast.
+struct ToastView: View {
+    let message: String
+    @Binding var isPresented: Bool
+
+    var body: some View {
+        if isPresented {
+            Text(message)
+                .font(.body)
+                .foregroundColor(.white)
+                .padding(.horizontal, 24)
+                .padding(.vertical, 12)
+                .background(Capsule().fill(Color.black.opacity(0.8)))
+                .onAppear {
+                    DispatchQueue.main.asyncAfter(deadline: .now() + 2) {
+                        withAnimation { isPresented = false }
+                    }
+                }
         }
     }
 }
@@ -570,7 +575,47 @@ struct PinpadOverlay: View {
 
 ### What it should look like
 
-![iOS Simulator running the offline pinpad test, showing the root account and the trigger button](/img/ios-offline-pinpad-test.png)
+> 📷 **[SCREENSHOT PLACEHOLDER]** — the all-in-one "full basic app" running in the iOS
+> Simulator: the SOL address at the top (tap to copy) and the "Send test transaction" button.
+> (`static/img/ios_full_basic_app.png` — to be captured)
+
+> 📷 **[SCREENSHOT PLACEHOLDER]** — the real VCA pinpad rendered full-screen by the Metal
+> renderer after tapping the button on a funded account.
+> (`static/img/ios_pinpad_full.png` — to be captured)
+
+### How to test it
+
+1. **Fund the SOL address** the app shows (it is also printed to the Xcode console with the
+   `[ContentView]` tag). The balance must be **above the VCA threshold** — the dev stack's SOL
+   threshold is **0.025 SOL**, so `0.03 SOL` is above it and the pinpad **must** appear. Any
+   smaller amount auto-sends without a pinpad.
+2. Build and run the app (Xcode's **Run ▶**, or `xcodebuild … build`).
+3. Tap **"Send test transaction (0.03 SOL to self)"**.
+4. Watch the **Xcode console**: the SDK sends the init extrinsic, polls the pending tx, and —
+   for an above-threshold amount — arms the pinpad (`RequiresVca`). The full-screen Metal
+   pinpad appears.
+5. Enter the correct digits (if you know them) to broadcast the self-send, or wrong digits to
+   see the rejection path (nothing is broadcast).
+
+:::note Complete the pad quickly
+Some coins have a **short-lived "pending tx TTL"**: a prepared SOL transaction is only valid
+for a short window (e.g. **SOL < 30s** on devnet) — cf the [pinpad guide](./pinpad.md). If the
+pad is not completed in time the transaction fails — simply tap the button again.
+:::
+
+:::note Why "self-send"?
+The recipient is the app's **own SOL address**, so the test exercises the whole
+threshold → VCA → pinpad → signature → broadcast path without needing a second funded account.
+The funds only move if the correct digits are entered.
+:::
+
+:::warning Creating the tx requires funding
+On an **unfunded** account the worker rejects the init extrinsic and the SDK surfaces the
+failure — on iOS `extrinsicClientInitializeTransaction` returns `""` (it does **not** throw
+like Android's `InterstellarException`) — so the pinpad cannot be reached without funding. The
+app shows the error in the status line and in the console; that is expected behaviour, not a
+bug.
+:::
 
 </details>
 

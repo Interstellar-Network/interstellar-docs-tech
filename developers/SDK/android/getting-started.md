@@ -541,7 +541,8 @@ import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 
 /**
- * ALL-IN-ONE "Full Basic App" — the Android equivalent of the iOS hidden Step 6.
+ * ALL-IN-ONE "Full Basic App" — the iOS equivalent lives in the iOS guide's hidden Step 6
+ * (developers/SDK/ios/getting-started.md): the same flow, in a single ContentView.swift.
  *
  * Demonstrates, in a single file:
  *  1. creating a SOL keypair if it does not exist,
