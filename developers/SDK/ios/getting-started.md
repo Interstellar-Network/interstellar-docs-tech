@@ -586,13 +586,27 @@ struct ToastView: View {
 
 ### What it should look like
 
-> 📷 **[SCREENSHOT PLACEHOLDER]** — the all-in-one "full basic app" running in the iOS
-> Simulator: the SOL address at the top (tap to copy) and the "Send test transaction" button.
-> (`static/img/ios_full_basic_app.png` — to be captured)
+The app starting — the "Initializing Interstellar SDK…" placeholder (the same look as the
+[Step 5](#step-5--run-it-against-the-local-stack) hello-world; SDK init takes **10–20 s** —
+watch the Xcode console):
 
-> 📷 **[SCREENSHOT PLACEHOLDER]** — the real VCA pinpad rendered full-screen by the Metal
-> renderer after tapping the button on a funded account.
-> (`static/img/ios_pinpad_full.png` — to be captured)
+![The app starting, showing the "Initializing Interstellar SDK…" placeholder](/img/ios_full_basic_app_init.png)
+
+The all-in-one "full basic app" ready — the SOL address at the top (**tap to copy**) and the
+"Send test transaction" button:
+
+![The all-in-one "full basic app" showing the SOL address and the "Send test transaction" button](/img/ios_full_basic_app.png)
+
+After funding the address, tapping **"Send test transaction"** and waiting ~10 s (the VCA
+circuits download — watch the Xcode console), the real VCA pinpad renders full-screen (the
+Metal renderer):
+
+![The real VCA pinpad rendered full-screen by the Metal renderer](/img/ios_pinpad_full.png)
+
+After entering the correct digits, the self-send broadcasts and the app is back on the main
+screen with the broadcasted tx hash in the status line:
+
+![Back on the main screen, showing the broadcasted tx hash](/img/ios_tx_broadcast.png)
 
 ### How to test it
 

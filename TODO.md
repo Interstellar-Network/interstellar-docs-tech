@@ -93,7 +93,10 @@ iOS mirror of the Android hidden Step 6 (`developers/SDK/android/getting-started
   `TxPinpadScreen(circuits:sdk:onTxDone:)` (Metal/WGPU renderer) — same `PinpadContent` pattern
   as the reference app's `TabBarView.swift`; tx actually broadcasting is NOT the goal, testing
   the pad is (hash handling + `showTxFailed` documented, mirroring the [pinpad guide](developers/SDK/ios/pinpad.md))
-- [x] screenshot placeholders added (2, in `What it should look like`) + listed below
+- [x] screenshots added (4, in `What it should look like`) — user-provided Simulator captures
+  (`ios_full_basic_app_init.png` initializing / `ios_full_basic_app.png` address + button /
+  `ios_pinpad_full.png` pinpad running / `ios_tx_broadcast.png` broadcasted tx hash back on the
+  main screen), the two placeholder entries below marked done
 - [x] the Android hidden Step 6's code comment that pointed at the OLD iOS step updated
   ("the iOS equivalent lives in the iOS guide's hidden Step 6")
 - [x] BUILD confirmed on the tart VM (`test-run-02`, Xcode 27.1 / Swift 6.4,
@@ -110,8 +113,10 @@ iOS mirror of the Android hidden Step 6 (`developers/SDK/android/getting-started
 
 All placeholders are visible blockquotes in the pages (`📷 [SCREENSHOT PLACEHOLDER] — …`).
 
-1. `developers/SDK/ios/getting-started.md` hidden Step 6 — `static/img/ios_full_basic_app.png`:
+1. [x] `developers/SDK/ios/getting-started.md` hidden Step 6 — `static/img/ios_full_basic_app.png`:
    the all-in-one "full basic app" in the iOS Simulator (SOL address + "Send test transaction" button)
-2. `developers/SDK/ios/getting-started.md` hidden Step 6 — `static/img/ios_pinpad_full.png`:
+   — captured (+ the initializing variant `ios_full_basic_app_init.png`)
+2. [x] `developers/SDK/ios/getting-started.md` hidden Step 6 — `static/img/ios_pinpad_full.png`:
    the real VCA pinpad (`TxPinpadScreen`) rendered full-screen by the Metal renderer
+   — captured (+ the post-broadcast main screen `ios_tx_broadcast.png`)
 
