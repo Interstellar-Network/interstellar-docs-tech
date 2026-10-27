@@ -16,7 +16,7 @@ must be able to **install** the app and exercise the flows of the
 :::info Two repositories, two kinds of artifacts
 - the **stack** (the `docker-compose.yml`, the IPFS init script) is released in
   [`Interstellar-Network/containers`](https://github.com/Interstellar-Network/containers/releases);
-- the **app artifacts** (the Android APK, the iOS `.ipa`) and the **SDK package** (the Swift
+- the **app artifacts** (the Android APK, the iOS `.app`) and the **SDK package** (the Swift
   package zip) are released in
   [`Interstellar-Network/wallet-app-internal`](https://github.com/Interstellar-Network/wallet-app-internal/releases),
   under the [`m6-v1` tag](https://github.com/Interstellar-Network/wallet-app-internal/releases/tag/m6-v1).
@@ -71,12 +71,6 @@ Simulator reaches `127.0.0.1` natively.
   </TableBody>
 </Table>
 
-:::warning ⚠️ The links are stable, the **artifacts are not there yet**
-The links below **will not change** — the [`m6-v1` release](https://github.com/Interstellar-Network/wallet-app-internal/releases/tag/m6-v1)
-and the Firebase tester group already exist. They are simply **empty for now**: the assets are
-attached when the M6 release is cut. The publishing **pipelines** are implemented and CI-checked
-in the meantime.
-:::
 
 ## Android — Firebase App Distribution
 
@@ -106,7 +100,7 @@ there [`m6-v1` release](https://github.com/Interstellar-Network/wallet-app-inter
 This is mostly useful if you want to test using an Emulator and want to avoid the whole Google signin there.
 :::
 
-## iOS — a direct `.ipa` (simulator) **and** TestFlight (real devices)
+## iOS — a direct `.app` (simulator) **and** TestFlight (real devices)
 
 iOS does **not** use Firebase: the app is built with `xcodebuild archive`, exported and uploaded
 to **App Store Connect**, where the build shows up in **TestFlight**.
@@ -115,7 +109,7 @@ to **App Store Connect**, where the build shows up in **TestFlight**.
 **TestFlight only delivers to real devices** — Apple does not distribute simulator builds
 through it. So the M6 release offers both:
 
-- a **direct `.ipa` download** for the **iOS Simulator** (the build compiles the Rust libraries
+- a **direct `.app` download** for the **iOS Simulator** (the build compiles the Rust libraries
   for the simulator slice, so the app runs locally — exactly like the Android APK in the
   emulator);
 - **TestFlight** for the **real devices** (signed and distributed by Apple).
@@ -125,7 +119,7 @@ through it. So the M6 release offers both:
 
 | What you want | Channel | What you do |
 | --- | --- | --- |
-| Run the app in the **Simulator** | direct `.ipa` download | download the `.ipa` from the [`m6-v1` release](https://github.com/Interstellar-Network/wallet-app-internal/releases/tag/m6-v1), then in Xcode *Device > Install Simulated Package…* (or `xcrun simctl install <device> <app>.ipa`) |
+| Run the app in the **Simulator** | direct `.app` download | download the zipped `.app` from the [`m6-v1` release](https://github.com/Interstellar-Network/wallet-app-internal/releases/tag/m6-v1) eg "iosApp-Simulator.app.zip", unzip it, then in Xcode *Device > Install Simulated Package…* (or `xcrun simctl install <device> <app>.app`) |
 | Run the app on a **real device** | **TestFlight** | install the **TestFlight** app, accept the invitation, then install the build |
 
 :::note Before you can install anything
