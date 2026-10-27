@@ -15,10 +15,10 @@ must be able to **install** the app and exercise the flows of the
 
 :::info Two repositories, two kinds of artifacts
 - the **stack** (the `docker-compose.yml`, the IPFS init script) is released in
-  [`Interstellar-Network/containers`](https://github.com/Interstellar-Network/containers);
+  [`Interstellar-Network/containers`](https://github.com/Interstellar-Network/containers/releases);
 - the **app artifacts** (the Android APK, the iOS `.ipa`) and the **SDK package** (the Swift
   package zip) are released in
-  [`Interstellar-Network/wallet-app-internal`](https://github.com/Interstellar-Network/wallet-app-internal),
+  [`Interstellar-Network/wallet-app-internal`](https://github.com/Interstellar-Network/wallet-app-internal/releases),
   under the [`m6-v1` tag](https://github.com/Interstellar-Network/wallet-app-internal/releases/tag/m6-v1).
 :::
 
@@ -92,10 +92,6 @@ through the tester-group link:
 
 [appdistribution.firebase.dev/i/71f8c7de02bcbcdc](https://appdistribution.firebase.dev/i/71f8c7de02bcbcdc)
 
-:::note
-The group is **empty for now** — the builds are attached when the M6 release is cut.
-:::
-
 Once you are in the group, the app is installed **straight from the browser** (the Firebase
 tester page) or from the **Firebase tester app** on the device — no adb, no sideloading.
 
@@ -103,9 +99,11 @@ The official documentation is the reference for the whole flow:
 [distribute-gradle](https://firebase.google.com/docs/app-distribution/android/distribute-gradle).
 
 :::note The other Android channel
-The same build is also published through **Firebase App Distribution** (above); the plain APK
-lives in the [`m6-v1` release](https://github.com/Interstellar-Network/wallet-app-internal/releases/tag/m6-v1)
+The same build is also published directly as an APK
+there [`m6-v1` release](https://github.com/Interstellar-Network/wallet-app-internal/releases/tag/m6-v1)
 — see the [local demo](../local-demo-with-docker.md#2-install-the-android-demo-app).
+
+This is mostly useful if you want to test using an Emulator and want to avoid the whole Google signin there.
 :::
 
 ## iOS — a direct `.ipa` (simulator) **and** TestFlight (real devices)
