@@ -101,7 +101,7 @@ real devices**, the M6 release offers **two** channels:
 
 | What you want | Channel | What you do |
 | --- | --- | --- |
-| Run the app in the **iOS Simulator** | direct `.app` download | download the zipped `.app` from the [M6 v1 release](https://github.com/Interstellar-Network/wallet-app-internal/releases/tag/m6-v1) eg "iosApp-Simulator.app.zip", unzip it, then in Xcode *Device > Install Simulated Package…* (or `xcrun simctl install <device> <app>.app`) |
+| Run the app in the **iOS Simulator** | direct `.app` download | download the zipped `.app` from the [M6 v1 release](https://github.com/Interstellar-Network/wallet-app-internal/releases/tag/m6-v1) eg "iosApp-Simulator.app.zip", unzip it, then in Xcode *Device > Install Simulated Package…* (or `xcrun simctl install booted <app>.app`) |
 | Run the app on a **real device** | **TestFlight** | install the **TestFlight** app, accept the invitation, then install the build |
 
 > 📷 **[SCREENSHOT PLACEHOLDER]** — *the iOS simulator running the wallet app (to be captured)*

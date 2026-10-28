@@ -119,7 +119,7 @@ through it. So the M6 release offers both:
 
 | What you want | Channel | What you do |
 | --- | --- | --- |
-| Run the app in the **Simulator** | direct `.app` download | download the zipped `.app` from the [`m6-v1` release](https://github.com/Interstellar-Network/wallet-app-internal/releases/tag/m6-v1) eg "iosApp-Simulator.app.zip", unzip it, then in Xcode *Device > Install Simulated Package…* (or `xcrun simctl install <device> <app>.app`) |
+| Run the app in the **Simulator** | direct `.app` download | download the zipped `.app` from the [`m6-v1` release](https://github.com/Interstellar-Network/wallet-app-internal/releases/tag/m6-v1) eg "iosApp-Simulator.app.zip", unzip it, then in Xcode *Device > Install Simulated Package…* (or `xcrun simctl install booted <app>.app`) |
 | Run the app on a **real device** | **TestFlight** | install the **TestFlight** app, accept the invitation, then install the build |
 
 :::note Before you can install anything
