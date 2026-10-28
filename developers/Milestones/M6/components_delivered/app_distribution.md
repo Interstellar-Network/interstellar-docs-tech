@@ -48,25 +48,25 @@ Simulator reaches `127.0.0.1` natively.
       <TableCell>Android</TableCell>
       <TableCell>GitHub release (<code>m6-v1</code>)</TableCell>
       <TableCell>Emulator (x86_64) &amp; devices (arm64)</TableCell>
-      <TableCell>the tag exists, the assets are added at the release</TableCell>
+      <TableCell>the tag exists, the assets attached</TableCell>
     </TableRow>
     <TableRow>
       <TableCell>Android</TableCell>
       <TableCell>Firebase App Distribution</TableCell>
-      <TableCell>Emulator &amp; devices</TableCell>
-      <TableCell>the group exists, the builds are added at the release</TableCell>
+      <TableCell>Device only (Firebase does not deliver to simulators)</TableCell>
+      <TableCell>the group exists, the builds are available </TableCell>
     </TableRow>
     <TableRow>
       <TableCell>iOS</TableCell>
       <TableCell>Direct <code>.ipa</code> download</TableCell>
-      <TableCell><strong>Simulator</strong> (TestFlight does not deliver to simulators)</TableCell>
+      <TableCell>Simulator (TestFlight does not deliver to simulators)</TableCell>
       <TableCell>the tag exists, the assets are added at the release</TableCell>
     </TableRow>
     <TableRow>
       <TableCell>iOS</TableCell>
       <TableCell>TestFlight (App Store Connect)</TableCell>
-      <TableCell>Real devices</TableCell>
-      <TableCell>the group exists, the builds are added at the release</TableCell>
+      <TableCell>Device only</TableCell>
+      <TableCell><strong>WIP account approved but setup pending</strong></TableCell>
     </TableRow>
   </TableBody>
 </Table>
@@ -120,13 +120,8 @@ through it. So the M6 release offers both:
 | What you want | Channel | What you do |
 | --- | --- | --- |
 | Run the app in the **Simulator** | direct `.app` download | download the zipped `.app` from the [`m6-v1` release](https://github.com/Interstellar-Network/wallet-app-internal/releases/tag/m6-v1) eg "iosApp-Simulator.app.zip", unzip it, then in Xcode *Device > Install Simulated Package…* (or `xcrun simctl install booted <app>.app`) |
-| Run the app on a **real device** | **TestFlight** | install the **TestFlight** app, accept the invitation, then install the build |
+| Run the app on a **real device** | **TestFlight** | **PENDING/WIP** install the **TestFlight** app, accept the invitation, then install the build |
 
-:::note Before you can install anything
-A **TestFlight** build needs an **Apple Developer Program** membership (a free personal team
-cannot upload to TestFlight). The internal tester groups (up to 100 App Store Connect users)
-need no beta review; the external ones (up to 10.000 testers) do.
-:::
 
 Official documentation:
 [upload builds](https://developer.apple.com/help/app-store-connect/manage-builds/upload-builds/) ·
