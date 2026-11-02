@@ -39,7 +39,7 @@ The **frontend** can run on any OS supported by Android Studio (Android emulator
 The stack files (`docker-compose.yml`, `docker-ipfs-init.sh`, …) live in the **private**
 [`Interstellar-Network/containers`](https://github.com/Interstellar-Network/containers) repository.
 The download commands in this section return **HTTP 404** until you have read access to that
-repository and a GitHub **classic** personal access token — get both first (steps below).
+repository and a GitHub personal access token — get both first (steps below).
 :::
 
 #### Read access to the private repositories
@@ -51,16 +51,41 @@ Two **private** repositories are involved in this guide:
 
 Ask Interstellar for read access to the repository (or repositories) you need.
 
-#### A GitHub **classic** personal access token
+#### A GitHub **classic** personal access token (required to run the stack)
 
-GitHub Packages only authenticates with a **classic** PAT — fine-grained tokens are *not* supported. From the official [documentation](https://docs.github.com/en/packages/working-with-a-github-packages-registry/working-with-the-gradle-registry#authenticating-to-github-packages):
+Running the stack needs **two** private things from GitHub — and one of them forces the token type:
 
-> GitHub Packages only supports authentication using a personal access token (classic). For more information, see [Managing your personal access tokens](https://docs.github.com/en/authentication/keeping-your-account-and-data-secure/managing-your-personal-access-tokens).
+| What | Where | Scope / token type |
+| --- | --- | --- |
+| The **stack files** (`docker-compose.yml`, …) | private `containers` repository | any read access (see the two download options below) |
+| The **container images** (`ghcr.io/interstellar-network/containers/…` pulled by `docker compose up`) | **ghcr.io** = GitHub Packages | **classic** PAT with **`read:packages`** — fine-grained tokens are *not* supported ([official docs](https://docs.github.com/en/packages/working-with-a-github-packages-registry/working-with-the-gradle-registry#authenticating-to-github-packages)) |
+
+So a **classic** PAT is needed **no matter what** — `docker` must log in to ghcr.io to pull the images:
 
 1. **GitHub → Settings → Developer settings → Personal access tokens → Tokens (classic) → Generate new token (classic)**.
-2. Select the **`read:packages`** scope. `TODO(#328)`: confirm the exact scope required for the http-auth `curl` downloads of the stack files below (likely the equivalent of `read:repository` on fine-grained tokens / `repo` on classic tokens).
+2. Select the **`read:packages`** scope (that is all a consumer needs).
 3. If the organisation enforces SAML SSO, click **Configure SSO** and authorize the token for `Interstellar-Network`.
-4. Copy the token (`ghp_…`) — GitHub shows it only once. Keep it around: the raw-file download commands below use the same classic PAT.
+4. Copy the token (`ghp_…`) — GitHub shows it only once.
+5. Log in to the container registry so `docker compose` can pull the private images:
+
+   ```bash
+   echo "ghp_…your-classic-token…" | docker login ghcr.io -u <your-github-username> --password-stdin
+   ```
+
+For the **stack-file downloads** you have two options (see below):
+
+- **`git`** (option 1) — uses whatever GitHub auth you already have on your machine; **no extra token needed**.
+- **`curl`** (option 2) — needs a **fine-grained** token with **`Contents: read`** on the
+  `containers` repository:
+
+  1. **GitHub → Settings → Developer settings → Personal access tokens → Fine-grained tokens → Generate new token**.
+  2. **Repository access**: `Interstellar-Network/containers`.
+  3. **Permissions → Repository permissions → Contents**: `Read-only` (metadata comes implicitly).
+  4. Copy the token (`github_pat_…`) — GitHub shows it only once.
+
+  ⚠️ Do **not** widen the classic PAT above with the `repo` scope to get file access — `repo`
+  grants **full read/write to all your repositories**. The fine-grained token is the
+  least-privilege way to download the files.
 
 :::info BTC RPC API Key  
 The BTC worker connects to a **Bitcoin Testnet RPC endpoint** using a hosted provider.  
@@ -76,15 +101,44 @@ Place the file in the **same directory** as `docker-compose.yml`.
 mkdir interstellar_m[x]_demo && cd interstellar_m[x]_demo
 ```
 
+The stack config lives in the **private** [`containers`](https://github.com/Interstellar-Network/containers) repository — fetch the two files of the milestone tag using **one** of the two options below.
+
+**Option 1 — `git` (simple, if you have a full dev environment already set up)**
+
+Just clone with your **existing** GitHub setup (SSH key, `gh auth login`, credential helper…):
+
 ```bash
-# Step 2: Download the stack config with the specific curl link of the current milestones [testnet-m6-v1]
-# The `containers` repository is private — authenticate with the GitHub classic PAT
-# from [Get access to the private repositories](#get-access-to-the-private-repositories).
-GITHUB_TOKEN=ghp_…your-classic-token…
+# shallow clone at the milestone TAG — `git clone --branch` accepts tags too
+# (the clone ends in "detached HEAD" state at the tag, which is what we want)
+git clone --depth 1 --branch testnet-m6-v1 https://github.com/Interstellar-Network/containers
+cp containers/docker-compose.yml containers/docker-ipfs-init.sh .
+```
+
+**Option 2 — `curl` + http auth with a fine-grained PAT**
+
+Use the fine-grained token created above ([A GitHub personal access token](#a-github-classic-personal-access-token-required-to-run-the-stack)):
+
+```bash
+GITHUB_TOKEN=github_pat_…your-fine-grained-token…
 curl -L -H "Authorization: Bearer $GITHUB_TOKEN" -o docker-compose.yml https://raw.githubusercontent.com/Interstellar-Network/containers/refs/tags/testnet-m6-v1/docker-compose.yml
 curl -L -H "Authorization: Bearer $GITHUB_TOKEN" -o docker-ipfs-init.sh https://raw.githubusercontent.com/Interstellar-Network/containers/refs/tags/testnet-m6-v1/docker-ipfs-init.sh
 chmod +x docker-ipfs-init.sh
 ```
+
+:::note Verified (and scope-tested)
+Tested against the private `testnet-m6-v1` tag:
+
+| Token | `curl` (raw) | REST contents API |
+| --- | --- | --- |
+| no auth | 404 | 404 |
+| classic PAT, **only `read:packages`** | 404 | 404 |
+| fine-grained, `Contents: read` | **200** | **200** |
+
+⚠️ A **classic** PAT with **only** `read:packages` does **not** grant repository file access —
+that scope is for the GitHub Packages registry (image pulls / SDK integration). For the `curl`
+downloads, use the **fine-grained** token — we deliberately do **not** document adding the
+`repo` scope to the classic PAT: it grants **full read/write access to all your repositories**.
+:::
 
 ```bash
 # Step 3: Place the .env file we send in this directory
