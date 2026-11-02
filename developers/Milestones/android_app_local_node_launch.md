@@ -60,7 +60,11 @@ Running the stack needs **two** private things from GitHub — and one of them f
 | The **stack files** (`docker-compose.yml`, …) | private `containers` repository | any read access (see the two download options below) |
 | The **container images** (`ghcr.io/interstellar-network/containers/…` pulled by `docker compose up`) | **ghcr.io** = GitHub Packages | **classic** PAT with **`read:packages`** — fine-grained tokens are *not* supported ([official docs](https://docs.github.com/en/packages/working-with-a-github-packages-registry/working-with-the-gradle-registry#authenticating-to-github-packages)) |
 
-So a **classic** PAT is needed **no matter what** — `docker` must log in to ghcr.io to pull the images:
+So a **classic** PAT is needed **no matter what** — `docker` must log in to ghcr.io to pull the images.
+
+:::note Planning to integrate or test the **Android SDK**?
+This **same** classic PAT (`read:packages`) is what the [Android SDK integration](/developers/SDK/android/getting-started#step-2--get-access-to-the-sdk) uses for the GitHub Packages **Maven registry** — one token covers both the local stack and the SDK.
+:::
 
 1. **GitHub → Settings → Developer settings → Personal access tokens → Tokens (classic) → Generate new token (classic)**.
 2. Select the **`read:packages`** scope (that is all a consumer needs).
@@ -96,12 +100,7 @@ Place the file in the **same directory** as `docker-compose.yml`.
 ⚠️ Ask us directly for an updated `.env` file.
 :::
 
-```bash
-# Step 1: Create a working directory for the current milestones[x]
-mkdir interstellar_m[x]_demo && cd interstellar_m[x]_demo
-```
-
-The stack config lives in the **private** [`containers`](https://github.com/Interstellar-Network/containers) repository — fetch the two files of the milestone tag using **one** of the two options below.
+The stack config lives in the **private** [`containers`](https://github.com/Interstellar-Network/containers) repository — fetch the two files of the milestone tag using **one** of the two options below. **Both options end up in the same working directory** (`interstellar_m[x]_demo`), so the next steps (`.env`, `docker compose up`) are identical either way.
 
 **Option 1 — `git` (simple, if you have a full dev environment already set up)**
 
@@ -110,8 +109,9 @@ Just clone with your **existing** GitHub setup (SSH key, `gh auth login`, creden
 ```bash
 # shallow clone at the milestone TAG — `git clone --branch` accepts tags too
 # (the clone ends in "detached HEAD" state at the tag, which is what we want)
-git clone --depth 1 --branch testnet-m6-v1 https://github.com/Interstellar-Network/containers
-cp containers/docker-compose.yml containers/docker-ipfs-init.sh .
+git clone --depth 1 --branch testnet-m6-v1 https://github.com/Interstellar-Network/containers interstellar_m[x]_demo
+cd interstellar_m[x]_demo
+chmod +x docker-ipfs-init.sh
 ```
 
 **Option 2 — `curl` + http auth with a fine-grained PAT**
@@ -119,36 +119,30 @@ cp containers/docker-compose.yml containers/docker-ipfs-init.sh .
 Use the fine-grained token created above ([A GitHub personal access token](#a-github-classic-personal-access-token-required-to-run-the-stack)):
 
 ```bash
+mkdir interstellar_m[x]_demo && cd interstellar_m[x]_demo
 GITHUB_TOKEN=github_pat_…your-fine-grained-token…
 curl -L -H "Authorization: Bearer $GITHUB_TOKEN" -o docker-compose.yml https://raw.githubusercontent.com/Interstellar-Network/containers/refs/tags/testnet-m6-v1/docker-compose.yml
 curl -L -H "Authorization: Bearer $GITHUB_TOKEN" -o docker-ipfs-init.sh https://raw.githubusercontent.com/Interstellar-Network/containers/refs/tags/testnet-m6-v1/docker-ipfs-init.sh
 chmod +x docker-ipfs-init.sh
 ```
 
-:::note Verified (and scope-tested)
-Tested against the private `testnet-m6-v1` tag:
+**Step 2 — Place the `.env` file (applies to BOTH options above)**
 
-| Token | `curl` (raw) | REST contents API |
-| --- | --- | --- |
-| no auth | 404 | 404 |
-| classic PAT, **only `read:packages`** | 404 | 404 |
-| fine-grained, `Contents: read` | **200** | **200** |
+Place the `.env` file we send you in the working directory — next to `docker-compose.yml`.
+It is **NOT** part of the private `containers` repository, so **neither** `git clone` **nor** `curl`
+fetches it — you must copy it there yourself.
 
-⚠️ A **classic** PAT with **only** `read:packages` does **not** grant repository file access —
-that scope is for the GitHub Packages registry (image pulls / SDK integration). For the `curl`
-downloads, use the **fine-grained** token — we deliberately do **not** document adding the
-`repo` scope to the classic PAT: it grants **full read/write access to all your repositories**.
-:::
+> Specific for the current Milestone delivery — previous `.env` files should not be reused.
+
+**Step 3 — Start Docker (if needed)**
 
 ```bash
-# Step 3: Place the .env file we send in this directory
-```
-> specific for current Milestone delivery - previous .env should not be reused
-```bash
-# Step 4: Start Docker (if needed)
 sudo service docker start  # (for most Linux distros)
+```
 
-# Step 5: Launch the stack
+**Step 4 — Launch the stack**
+
+```bash
 sudo docker compose down --timeout 1 && sudo docker compose up --force-recreate
 ```
 

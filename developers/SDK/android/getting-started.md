@@ -128,10 +128,6 @@ adb devices            # your emulator/device must be listed
 
 The SDK lives in a **private** repository, so you need two things.
 
-:::note Same token as the local stack guides
-These credentials also serve the [local stack downloads](/developers/Milestones/android_app_local_node_launch#2-launch-the-interstellar-stack-install) — the access walkthrough is documented once, in [Get access to the private repositories](/developers/Milestones/android_app_local_node_launch#get-access-to-the-private-repositories).
-:::
-
 ### 2.1 — Read access to the repository
 
 Ask Interstellar for read access to [`Interstellar-Network/wallet-app-internal`](https://github.com/Interstellar-Network/wallet-app-internal).
@@ -140,16 +136,9 @@ Why this repository? The Maven package could be published to **any** Maven regis
 
 ### 2.2 — A GitHub **classic** personal access token
 
-GitHub Packages only authenticates with a **classic** PAT — fine-grained tokens are *not* supported. From the official [Gradle registry](https://docs.github.com/en/packages/working-with-a-github-packages-registry/working-with-the-gradle-registry#authenticating-to-github-packages) documentation:
+GitHub Packages only authenticates with a **classic** PAT — fine-grained tokens are *not* supported ([official docs](https://docs.github.com/en/packages/working-with-a-github-packages-registry/working-with-the-gradle-registry#authenticating-to-github-packages)).
 
-> GitHub Packages only supports authentication using a personal access token (classic). For more information, see [Managing your personal access tokens](https://docs.github.com/en/authentication/keeping-your-account-and-data-secure/managing-your-personal-access-tokens).
-
-The short version:
-
-1. **GitHub → Settings → Developer settings → Personal access tokens → Tokens (classic) → Generate new token (classic)**.
-2. Select the **`read:packages`** scope (that is all a consumer needs).
-3. If the organisation enforces SAML SSO, click **Configure SSO** and authorize the token for `Interstellar-Network`.
-4. Copy the token (`ghp_…`) — GitHub shows it only once.
+Create the token by following **[A GitHub **classic** personal access token (required to run the stack)](/developers/Milestones/android_app_local_node_launch#a-github-classic-personal-access-token-required-to-run-the-stack)** in the local stack guide — the **same** classic PAT (`read:packages` scope) is used there to pull the stack's container images and here for the Maven registry. **Only the `read:packages` scope is needed for the SDK.**
 
 ### 2.3 — Give the token to Gradle
 
