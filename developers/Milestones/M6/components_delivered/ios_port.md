@@ -118,7 +118,40 @@ painted with the garbled-circuit pixel stream. The contract is identical on both
 The app runs in the **iOS Simulator** (the Rust libraries are compiled for the simulator slice
 as well) and on real devices through **TestFlight** — see
 [App Distribution — Android & iOS](./app_distribution.md) and the
-[local demo](../local-demo-with-docker.md).
+[local stack + demo app guide](/developers/Milestones/android_app_local_node_launch).
+
+### Scanning the WalletConnect QR in the Simulator (FauxCam)
+
+The **iOS Simulator has no camera**: any app that opens an `AVCaptureSession` gets nothing, so
+the wallet app's QR scanner cannot work in the simulator. (The Android emulator is fine — it has
+a virtual camera.)
+
+The workaround is [**FauxCam**](https://github.com/mkemalgokce/fauxcam) — a macOS **menu-bar app**
+that feeds a fake camera (a still image, a video, your Mac's webcam or **a QR code you type**)
+into the apps running in the simulator.
+
+**Install it**
+
+1. Download the latest `FauxCam.dmg` from the [FauxCam releases](https://github.com/mkemalgokce/fauxcam/releases).
+2. Open the DMG, drag **FauxCam.app** into `/Applications`, then launch it.
+3. It is a **menu-bar app**: no Dock icon, no main window — click the menu-bar icon to open the viewfinder.
+
+> The upstream README documents the whole feature set (the *Media* / *Camera* / *QR* sources, the `faux` CLI, the requirements): [FauxCamApp — menu-bar app](https://github.com/mkemalgokce/fauxcam#fauxcamapp-menu-bar-app).
+
+**Use it — paste the WalletConnect URI**
+
+1. In the Reown lab Dapp, **copy the WalletConnect URI** (the M5 tutorial, [step 1.2](/developers/Milestones/M5/local-demo-with-docker#step-12--get-the-walletconnect-uri), shows how).
+2. In the FauxCam panel, switch to the **QR** tab and **paste the URI** — FauxCam encodes it as a QR code and streams it to the simulator.
+3. In the wallet app (on the simulator), open the **QR scanner** (Portfolio or Send → the QR icon at the top left) and point it at the FauxCam viewfinder: the URI is "scanned" and the session starts.
+
+This is the shortest path: **no screenshot of the QR code to take, re-encode and import** — the
+URI is copied once and everything else happens inside the simulator.
+
+:::note
+The fake camera is injected **when the app launches**, so restart the wallet app (or re-run it
+from Xcode) after starting FauxCam. The CLI can do the same in one command:
+`faux run <bundle-id> --source qr:<the-walletconnect-uri>`.
+:::
 
 :::warning Known issue (transient, Simulator only)
 When adding a **cloud-token** recovery, tapping **"save to files"** can show a **white window**
@@ -130,4 +163,4 @@ Interstellar app: *Device → Erase All Content and Settings*, then reinstall th
 
 - [Interstellar SDK — Integration Delivered in Milestone 6](./interstellar_sdk.md) — the SDK itself.
 - [App Distribution — Android & iOS](./app_distribution.md) — how to install the app.
-- [Local Demo with Docker](../local-demo-with-docker.md) — run the stack and drive the app.
+- [Launch the Interstellar Stack with the Demo App](/developers/Milestones/android_app_local_node_launch) — run the stack and drive the app.

@@ -99,4 +99,4 @@ The SDK is delivered as a **technical preview** on top of the private `wallet-ap
 - [iOS Port](./ios_port.md) — the iOS wallet app and the iOS SDK.
 - [App Distribution — Android & iOS](./app_distribution.md) — how to install the app.
 
-The WalletConnect/Reown interoperability delivered in **M5** remains testable through the same app and flows — see the [M5 documentation](/developers/Milestones/M5/local-demo-with-docker) and the running tutorial in [Local Demo with Docker](../local-demo-with-docker.md).
+The WalletConnect/Reown interoperability delivered in **M5** remains testable through the same app and flows — see the [M5 documentation](/developers/Milestones/M5/local-demo-with-docker) and the [M6 reviewer shortcut](/developers/Milestones/M6/quick-start-evaluator).

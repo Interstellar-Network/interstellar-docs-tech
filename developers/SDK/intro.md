@@ -89,7 +89,7 @@ At the time of writing the current version is **`0.1.0`** (Android: the `shared`
    - unzip it and add the `InterstellarSdk` folder as a **local** Swift package — Xcode links *and embeds* the frameworks by itself;
    - the two `.xcframework`s are also attached **individually** (with their SPM checksums), but the **remote `.binaryTarget(url:checksum:)` flow is not recommended for a private repo**: SwiftPM downloads binary targets anonymously (nowhere to put a token) and every new build invalidates the checksum — see [why](./ios/getting-started.md#why-not-a-remote-hosted-swift-package).
    - Full walkthrough: [iOS — Getting Started](./ios/getting-started.md#step-2--download-the-sdk).
-4. **Endpoints & test keys** — the shared testnet endpoints (and the MoonPay/Reown test keys, see the [M6 demo notes](/developers/Milestones/M6/local-demo-with-docker)) are provided by Interstellar on request.
+4. **Endpoints & test keys** — the shared testnet endpoints (and the MoonPay/Reown test keys, see the [app distribution notes](/developers/Milestones/M6/components_delivered/app_distribution)) are provided by Interstellar on request.
 
 ### The artifacts are proved by the CI
 

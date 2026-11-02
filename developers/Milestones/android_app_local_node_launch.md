@@ -1,6 +1,6 @@
-# Launch Android App with Local Nodes
+# Launch the Interstellar Stack with the Demo App
 
-This guide explains how to run the full Interstellar stack **locally** using Docker or Podman. You will be able to launch the Substrate node, Integritee TEE worker, and IPFS service, then interact with the system using the **Interstellar Android demo app**.
+This guide explains how to run the full Interstellar stack **locally** using Docker or Podman. You will be able to launch the Substrate node, Integritee TEE worker, and IPFS service, then interact with the system using the **Interstellar demo app** — on **Android** (APK or emulator) or on **iOS** (Simulator).
 
 This setup enables full offline testing without relying on a hosted VPS.
 
@@ -11,8 +11,7 @@ The stack is expected to work on other recent Linux distributions, but this has 
 
 Known issue: May fail on Apple Silicon (M1/M2/M3/M4) - due to current SIMD usage and QEMU/Rosetta limitations - crash on M1/M2 (not tested on M3/M4)
 
-The **frontend** (e.g., Android emulator or physical device) 
-can run on any OS supported by Android Studio (expect some emulator limitations on Apple Silicon)
+The **frontend** can run on any OS supported by Android Studio (Android emulator or physical device — expect some emulator limitations on Apple Silicon), and the demo app also runs in the **iOS Simulator** on macOS
 
 *Compose tools are required to manage service startup dependencies (e.g., health checks).
 :::
@@ -25,12 +24,43 @@ can run on any OS supported by Android Studio (expect some emulator limitations 
 | Docker             | [Install Docker](https://docs.docker.com/engine/install/) |
 | Docker Compose     | [Install docker-compose](https://docs.docker.com/compose/install/) |
 | `curl`, `wget`, `jq` | Installed via `apt`/`brew` or default in most environments |
+| GitHub access | read access to the **private** [`containers`](https://github.com/Interstellar-Network/containers) repo + a GitHub **classic** PAT — see [Get access to the private repositories](#get-access-to-the-private-repositories) |
 | Android Studio     |  [Install Android Studio](https://developer.android.com/studio) |
 | ADB (`adb reverse`) | Comes with Android Studio |
+| Xcode | [Install Xcode](https://apps.apple.com/app/xcode) — iOS only (to install the app in the iOS Simulator) |
 
 > You may also use **Podman** as an alternative to Docker.
 
 ## 2. Launch the Interstellar Stack Install 
+
+### Get access to the private repositories
+
+:::warning The `containers` repository is **private**
+The stack files (`docker-compose.yml`, `docker-ipfs-init.sh`, …) live in the **private**
+[`Interstellar-Network/containers`](https://github.com/Interstellar-Network/containers) repository.
+The download commands in this section return **HTTP 404** until you have read access to that
+repository and a GitHub **classic** personal access token — get both first (steps below).
+:::
+
+#### Read access to the private repositories
+
+Two **private** repositories are involved in this guide:
+
+- [`Interstellar-Network/containers`](https://github.com/Interstellar-Network/containers) — hosts the stack files **and** the container images. **Every** reader of this guide needs read access.
+- [`Interstellar-Network/wallet-app-internal`](https://github.com/Interstellar-Network/wallet-app-internal) — hosts the SDK sources and their registries (the Android Maven package, the iOS GitHub release). Only needed if you also integrate the SDK — see the [Android](/developers/SDK/android/getting-started) and [iOS](/developers/SDK/ios/getting-started) getting-started guides.
+
+Ask Interstellar for read access to the repository (or repositories) you need.
+
+#### A GitHub **classic** personal access token
+
+GitHub Packages only authenticates with a **classic** PAT — fine-grained tokens are *not* supported. From the official [documentation](https://docs.github.com/en/packages/working-with-a-github-packages-registry/working-with-the-gradle-registry#authenticating-to-github-packages):
+
+> GitHub Packages only supports authentication using a personal access token (classic). For more information, see [Managing your personal access tokens](https://docs.github.com/en/authentication/keeping-your-account-and-data-secure/managing-your-personal-access-tokens).
+
+1. **GitHub → Settings → Developer settings → Personal access tokens → Tokens (classic) → Generate new token (classic)**.
+2. Select the **`read:packages`** scope. `TODO(#328)`: confirm the exact scope required for the http-auth `curl` downloads of the stack files below (likely the equivalent of `read:repository` on fine-grained tokens / `repo` on classic tokens).
+3. If the organisation enforces SAML SSO, click **Configure SSO** and authorize the token for `Interstellar-Network`.
+4. Copy the token (`ghp_…`) — GitHub shows it only once. Keep it around: the raw-file download commands below use the same classic PAT.
 
 :::info BTC RPC API Key  
 The BTC worker connects to a **Bitcoin Testnet RPC endpoint** using a hosted provider.  
@@ -48,8 +78,11 @@ mkdir interstellar_m[x]_demo && cd interstellar_m[x]_demo
 
 ```bash
 # Step 2: Download the stack config with the specific curl link of the current milestones [testnet-m6-v1]
-curl -L -o docker-compose.yml https://raw.githubusercontent.com/Interstellar-Network/containers/refs/tags/testnet-m6-v1/docker-compose.yml
-curl -L -o docker-ipfs-init.sh https://raw.githubusercontent.com/Interstellar-Network/containers/refs/tags/testnet-m6-v1/docker-ipfs-init.sh
+# The `containers` repository is private — authenticate with the GitHub classic PAT
+# from [Get access to the private repositories](#get-access-to-the-private-repositories).
+GITHUB_TOKEN=ghp_…your-classic-token…
+curl -L -H "Authorization: Bearer $GITHUB_TOKEN" -o docker-compose.yml https://raw.githubusercontent.com/Interstellar-Network/containers/refs/tags/testnet-m6-v1/docker-compose.yml
+curl -L -H "Authorization: Bearer $GITHUB_TOKEN" -o docker-ipfs-init.sh https://raw.githubusercontent.com/Interstellar-Network/containers/refs/tags/testnet-m6-v1/docker-ipfs-init.sh
 chmod +x docker-ipfs-init.sh
 ```
 
@@ -101,8 +134,6 @@ Requested started id=1059 method=POST uri=http://ipfs:5001/api/v0/add
 [ocw-circuits] Hello from pallet-ocw-circuits.
 🛌 Idle (0 peers), best: #6 (...), finalized #3 (...), ⬇ 0 ⬆ 0
 ```
-You can also verify the runtime is ready using [Polkadot.js](https://polkadot.js.org/apps/?rpc=ws://localhost:9944)
-
 :::info VCA System Layer
 
 While waiting for the stack to fully initialize, you can explore the architecture and rationale behind 
@@ -118,16 +149,29 @@ Once built, these circuits are uploaded to IPFS and used to enable real-time, **
 :::
 
 
-## 3. Install the Android Demo App
+## 3. Install the Demo App
 
-### Download the APK
+Both demo apps are **preconfigured to connect to `localhost`** — the local stack launched in section 2.
 
-Use the specific apk link for the cuurent milestones
+:::warning The **same** build on every channel — and it needs the **local** stack
+The APK you get from the **GitHub release** or from **Firebase App Distribution**, and the iOS
+`.app` you get from the **GitHub release** — are all **the very same builds**: they are configured
+for the **local dev stack** (`wss://127.0.0.1:2090`, `ws://127.0.0.1:9944`, IPFS
+`127.0.0.1:5001`), **not** for a hosted testnet.
+So: **start the stack first** (section 2), install the app (below) and expose the stack ports to
+the device/emulator (section 4).
+:::
+
+### Android
+
+#### Download the APK
+
+Download the APKs from the current milestone's GitHub release — e.g. the [M6 v1 release](https://github.com/Interstellar-Network/wallet-app-internal/releases/tag/m6-v1) (APKs preconfigured to connect to `localhost`):
 
 - `androidApp-arm64-release.apk` — for Android devices and Apple Silicon(M1/M2/M3/M4)
 - `androidApp-x86_64-release.apk` — for Android emulators running on x86_64 platforms (e.g., Windows PCs, Intel-based Mac)
 
-> **Latest version recommended**
+> **Latest version recommended** — the `m6-v1` release exists but is **empty for now**: the APKs are attached when the M6 release is cut.
 
 :::tip Recommended Test Setup – Hardware & Emulator Guidance
 
@@ -153,7 +197,7 @@ The app uses local secure storage and cached configuration; keeping a previous v
 
 
 
-### Option 1: Physical Device
+#### Option 1: Physical Device
 
 1. Transfer the APK to your phone or download it directly from the device 
 2. Allow app installation from external sources
@@ -166,7 +210,7 @@ The app uses local secure storage and cached configuration; keeping a previous v
 :::warning
 Ensure that your device is configured for **english** language
 :::
-### Option 2: Emulator
+#### Option 2: Emulator
 
 1. [Create](https://developer.android.com/studio/run/managing-avds#createavd)  a `Pixel 7` or equivalent emulator with the **API 35** system image (`x86_64`)
 2. Edit the emulator and make sure the API level is **35 or lower** — API 36+ crashes in the emulator (see the note below)
@@ -205,12 +249,42 @@ Enabling this setting ensures more reliable emulator behavior, especially for na
 
 :::
 
+:::info Or: install from Firebase App Distribution (Android)
+The same build is also distributed through **Firebase App Distribution** — installs straight from
+the browser, device only. See [App Distribution — Android & iOS](/developers/Milestones/M6/components_delivered/app_distribution).
+:::
+
+### iOS
+
+iOS does **not** use Firebase: the app is archived with `xcodebuild`, exported and uploaded to
+**App Store Connect**, where it shows up in **TestFlight**. Since **TestFlight only delivers to
+real devices**, the current release offers **two** channels:
+
+| What you want | Channel | What you do |
+| --- | --- | --- |
+| Run the app in the **iOS Simulator** | direct `.app` download | download the zipped `.app` from the [M6 v1 release](https://github.com/Interstellar-Network/wallet-app-internal/releases/tag/m6-v1) eg "iosApp-Simulator.app.zip", unzip it, then in Xcode *Device > Install Simulated Package…* (or `xcrun simctl install booted <app>.app`) |
+| Run the app on a **real device** | **TestFlight** | install the **TestFlight** app, accept the invitation, then install the build |
+
+:::warning Real devices vs the local stack
+The build is preconfigured to reach the stack at `127.0.0.1` — on a **real device**, that is the
+device itself, so the local stack running on your computer is **not** reachable this way. Use the
+**iOS Simulator** channel for local-stack testing.
+`TODO(#328)`: document the real-device story (hosted stack or port forwarding) if/when relevant.
+:::
+
+Full details (and what the maintainer does to publish): [App Distribution — Android & iOS](/developers/Milestones/M6/components_delivered/app_distribution).
+
 ---
 
-## 2. Link App to your local Interstellar stack:
+## 4. Link App to your local Interstellar stack:
 
-The Android app is preconfigured to connect to `localhost`
-To allow the Android app to connect to your local blockchain and IPFS stack:
+The demo app is preconfigured to connect to `localhost`
+To allow the demo app to connect to your local blockchain and IPFS stack:
+
+### Step 0: iOS Simulator — no forwarding needed
+
+The **iOS Simulator runs on your computer** and reaches `127.0.0.1` natively — **no `adb reverse`
+or port forwarding is needed**. The steps below apply to the **Android** device/emulator.
 
 ### Step 1: `adb reverse` Setup
 > **On** the **Desktop** connected to the **Device** or running the **Emulator** 

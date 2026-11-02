@@ -19,7 +19,7 @@ One Activity, one `TextView`, one `InterstellarSdk.create(...)` call. No Compose
 | JDK | 17 (Android Studio's embedded JBR is fine) |
 | Android SDK | `compileSdk 37` |
 | **Rust / NDK / cargo** | **not needed** — the published AAR already ships the prebuilt native libraries (`arm64-v8a` + `x86_64`) |
-| Interstellar stack | the local Docker stack from the [M6 tutorial](../../Milestones/M6/local-demo-with-docker.md) must be running (the SDK's default endpoints are `wss://127.0.0.1:2090` / `ws://127.0.0.1:9944` / IPFS `5001`) |
+| Interstellar stack | the local Docker stack from the [local stack guide](../../Milestones/android_app_local_node_launch.md) must be running (the SDK's default endpoints are `wss://127.0.0.1:2090` / `ws://127.0.0.1:9944` / IPFS `5001`) |
 | SDK access | read access to the private [`wallet-app-internal`](https://github.com/Interstellar-Network/wallet-app-internal) repo — **the repo that hosts the SDK's Maven registry** — plus a GitHub **classic** PAT with the `read:packages` scope — see [Get access to the SDK](#step-2--get-access-to-the-sdk) |
 
 :::info Which artifact?
@@ -127,6 +127,10 @@ adb devices            # your emulator/device must be listed
 ## Step 2 — Get access to the SDK
 
 The SDK lives in a **private** repository, so you need two things.
+
+:::note Same token as the local stack guides
+These credentials also serve the [local stack downloads](/developers/Milestones/android_app_local_node_launch#2-launch-the-interstellar-stack-install) — the access walkthrough is documented once, in [Get access to the private repositories](/developers/Milestones/android_app_local_node_launch#get-access-to-the-private-repositories).
+:::
 
 ### 2.1 — Read access to the repository
 
@@ -436,7 +440,7 @@ What happens on first launch:
 
 ## Step 5 — Run it against the local stack
 
-1. Start the Docker stack (node `9944`, worker `2090`, IPFS `5001`) — see the [M6 tutorial](../../Milestones/M6/local-demo-with-docker.md).
+1. Start the Docker stack (node `9944`, worker `2090`, IPFS `5001`) — see the [local stack guide](../../Milestones/android_app_local_node_launch.md).
 
    ::::important Docker stack and Android Studio on different machines
    The `adb reverse` commands below only forward the ports of the machine running **Android Studio**
@@ -897,6 +901,6 @@ artifact unless you want to patch the SDK.
 | `Received status code 402` while publishing (maintainers) | the organisation's GitHub Packages budget is exhausted — see the [Packages billing docs](https://docs.github.com/en/billing/concepts/product-billing/github-packages) |
 | `OutOfMemoryError` / D8 dex merge fails | raise `org.gradle.jvmargs` to `-Xmx2048M` in the project's `gradle.properties` |
 | App shows `SDK init failed: …` at start | the local stack isn't reachable — check Docker + `adb reverse` for **all three** ports |
-| Init succeeds but no balances | expected for a fresh account — fund the coin address (see the [M6 tutorial](../../Milestones/M6/local-demo-with-docker.md)) |
+| Init succeeds but no balances | expected for a fresh account — fund the coin address (see the [local stack guide](../../Milestones/android_app_local_node_launch.md)) |
 
 Next: [**API Reference**](./api-reference.md) and the [**VCA pinpad guide**](./pinpad.md).

@@ -11,7 +11,7 @@ import { Table, TableHeader, TableRow, TableCell, TableBody } from "@site/src/co
 
 Milestone 6 also delivers the **distribution channels** of the wallet app: a reviewer or tester
 must be able to **install** the app and exercise the flows of the
-[local demo](../local-demo-with-docker.md) **without building it from source**.
+[local demo](/developers/Milestones/android_app_local_node_launch) **without building it from source**.
 
 :::info Two repositories, two kinds of artifacts
 - the **stack** (the `docker-compose.yml`, the IPFS init script) is released in
@@ -29,7 +29,7 @@ are configured for the **local dev stack** (`wss://127.0.0.1:2090`, `ws://127.0.
 `127.0.0.1:5001`), **not** for a hosted testnet.
 
 So the **local stack must be running** before you can use any of them (see the
-[local demo](../local-demo-with-docker.md#1-launch-the-interstellar-stack)), and on Android the
+[local demo](/developers/Milestones/android_app_local_node_launch#2-launch-the-interstellar-stack-install)), and on Android the
 three ports must be exposed to the device/emulator (`adb reverse tcp:2090 tcp:2090`, …). An iOS
 Simulator reaches `127.0.0.1` natively.
 :::
@@ -95,7 +95,7 @@ The official documentation is the reference for the whole flow:
 :::note The other Android channel
 The same build is also published directly as an APK
 there [`m6-v1` release](https://github.com/Interstellar-Network/wallet-app-internal/releases/tag/m6-v1)
-— see the [local demo](../local-demo-with-docker.md#2-install-the-android-demo-app).
+— see the [local demo](/developers/Milestones/android_app_local_node_launch#3-install-the-demo-app).
 
 This is mostly useful if you want to test using an Emulator and want to avoid the whole Google signin there.
 :::
@@ -117,11 +117,7 @@ through it. So the M6 release offers both:
 
 ### For the testers
 
-| What you want | Channel | What you do |
-| --- | --- | --- |
-| Run the app in the **Simulator** | direct `.app` download | download the zipped `.app` from the [`m6-v1` release](https://github.com/Interstellar-Network/wallet-app-internal/releases/tag/m6-v1) eg "iosApp-Simulator.app.zip", unzip it, then in Xcode *Device > Install Simulated Package…* (or `xcrun simctl install booted <app>.app`) |
-| Run the app on a **real device** | **TestFlight** | **PENDING/WIP** install the **TestFlight** app, accept the invitation, then install the build |
-
+The install steps per channel are documented **once** in [Install the Demo App](/developers/Milestones/android_app_local_node_launch#3-install-the-demo-app).
 
 Official documentation:
 [upload builds](https://developer.apple.com/help/app-store-connect/manage-builds/upload-builds/) ·
@@ -129,6 +125,6 @@ Official documentation:
 
 ## See also
 
-- [Local Demo with Docker](../local-demo-with-docker.md) — run the stack and drive the app.
+- [Launch the Interstellar Stack with the Demo App](/developers/Milestones/android_app_local_node_launch) — run the stack and drive the app.
 - [Interstellar SDK — Integration Delivered in Milestone 6](./interstellar_sdk.md) — the SDK itself.
 - [iOS Port](./ios_port.md) — the iOS app and the iOS SDK.
