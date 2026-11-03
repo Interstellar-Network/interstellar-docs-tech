@@ -146,55 +146,18 @@ sudo service docker start  # (for most Linux distros)
 sudo docker compose down --timeout 1 && sudo docker compose up --force-recreate
 ```
 
-### ⏳ Waiting for Master Circuit Generation
+**Step 5 — Wait for master circuit generation**
 
-Once the node and service are running, the system will automatically trigger the **generation of master circuits** from the hardware description files.
-
-These circuits are compiled using the Verilog logic generated from the original master circuits specifications, processed through the logic synthesis pipeline. This step may take several minutes depending on the environment.
-
-During this time, monitor the logs and wait for the following sequence of messages:
+On first launch the stack automatically generates the master circuits — this takes several minutes.
+The stack is ready once `integritee_node-1` logs both of the following:
 
 ```bash
-[ocw-circuits] callback_new_skcd_signed sent number : <number> 1-Success  - 0-Fail
-[ocw-circuits] callback_new_display_circuits_package_signed: (<CID_1>, <message_digits_number>), (<CID_2>, <pinpad_digits_number>) for <account_id>
-```
-Shortly before these messages, you will also see large blob uploads to IPFS such as:
-```bash
-Requested started id=<...> method=POST uri=http://ipfs:5001/api/v0/add
-```
-These blobs correspond to the master visual circuits (SKCD display circuits), which are the result 
-of the hardware synthesis pipeline. Their appearance in the logs is a strong indicator 
-that the build process has completed.
-
-> ℹ️ You can identify this moment easily by spotting two large IPFS file hashes being 
-> logged together — one for the secure keypad circuit and one for the display message circuit 
-> i.e one time code These hashes will later be used for visual challenge rendering and validation.
-
-Detailed example from `integritee_node-1` 
-```bash
-Requested started id=1059 method=POST uri=http://ipfs:5001/api/v0/add
-[fetch_from_remote_grpc_web] content_type: application/json
 [ocw-circuits] callback_new_skcd_signed sent number : 1
-[ocw-circuits] callback_new_display_circuits_package_signed: ("QmUx8mMo8GgGdUhcgFQVg2sexkVfyq1sViruZiBadUfs4d",2),("QmcwXyZNmLXnjeoA25YSzj41G1sr6ZsHgZZBQVWvcfe1qn",10) for d43593c715fdd31c61141abd04a99fd6822c8558854ccde39a5684e7a56da27d (5GrwvaEF...)
+[ocw-circuits] callback_new_display_circuits_package_signed: ("<CID_1>",2),("<CID_2>",10) for <account_id> (5GrwvaEF...)
 ```
 
-```
-[ocw-circuits] Hello from pallet-ocw-circuits.
-🛌 Idle (0 peers), best: #6 (...), finalized #3 (...), ⬇ 0 ⬆ 0
-```
-:::info VCA System Layer
-
-While waiting for the stack to fully initialize, you can explore the architecture and rationale behind 
-the **[VCA System Layer](/developers/category/vca-system-layer)**. This layer is responsible for producing the `VCA Token`, 
-the core cryptographic artifact used by the Trusted Action Validation Protocol (`TAVP`).
-
-The token is generated through a hardware-secure pipeline starting from VHDL logic descriptions, synthesized into 
-Verilog and compiled using the`Yosis` and `abc` logic synthesis toolchain. The resulting master circuits define both the secure display and interaction logic — including the Secure Circuit Descriptor (`scd`) and its runtime variant, `skcd`, used for verifiable evaluation.
-
-Once built, these circuits are uploaded to IPFS and used to enable real-time, **privacy-preserving visual cryptographic** 
-**challenges**, ensuring each critical **user interaction** is verifiable and **resistant to malware, phishing, and adversarial AI**.
-
-:::
+The two CIDs in the second line are the master circuits uploaded to IPFS; they are used later
+for visual challenge rendering and validation.
 
 
 ## 3. Install the Demo App
