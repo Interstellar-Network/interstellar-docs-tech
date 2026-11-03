@@ -364,7 +364,7 @@ $env:Path += ";$env:LOCALAPPDATA\Android\Sdk\platform-tools"
 
 ```bash
 adb reverse tcp:9944 tcp:9944   # Substrate WS
-adb reverse tcp:2090 tcp:2090   # Integritee node port
+adb reverse tcp:2090 tcp:2090   # Worker trusted port
 adb reverse tcp:5001 tcp:5001   # IPFS
 
 ```
