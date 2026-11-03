@@ -662,32 +662,13 @@ checkout** instead of from the published zip.
 The SDK is a Swift package in the repository (`iosSdk/`), so you can add **that folder** as a
 local Swift package (*File > Add Package Dependencies… > Add Local…* → `wallet-app-internal/iosSdk`).
 
-Its two binary targets in the source `Package.swift` point at `../build/sdk/` — that is,
-`wallet-app-internal/build/sdk/` **relative to the repository root** — so the Rust libraries
-must be built once first:
-
-```bash
-# in the wallet-app-internal checkout
-./iosApp/scripts/publish-ios-sdk.sh --version <version> --no-publish
-# → iosApp/build/sdk/{substrate_clientFFI,rendererFFI}.xcframework
-```
-
-:::warning Path mismatch
-The script writes the build outputs into `iosApp/build/sdk/`, but the source `Package.swift`
-looks for them in `build/sdk/` at the repository root (`../build/sdk/` relative to `iosSdk/`).
-You must make the frameworks available at the path the package expects — the easiest way is
-a symlink:
-
-```bash
-# in the wallet-app-internal checkout
-mkdir -p build && ln -s iosApp/build/sdk build/sdk
-```
-
-(Alternatively, copy the `.xcframework` files from `iosApp/build/sdk/` to `build/sdk/`.)
-:::
-
-After that, the package resolves like the published one — Xcode links **and embeds** the
-frameworks, no linker flags.
+Option A does **not** resolve as-is: the two binary targets in the source `Package.swift` point
+at `../build/sdk/` — `wallet-app-internal/build/sdk/` relative to the repository root — while
+the build script (`./iosApp/scripts/publish-ios-sdk.sh --version <version> --no-publish`) writes
+its outputs to `iosApp/build/sdk/`. The two paths **do not match**, so the local package fails
+to resolve until the mismatch is reconciled. This is one more reason the whole flow is marked
+unsupported above (`TODO(M7)`: align the publish script output path with the source
+`Package.swift`).
 
 ### B. Build the SDK into your app target (what the reference app does)
 
