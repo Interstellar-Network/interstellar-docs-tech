@@ -52,8 +52,9 @@ The API mirrors the underlying Rust calls: **`getter…`** functions read state,
 
 :::note
 The three `DEFAULT_*` constants point at the **local dev stack**: each port needs an
-`adb reverse tcp:PORT tcp:PORT` to be reachable from a device or an emulator. Changing the
-environment is done at integration time by Interstellar — **contact us** for the other values.
+`adb reverse tcp:PORT tcp:PORT` to be reachable from a device or an emulator. The endpoints are
+**built into the SDK** — the only supported environment at this stage is the local Docker stack; a
+different environment is set at build time by Interstellar.
 :::
 
 ## Initialization & lifecycle

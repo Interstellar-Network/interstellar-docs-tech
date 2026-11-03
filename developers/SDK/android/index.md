@@ -26,8 +26,12 @@ it, so **no Rust, no NDK and no cargo** are needed on your machine. See
 | Device key | **Android Keystore** — P-256 (secp256r1) ECDSA, alias `interstellar_mobile_proxy_v1` |
 | Backend | An Interstellar worker (L2, `wss://`), node (L1, `ws://`) and IPFS endpoint |
 
-:::note Endpoint defaults
-The SDK defaults are the **local dev stack**: `wss://127.0.0.1:2090` (worker), `ws://127.0.0.1:9944` (node), `/ip4/127.0.0.1/tcp/5001` (IPFS) — the `DEFAULT_WS_URL` / `DEFAULT_NODE_URL` / `DEFAULT_IPFS_ADDR` constants. Connecting to a different environment is currently configured at build/integration time by Interstellar — **contact us** for the values to use. When developing against the local stack, each port needs `adb reverse tcp:PORT tcp:PORT`.
+:::note Endpoint defaults — local stack only, by design
+The SDK defaults are the **local dev stack**: `wss://127.0.0.1:2090` (worker), `ws://127.0.0.1:9944` (node), `/ip4/127.0.0.1/tcp/5001` (IPFS) — the `DEFAULT_WS_URL` / `DEFAULT_NODE_URL` / `DEFAULT_IPFS_ADDR` constants.
+
+At this stage the endpoints are **built into the SDK** (the `DEFAULT_*` constants) and point at the **local Docker stack** (see [Launch the Interstellar Stack with the Demo App](/developers/Milestones/android_app_local_node_launch)) — the only supported environment, replicating a hosted testnet fully self-contained: no runtime configuration, the SDK just works against the local stack. The public `create` factory takes **no** endpoint parameters; the URL-override overload is `internal` (SDK build/tests only), so a different environment is set at build time by Interstellar.
+
+When developing against the local stack, each port needs `adb reverse tcp:PORT tcp:PORT`.
 :::
 
 ## The one and only entry point

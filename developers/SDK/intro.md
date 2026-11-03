@@ -122,7 +122,7 @@ If you have the repository, you can always build the SDK from source and consume
 Until the final testnet release:
 
 - Public API surface may change between milestone deliveries.
-- The default backend URLs point at the **local dev stack** (`wss://127.0.0.1:2090`, `ws://127.0.0.1:9944`, `/ip4/127.0.0.1/tcp/5001`) — production/testnet endpoints are provided by Interstellar.
+- The backend URLs are **built into the SDK** and point at the **local dev stack** (`wss://127.0.0.1:2090`, `ws://127.0.0.1:9944`, `/ip4/127.0.0.1/tcp/5001`) — the only supported environment at this stage (see [Launch the Interstellar Stack with the Demo App](/developers/Milestones/android_app_local_node_launch)).
 - USD prices used by the balance helpers are **hardcoded constants** meant for demo/dev flows.
 
 The full wallet application (`wallet-app`) is the reference integration of this SDK — every feature described here is exercised by that app on both platforms.
