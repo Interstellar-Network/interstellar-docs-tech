@@ -67,7 +67,7 @@ try await InterstellarSdk.create(
 
 ## Server-reset semantics
 
-Identical to Android (both mirror the same Rust flow):
+Similar to Android (both share the same Rust core logic, but **network error handling is not identical**: iOS uses Swift's `async throws` — a connection failure rejects the promise with a thrown error — while Android relies on coroutine `catch` blocks and Toast callbacks):
 
 - **Fresh install** → transparent registration.
 - **Stored account ≠ server root** (or server no longer knows the device) → your `onServerResetDetected` closure is awaited; when it returns, the SDK re-registers.
