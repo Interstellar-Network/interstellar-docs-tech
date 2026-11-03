@@ -116,8 +116,8 @@ painted with the garbled-circuit pixel stream. The contract is identical on both
 ## Running it
 
 The app runs in the **iOS Simulator** (the Rust libraries are compiled for the simulator slice
-as well) and on real devices through **TestFlight** — see
-[App Distribution — Android & iOS](./app_distribution.md) and the
+as well) and on real devices through **TestFlight** (⚠️ pending setup — not available yet,
+see [App Distribution — Android & iOS](./app_distribution.md)) and the
 [local stack + demo app guide](/developers/Milestones/android_app_local_node_launch).
 
 ### Scanning the WalletConnect QR in the Simulator (FauxCam)

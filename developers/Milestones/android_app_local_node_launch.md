@@ -219,7 +219,7 @@ Download the APKs from the current milestone's GitHub release — e.g. the [M6 v
 - `androidApp-arm64-release.apk` — for Android devices and Apple Silicon(M1/M2/M3/M4)
 - `androidApp-x86_64-release.apk` — for Android emulators running on x86_64 platforms (e.g., Windows PCs, Intel-based Mac)
 
-> **Latest version recommended** — the `m6-v1` release exists but is **empty for now**: the APKs are attached when the M6 release is cut.
+> **Latest version recommended** — the `m6-v1` release ships the current APKs (both architectures); new versions follow each release — check the [releases page](https://github.com/Interstellar-Network/wallet-app-internal/releases).
 
 :::tip Recommended Test Setup – Hardware & Emulator Guidance
 
@@ -306,7 +306,9 @@ the browser, device only. See [App Distribution — Android & iOS](/developers/M
 
 iOS does **not** use Firebase: the app is archived with `xcodebuild`, exported and uploaded to
 **App Store Connect**, where it shows up in **TestFlight**. Since **TestFlight only delivers to
-real devices**, the current release offers **two** channels:
+real devices**, the current release offers **two** channels — the direct zipped `.app` download
+(available now) and **TestFlight** (⚠️ the TestFlight account is approved but the setup is
+**still pending**, so the build is **not** available there yet):
 
 :::info Why is the Simulator build a zip?
 Unlike an Android APK — a single binary file — an iOS `.app` is a **folder**, so it cannot be
@@ -317,7 +319,7 @@ you unzip before installing (steps in the table below).
 | What you want | Channel | What you do |
 | --- | --- | --- |
 | Run the app in the **iOS Simulator** | direct `.app` download | download the zipped `.app` from the [M6 v1 release](https://github.com/Interstellar-Network/wallet-app-internal/releases/tag/m6-v1) eg "iosApp-Simulator.app.zip", unzip it, then in Xcode *Device > Install Simulated Package…* (or `xcrun simctl install booted <app>.app`) |
-| Run the app on a **real device** | **TestFlight** | install the **TestFlight** app, accept the invitation, then install the build |
+| Run the app on a **real device** | **TestFlight** ⚠️ **pending setup** | install the **TestFlight** app, accept the invitation, then install the build — ⚠️ **not available yet** for this release (account approved but setup pending, see [App Distribution](/developers/Milestones/M6/components_delivered/app_distribution)) |
 
 :::warning Real devices vs the local stack
 The build is preconfigured to reach the stack at `127.0.0.1` — on a **real device**, that is the

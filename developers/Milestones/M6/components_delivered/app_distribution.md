@@ -60,7 +60,7 @@ Simulator reaches `127.0.0.1` natively.
       <TableCell>iOS</TableCell>
       <TableCell>Direct zipped <code>.app</code> download</TableCell>
       <TableCell>Simulator (TestFlight does not deliver to simulators)</TableCell>
-      <TableCell>the tag exists, the assets are added at the release</TableCell>
+      <TableCell>the tag exists, the assets attached</TableCell>
     </TableRow>
     <TableRow>
       <TableCell>iOS</TableCell>
