@@ -191,6 +191,18 @@ with Android. Do not build on them; use the real flows (`prepareCoinTransfer`,
 | `CircuitSurfaceView` | The `UIView` that hosts the Metal/WGPU renderer (`configure(circuitsPackage:)`, `start()`, `stop()`, `onClickPinpadDigit(_:)`). |
 | `CircuitSurfaceViewRepresentable` | The `UIViewRepresentable` wrapper used by `TxPinpadScreen`. |
 
+## The other UI components (shipped with the SDK)
+
+| Type | Description |
+| --- | --- |
+| `ConfirmMessageBar` | The SwiftUI bar shown under the pad to confirm a message signature (used by the sign-message flow). |
+| `HeaderWithBrand` | The header the stock `TxPinpadScreen` renders — brand text over the app's logo asset. |
+| `InterstellarBrandText` | The brand text view used inside `HeaderWithBrand`. |
+| `Color` / `UIColor` extensions (`Theme.swift`) | the shared theme colors used by the pad (imported automatically with `import InterstellarSdk`). |
+
+These are part of the published package (`import InterstellarSdk`) — use them, or replace
+`HeaderWithBrand` with your own header as described in the [pinpad guide](./pinpad.md).
+
 ## The raw Rust API is re-exported
 
 `import InterstellarSdk` also gives you the **uniffi bindings** and the **renderer C API** (the package re-exports the two FFI modules). Handy for advanced use — e.g. calling the renderer directly:
