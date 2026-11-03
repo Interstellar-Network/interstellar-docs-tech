@@ -81,6 +81,6 @@ see [Scanning the WalletConnect QR in the Simulator](./components_delivered/ios_
 
 :::note
 
-You can return at any time to the full documentation, which offers detailed walkthroughs of the delivered features, runtime components, trusted execution flows, and cryptographic guarantees implemented in Milestone 1.
+You can return at any time to the full documentation, which offers detailed walkthroughs of the delivered features, runtime components, trusted execution flows, and cryptographic guarantees implemented in Milestone 6.
 
 :::
