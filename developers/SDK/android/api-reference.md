@@ -60,7 +60,7 @@ environment is done at integration time by Interstellar — **contact us** for t
 
 | API | Signature | Description |
 | --- | --- | --- |
-| `create` | `suspend fun create(context: Context, fileSharer: InterstellarFileSharer, listener: SdkInitListener? = null): InterstellarSdk` | **[network]** The only entry point. Registers the device if needed, handles server-reset via `listener`, warms the balance cache, returns a ready SDK. |
+| `create` | `suspend fun create(context: Context, fileSharer: InterstellarFileSharer, listener: SdkInitListener? = null): InterstellarSdk` | **[network]** The only entry point. Registers the device if needed, handles server-reset via `listener`, warms the balance cache (⚠️ only for coins that already have a client account — on a **fresh install** the cache stays zero until `getterClientGetAccount` creates them and `updateBalances` runs again), returns a ready SDK. |
 | `checkServerReset` | `suspend fun checkServerReset(listener: SdkInitListener?): Boolean` | **[network]** Re-run the server-reset detection (call on app resume). Returns `true` if a reset was detected and handled (your `listener` was awaited, then re-registration + balance refresh happened). |
 | `resetKeyPairAndRegister` | `suspend fun resetKeyPairAndRegister()` | **[network]** Delete the Android-Keystore key, wipe cached state and register a **new** identity. User-initiated only. |
 | `toastListener` | property | See [Overview](./index.md#server-reset-semantics). |

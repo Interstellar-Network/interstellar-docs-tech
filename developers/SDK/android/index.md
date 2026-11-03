@@ -54,7 +54,7 @@ val sdk = InterstellarSdk.create(
 | `fileSharer` | `InterstellarFileSharer` | Your implementation; the SDK calls `shareData(...)` when it produces a recovery token file (filename `recovery-token.interstellar.enc`, MIME `application/octet-stream`). |
 | `listener` | `SdkInitListener?` | Server-reset callback (see below). |
 
-`create` must be called from a coroutine. On completion the SDK is **ready to use**: registered (or re-registered), with balances cached.
+`create` must be called from a coroutine. On completion the SDK is **ready to use**: registered (or re-registered), and the balance cache is warmed **for the coins that already have a client account** — on a **fresh install** no coin account exists yet, so the balances stay zero until the coin accounts are created (`getterClientGetAccount` caches them) and `updateBalances` is called again (pull-to-refresh or after funding).
 
 ## Server-reset semantics
 
