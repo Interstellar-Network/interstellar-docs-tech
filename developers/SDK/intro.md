@@ -93,12 +93,22 @@ At the time of writing the current version is **`0.1.0`** (Android: the `shared`
 
 ### The artifacts are proved by the CI
 
-Both platforms are validated end-to-end by a **consumer smoke test** that runs on every CI build — a *real external consumer app* is built against the published artifact, exactly like you would:
+Both platforms are validated by a **consumer smoke test** that runs on every CI build — a *real external consumer app* is built against the generated artifact, exactly like you would:
 
 | Platform | What the CI does | Where |
 | --- | --- | --- |
 | **Android** | publishes `:shared` to a **local Maven repo** and builds the standalone `sdk-consumer/` project (debug **and** release) against `gg.interstellar.wallet:shared:<version>`, then asserts both APKs contain the `arm64-v8a` **and** `x86_64` native libraries | `wallet-app-internal` → `sdk-consumer/` |
-| **iOS** | runs the real publish script (`--no-publish`), **unzips the published zip** into `sdk-consumer-ios/SDK/`, builds the consumer app against it, checks the two frameworks are **embedded** in the app bundle, then **runs it in the simulator** and asserts its output | `wallet-app-internal` → `sdk-consumer-ios/` |
+| **iOS** | runs the real publish script (`--no-publish`), **unzips the generated zip** into `sdk-consumer-ios/SDK/`, builds the consumer app against it, checks the two frameworks are **embedded** in the app bundle, then **runs it in the simulator** and asserts its output | `wallet-app-internal` → `sdk-consumer-ios/` |
+
+:::note On the iOS SPM checksums
+For the iOS release, the CI **generates** the artifact locally (via `publish-ios-sdk.sh --no-publish`)
+but **does not upload** it to GitHub Releases — the actual upload is a manual step performed by
+the maintainer. For this reason, the CI **prints** the SPM checksums of the generated
+`.xcframework.zip` files but **cannot verify** them against what is actually published:
+there is no GitHub Release asset for the CI to fetch and compare against.
+This is also why the CI only checks the **local** zip contents and structure, not the
+remote-hosted artifact.
+:::
 
 This is what guarantees that a consumer needs **no Rust, no NDK, no uniffi, no Kotlin/Native and no linker flags** — and it is why the guides above need nothing but Android Studio / Xcode.
 
