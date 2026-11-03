@@ -308,6 +308,12 @@ iOS does **not** use Firebase: the app is archived with `xcodebuild`, exported a
 **App Store Connect**, where it shows up in **TestFlight**. Since **TestFlight only delivers to
 real devices**, the current release offers **two** channels:
 
+:::info Why is the Simulator build a zip?
+Unlike an Android APK — a single binary file — an iOS `.app` is a **folder**, so it cannot be
+downloaded and installed as-is: it is packaged as a **zip** (`iosApp-Simulator.app.zip`), which
+you unzip before installing (steps in the table below).
+:::
+
 | What you want | Channel | What you do |
 | --- | --- | --- |
 | Run the app in the **iOS Simulator** | direct `.app` download | download the zipped `.app` from the [M6 v1 release](https://github.com/Interstellar-Network/wallet-app-internal/releases/tag/m6-v1) eg "iosApp-Simulator.app.zip", unzip it, then in Xcode *Device > Install Simulated Package…* (or `xcrun simctl install booted <app>.app`) |

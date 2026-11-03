@@ -23,9 +23,9 @@ must be able to **install** the app and exercise the flows of the
 :::
 
 :::warning The **same** build on every channel — and it needs the **local** stack
-The APK you get from the **GitHub release**, from **Firebase App Distribution** or the `.ipa`
-you get from **TestFlight** (or from the direct download) are **the very same builds**: they
-are configured for the **local dev stack** (`wss://127.0.0.1:2090`, `ws://127.0.0.1:9944`, IPFS
+The APK you get from the **GitHub release** or from **Firebase App Distribution**, and the iOS
+builds you get from **TestFlight** (real devices) or from the direct download (zipped `.app`,
+for the Simulator) are **the very same builds**: they are configured for the **local dev stack** (`wss://127.0.0.1:2090`, `ws://127.0.0.1:9944`, IPFS
 `127.0.0.1:5001`), **not** for a hosted testnet.
 
 So the **local stack must be running** before you can use any of them (see the
@@ -58,7 +58,7 @@ Simulator reaches `127.0.0.1` natively.
     </TableRow>
     <TableRow>
       <TableCell>iOS</TableCell>
-      <TableCell>Direct <code>.ipa</code> download</TableCell>
+      <TableCell>Direct zipped <code>.app</code> download</TableCell>
       <TableCell>Simulator (TestFlight does not deliver to simulators)</TableCell>
       <TableCell>the tag exists, the assets are added at the release</TableCell>
     </TableRow>
@@ -109,9 +109,10 @@ to **App Store Connect**, where the build shows up in **TestFlight**.
 **TestFlight only delivers to real devices** — Apple does not distribute simulator builds
 through it. So the M6 release offers both:
 
-- a **direct `.app` download** for the **iOS Simulator** (the build compiles the Rust libraries
-  for the simulator slice, so the app runs locally — exactly like the Android APK in the
-  emulator);
+- a **direct zipped `.app` download** for the **iOS Simulator** (an iOS `.app` is a **folder**,
+  not a binary — so it is packaged as a zip to be distributed; the build compiles the Rust
+  libraries for the simulator slice, so the app runs locally — exactly like the Android APK in
+  the emulator);
 - **TestFlight** for the **real devices** (signed and distributed by Apple).
 :::
 

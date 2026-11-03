@@ -24,7 +24,7 @@ The milestone's **new** deliverables:
 
 - the **Interstellar SDK** — documented in the [**Interstellar SDK section**](/developers/SDK/intro) (full public API reference for Android and iOS), with per-platform getting-started guides ([**Android**](/developers/SDK/android/getting-started) and [**iOS**](/developers/SDK/ios/getting-started)) that show how to embed the SDK into a fresh app and display the root account ID;
 - the **iOS port** of the wallet app and the SDK — see the [iOS Port](/developers/Milestones/M6/components_delivered/ios_port) page;
-- the **app distribution channels** (Firebase App Distribution for Android, `.ipa` + TestFlight for iOS) — see [App Distribution](/developers/Milestones/M6/components_delivered/app_distribution).
+- the **app distribution channels** (Firebase App Distribution for Android; a zipped `.app` for the iOS Simulator + TestFlight for real devices) — see [App Distribution](/developers/Milestones/M6/components_delivered/app_distribution).
 
 ## Milestone 6 scope
 
