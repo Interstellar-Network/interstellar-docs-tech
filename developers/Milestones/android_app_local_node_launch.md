@@ -91,15 +91,6 @@ For the **stack-file downloads** you have two options (see below):
   grants **full read/write to all your repositories**. The fine-grained token is the
   least-privilege way to download the files.
 
-:::info BTC RPC API Key  
-The BTC worker connects to a **Bitcoin Testnet RPC endpoint** using a hosted provider.  
-For simplicity, we provide curators with a ready-to-use `.env` file.  
-
-Place the file in the **same directory** as `docker-compose.yml`.  
-
-⚠️ Ask us directly for an updated `.env` file.
-:::
-
 The stack config lives in the **private** [`containers`](https://github.com/Interstellar-Network/containers) repository — fetch the two files of the milestone tag using **one** of the two options below. **Both options end up in the same working directory** (`interstellar_m[x]_demo`), so the next steps (`.env`, `docker compose up`) are identical either way.
 
 **Option 1 — `git` (simple, if you have a full dev environment already set up)**
@@ -132,7 +123,11 @@ Place the `.env` file we send you in the working directory — next to `docker-c
 It is **NOT** part of the private `containers` repository, so **neither** `git clone` **nor** `curl`
 fetches it — you must copy it there yourself.
 
-> Specific for the current Milestone delivery — previous `.env` files should not be reused.
+> It contains the two secrets the stack requires — **both are mandatory**, `docker compose up`
+> fails without them: `BITCOIN_TESTNET_API_KEY` (Bitcoin testnet RPC provider used by the BTC
+> worker) and `MOONPAY_SECRET_KEY` (MoonPay URL signing, used by the fiat on/off-ramp).
+
+⚠️ Ask us directly for an updated `.env` file — previous milestone `.env` files should not be reused.
 
 **Step 3 — Start Docker (if needed)**
 
