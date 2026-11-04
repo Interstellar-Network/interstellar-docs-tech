@@ -24,8 +24,10 @@ The iOS SDK is the **`InterstellarSdk` Swift package** (`iosSdk/` in the source 
 | Backend | Interstellar worker (`wss://`), node (`ws://`), IPFS endpoint |
 | Toolchain | **Xcode/SPM only** — no Rust, no uniffi, no Kotlin/Native, no linker flags |
 
-:::note Endpoint defaults
-Defaults are the **local dev stack**: `wss://127.0.0.1:2090` (worker), `ws://127.0.0.1:9944` (node), `/ip4/127.0.0.1/tcp/5001` (IPFS). Unlike Android, the iOS factory **accepts overrides** (`create(wsURL:nodeURL:ipfsAddr:…)`), so you can point the SDK at another environment at runtime. **Contact us** for the shared testnet values.
+:::note Endpoint defaults — local stack only, by design
+Defaults are the **local dev stack**: `wss://127.0.0.1:2090` (worker), `ws://127.0.0.1:9944` (node), `/ip4/127.0.0.1/tcp/5001` (IPFS).
+
+At this stage the endpoints are **built into the SDK** and point at the **local Docker stack** (see [Launch the Interstellar Stack with the Demo App](/developers/Milestones/android_app_local_node_launch)) — the only supported environment, replicating a hosted testnet fully self-contained: no runtime configuration, the SDK just works against the local stack. The iOS factory's URL-override overload (`create(wsURL:nodeURL:ipfsAddr:…)` — no Android equivalent, the Android one is `internal`) exists **for testing purposes only** (e.g. server-down-at-init tests) and is **not meant for public use**: integrators must use the one-argument `create`. A different environment is set at build time by Interstellar.
 :::
 
 ## Package integration
@@ -67,7 +69,7 @@ try await InterstellarSdk.create(
 
 ## Server-reset semantics
 
-Identical to Android (both mirror the same Rust flow):
+Similar to Android (both share the same Rust core logic, but **network error handling is not identical**: iOS uses Swift's `async throws` — a connection failure rejects the promise with a thrown error — while Android relies on coroutine `catch` blocks and Toast callbacks):
 
 - **Fresh install** → transparent registration.
 - **Stored account ≠ server root** (or server no longer knows the device) → your `onServerResetDetected` closure is awaited; when it returns, the SDK re-registers.

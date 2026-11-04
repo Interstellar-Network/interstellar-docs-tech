@@ -52,15 +52,16 @@ The API mirrors the underlying Rust calls: **`getter…`** functions read state,
 
 :::note
 The three `DEFAULT_*` constants point at the **local dev stack**: each port needs an
-`adb reverse tcp:PORT tcp:PORT` to be reachable from a device or an emulator. Changing the
-environment is done at integration time by Interstellar — **contact us** for the other values.
+`adb reverse tcp:PORT tcp:PORT` to be reachable from a device or an emulator. The endpoints are
+**built into the SDK** — the only supported environment at this stage is the local Docker stack; a
+different environment is set at build time by Interstellar.
 :::
 
 ## Initialization & lifecycle
 
 | API | Signature | Description |
 | --- | --- | --- |
-| `create` | `suspend fun create(context: Context, fileSharer: InterstellarFileSharer, listener: SdkInitListener? = null): InterstellarSdk` | **[network]** The only entry point. Registers the device if needed, handles server-reset via `listener`, warms the balance cache, returns a ready SDK. |
+| `create` | `suspend fun create(context: Context, fileSharer: InterstellarFileSharer, listener: SdkInitListener? = null): InterstellarSdk` | **[network]** The only entry point. Registers the device if needed, handles server-reset via `listener`, warms the balance cache (⚠️ only for coins that already have a client account — on a **fresh install** the cache stays zero until `getterClientGetAccount` creates them and `updateBalances` runs again), returns a ready SDK. |
 | `checkServerReset` | `suspend fun checkServerReset(listener: SdkInitListener?): Boolean` | **[network]** Re-run the server-reset detection (call on app resume). Returns `true` if a reset was detected and handled (your `listener` was awaited, then re-registration + balance refresh happened). |
 | `resetKeyPairAndRegister` | `suspend fun resetKeyPairAndRegister()` | **[network]** Delete the Android-Keystore key, wipe cached state and register a **new** identity. User-initiated only. |
 | `toastListener` | property | See [Overview](./index.md#server-reset-semantics). |
@@ -178,6 +179,17 @@ Recovering a **lost** account: the helping device (with its own or the imported 
 | --- | --- | --- |
 | `signMoonpayUrl` | `suspend fun signMoonpayUrl(queryString: String): String?` | **[network]** Server-signs a MoonPay query string so your app can build a trusted MoonPay URL. |
 
+## UI components shipped with the SDK
+
+The SDK module also ships the **pinpad UI** as public classes (`gg.interstellar.wallet`):
+
+| Component | Description |
+| --- | --- |
+| `TxPinpadView` | The `FrameLayout` implementing the VCA/pinpad: 12 digit slots + message bar rendered inside the garbled-circuit pixel stream. Full walkthrough: [Android pinpad guide](./pinpad.md). |
+| `WGPUSurfaceView` | The `View` hosting the **WGPU renderer** that paints the garbled circuits. Built and managed **by `TxPinpadView`** — you should never need to instantiate it directly, but it is part of the module (it is how the visual cryptography reaches the screen). |
+
+`processPinpadInputs` (called internally by `TxPinpadView`) is documented in the [pinpad guide](./pinpad.md#the-contract) — call it only if you build your own pad on top of `CircuitSurfaceView`/`WGPUSurfaceView`.
+
 ## Demo transaction (visual cryptography sandbox) — *not part of the public API*
 
 The SDK code still carries a `createDemoTx` / `demoTxCheckInputs` pair: it garbles a display
@@ -193,19 +205,21 @@ with iOS. Do not build on them; use the real flows (`prepareCoinTransfer`,
 - `StateFlow`s are safe to collect from the UI thread.
 - On iOS the equivalent published-state mutations are serialized on the main thread — see the [iOS reference](../ios/api-reference.md).
 
-## What is **not** public API
+## Remaining public symbols — **not part of the supported contract**
 
-The SDK module contains a few more classes; they are `internal` and are **not** part of the
-contract — do not use them (and do not expect them to exist in a future release):
+The Kotlin module (`gg.interstellar.wallet`) also exposes a few classes without an explicit
+`internal` modifier — they are **technically public**, but they are **implementation details**:
+they are not documented as a contract, they may change or disappear in any release, and they are
+not covered by the Android/iOS parity promise. Do not build on them:
 
 | Symbol | What it is |
 | --- | --- |
-| `processPinpadInputs(inputs)` | the SDK's internal pinpad entry point (it is called by `TxPinpadView` for you). ⚠️ it **is** public on iOS — an asymmetry, not a contract. |
 | `RustWrapper` | the thin adapter over the uniffi-Kotlin bindings. |
-| `CurrencyMath` | the internal currency helpers (the public entry points are `convertToUsd`, `convertCoinToAtomic`, `getterClientGetBalanceInUsd`, …). |
-| `MobileKeySigner` / `AndroidKeyStoreSigner` / `AndroidMobileSigner` | the internal signing seam over the Android Keystore (it is injectable **in the tests only**). |
-| `PreferencesManager` / `KeysManager` | the internal persistence and key-management helpers. |
+| `CurrencyMath` | the currency helpers (the supported entry points are `convertToUsd`, `convertCoinToAtomic`, `getterClientGetBalanceInUsd`, … on `InterstellarSdk`). |
+| `AndroidMobileSigner` / `AndroidKeyStoreSigner` | the signing seam over the Android Keystore (`InterstellarSigningException` is its error type) — injectable **in the tests only**. |
+| `PreferencesManager` / `KeysManager` | the persistence and key-management helpers used by `create`/`checkServerReset`. |
 | `updateWorkerEndpointForTest(wsUrl)` | test-only endpoint switch. |
 
+Everything a third-party app needs is the `InterstellarSdk` API + the [UI components](#ui-components-shipped-with-the-sdk) documented above.
 The **public** Rust surface is reachable through the same uniffi bindings, but the supported
-entry point is the `InterstellarSdk` API documented above.
+entry point is the `InterstellarSdk` API documented on this page.

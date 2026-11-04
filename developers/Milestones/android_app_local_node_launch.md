@@ -1,6 +1,6 @@
-# Launch Android App with Local Nodes
+# Launch the Interstellar Stack with the Demo App
 
-This guide explains how to run the full Interstellar stack **locally** using Docker or Podman. You will be able to launch the Substrate node, Integritee TEE worker, and IPFS service, then interact with the system using the **Interstellar Android demo app**.
+This guide explains how to run the full Interstellar stack **locally** using Docker or Podman. You will be able to launch the Substrate node, Integritee TEE worker, and IPFS service, then interact with the system using the **Interstellar demo app** — on **Android** (APK or emulator) or on **iOS** (Simulator).
 
 This setup enables full offline testing without relying on a hosted VPS.
 
@@ -9,10 +9,7 @@ This setup enables full offline testing without relying on a hosted VPS.
 This compatibility note applies to the **backend stack**, tested on Ubuntu 24.04 LTS (x86_64) using Docker (`docker-compose`) or Podman (with manually installed `podman-compose`*).  
 The stack is expected to work on other recent Linux distributions, but this has not been officially verified.
 
-Known issue: May fail on Apple Silicon (M1/M2/M3/M4) - due to current SIMD usage and QEMU/Rosetta limitations - crash on M1/M2 (not tested on M3/M4)
-
-The **frontend** (e.g., Android emulator or physical device) 
-can run on any OS supported by Android Studio (expect some emulator limitations on Apple Silicon)
+Known issue: **the stack does NOT work on Apple Silicon Macs** — tested and confirmed failing on **M1/M2**; **M3/M4 not tested** (assume the same). See [the MacOS details below](#macos-as-stack-host) for every failing scenario and the tracking issue [roadmap#133](https://github.com/Interstellar-Network/roadmap/issues/133).
 
 *Compose tools are required to manage service startup dependencies (e.g., health checks).
 :::
@@ -22,112 +19,231 @@ can run on any OS supported by Android Studio (expect some emulator limitations 
 
 | Requirement        | Install Guide |
 |--------------------|----------------|
-| Docker             | [Install Docker](https://docs.docker.com/engine/install/) |
-| Docker Compose     | [Install docker-compose](https://docs.docker.com/compose/install/) |
+| **Docker & Docker Compose** | **Linux (recommended):** [Install Docker Engine](https://docs.docker.com/engine/install/) & [Install Docker Compose](https://docs.docker.com/compose/install/) — *or* [Install Podman](https://podman.io/getting-started/installation) & `podman-compose` |
+|                          | **MacOS (Stack Host): ⚠️ NOT SUPPORTED** *(see [the MacOS details below](#macos-as-stack-host))* |
 | `curl`, `wget`, `jq` | Installed via `apt`/`brew` or default in most environments |
+| GitHub access | read access to the **private** [`containers`](https://github.com/Interstellar-Network/containers) repo + a GitHub **classic** PAT — see [Get access to the private repositories](#get-access-to-the-private-repositories) |
 | Android Studio     |  [Install Android Studio](https://developer.android.com/studio) |
 | ADB (`adb reverse`) | Comes with Android Studio |
+| Xcode | [Install Xcode](https://apps.apple.com/app/xcode) — iOS only (to install the app in the iOS Simulator) |
 
 > You may also use **Podman** as an alternative to Docker.
 
+### MacOS as stack host
+
+<details>
+<summary>⚠️ MacOS (Stack Host): NOT supported — click for details</summary>
+
+The stack is **NOT supported on macOS** — **it does NOT work, tested on M1/M2** (M3/M4 not
+tested, assume the same). Tracking issue: [roadmap#133](https://github.com/Interstellar-Network/roadmap/issues/133).
+Use **Linux** for the stack host. Three distinct cases, all failing:
+
+- ⚠️ **Inside a nested VM (eg a `tart` VM) — does NOT work.** The nested VM does not expose
+  usable virtualization to Docker, so Docker itself cannot start (virtualization error below).
+- ⚠️ **Directly on the Mac, Docker Desktop WITH Rosetta — does NOT work.** The `node` container
+  starts, but the `service` (Integritee worker) **hangs at startup** — the stack never becomes
+  ready.
+- ⚠️ **Directly on the Mac, Docker Desktop WITHOUT Rosetta — does NOT work.** The `node`
+  container **immediately fails with a core dump** (screenshot below).
+
+Both direct-on-Mac scenarios are consistent with the current SIMD usage of the worker/node
+not being fully supported by Rosetta/QEMU emulation on Apple Silicon.
+
+#### Docker Desktop setup (directly on the Mac)
+
+Install with Docker Desktop: [Install guide](https://docs.docker.com/desktop/setup/install/mac-install/)
+or [Brew cask](https://formulae.brew.sh/cask/docker-desktop).
+
+On the first launch you will go through the prompts below:
+
+**1. Gatekeeper security prompt** — *"This app was downloaded from the internet. You are asking for
+permission to open this application."*
+
+<img src="/img/MacOS_Docker_SecurityPrompt.png" alt="Docker Security Prompt" width="200"/>
+
+**2. Accept the service agreement**:
+
+<img src="/img/MacOS_Docker_AcceptAgreement.png" alt="Docker Accept Agreement" width="600"/>
+
+**3. "Welcome to Docker" onboarding page** — you can just click **"Skip"** in the top right;
+no sign-in or configuration is needed:
+
+<img src="/img/MacOS_Docker_Welcome.png" alt="Docker Welcome page — click Skip in the top right" width="600"/>
+
+**4. Settings** — the defaults are fine; just **double-check that "Rosetta" is enabled** (needed
+for x86_64 emulation on Apple Silicon):
+
+<img src="/img/MacOS_Docker_DefaultSettings.png" alt="Docker Default settings — verify Rosetta is enabled" width="600"/>
+
+#### Launching the stack on the Mac — both Rosetta scenarios fail
+
+Even with Docker Desktop correctly set up, the stack does **not** start on Apple Silicon:
+
+- **WITH Rosetta**: the `node` container runs, but the `service` (Integritee worker) **hangs at
+  startup** — the stack never becomes ready.
+- **WITHOUT Rosetta**: the `node` container **immediately fails with a core dump**:
+
+<img src="/img/MacOS_Docker_NodeCoreDump.png" alt="node container core dump on Apple Silicon without Rosetta" width="600"/>
+
+Tracking issue: [roadmap#133](https://github.com/Interstellar-Network/roadmap/issues/133).
+
+#### Inside a nested VM (eg `tart`) — does NOT work
+
+If Docker Desktop runs inside a nested VM, the stack fails with:
+
+*Error: Docker Desktop requires a system with a working virtualization framework.*
+
+<img src="/img/MacOS_Docker_NoVirtualization.png" alt="Docker No Virtualization" width="300"/>
+
+</details>
+
 ## 2. Launch the Interstellar Stack Install 
 
-:::info BTC RPC API Key  
-The BTC worker connects to a **Bitcoin Testnet RPC endpoint** using a hosted provider.  
-For simplicity, we provide curators with a ready-to-use `.env` file.  
+### Get access to the private repositories
 
-Place the file in the **same directory** as `docker-compose.yml`.  
-
-⚠️ Ask us directly for an updated `.env` file.
+:::warning The `containers` repository is **private**
+The stack files (`docker-compose.yml`, `docker-ipfs-init.sh`, …) live in the **private**
+[`Interstellar-Network/containers`](https://github.com/Interstellar-Network/containers) repository.
+The download commands in this section return **HTTP 404** until you have read access to that
+repository and a GitHub personal access token — get both first (steps below).
 :::
 
-```bash
-# Step 1: Create a working directory for the current milestones[x]
-mkdir interstellar_m[x]_demo && cd interstellar_m[x]_demo
-```
+#### Read access to the private repositories
+
+Two **private** repositories are involved in this guide:
+
+- [`Interstellar-Network/containers`](https://github.com/Interstellar-Network/containers) — hosts the stack files **and** the container images. **Every** reader of this guide needs read access.
+- [`Interstellar-Network/wallet-app-internal`](https://github.com/Interstellar-Network/wallet-app-internal) — hosts the SDK sources and their registries (the Android Maven package, the iOS GitHub release). Only needed if you also integrate the SDK — see the [Android](/developers/SDK/android/getting-started) and [iOS](/developers/SDK/ios/getting-started) getting-started guides.
+
+Ask Interstellar for read access to the repository (or repositories) you need.
+
+#### A GitHub **classic** personal access token (required to run the stack)
+
+Running the stack needs **two** private things from GitHub — and one of them forces the token type:
+
+| What | Where | Scope / token type |
+| --- | --- | --- |
+| The **stack files** (`docker-compose.yml`, …) | private `containers` repository | any read access (see the two download options below) |
+| The **container images** (`ghcr.io/interstellar-network/containers/…` pulled by `docker compose up`) | **ghcr.io** = GitHub Packages | **classic** PAT with **`read:packages`** — fine-grained tokens are *not* supported ([official docs](https://docs.github.com/en/packages/working-with-a-github-packages-registry/working-with-the-gradle-registry#authenticating-to-github-packages)) |
+
+So a **classic** PAT is needed **no matter what** — `docker` must log in to ghcr.io to pull the images.
+
+:::note Planning to integrate or test the **Android SDK**?
+This **same** classic PAT (`read:packages`) is what the [Android SDK integration](/developers/SDK/android/getting-started#step-2--get-access-to-the-sdk) uses for the GitHub Packages **Maven registry** — one token covers both the local stack and the SDK.
+:::
+
+1. **GitHub → Settings → Developer settings → Personal access tokens → Tokens (classic) → Generate new token (classic)**.
+2. Select the **`read:packages`** scope (that is all a consumer needs).
+3. If the organisation enforces SAML SSO, click **Configure SSO** and authorize the token for `Interstellar-Network`.
+4. Copy the token (`ghp_…`) — GitHub shows it only once.
+5. Log in to the container registry so `docker compose` can pull the private images:
+
+   ```bash
+   echo "ghp_…your-classic-token…" | docker login ghcr.io -u <your-github-username> --password-stdin
+   ```
+
+For the **stack-file downloads** you have two options (see below):
+
+- **`git`** (option 1) — uses whatever GitHub auth you already have on your machine; **no extra token needed**.
+- **`curl`** (option 2) — needs a **fine-grained** token with **`Contents: read`** on the
+  `containers` repository:
+
+  1. **GitHub → Settings → Developer settings → Personal access tokens → Fine-grained tokens → Generate new token**.
+  2. **Repository access**: `Interstellar-Network/containers`.
+  3. **Permissions → Repository permissions → Contents**: `Read-only` (metadata comes implicitly).
+  4. Copy the token (`github_pat_…`) — GitHub shows it only once.
+
+  ⚠️ Do **not** widen the classic PAT above with the `repo` scope to get file access — `repo`
+  grants **full read/write to all your repositories**. The fine-grained token is the
+  least-privilege way to download the files.
+
+The stack config lives in the **private** [`containers`](https://github.com/Interstellar-Network/containers) repository — fetch the two files of the milestone tag using **one** of the two options below. **Both options end up in the same working directory** (`interstellar_m[x]_demo`), so the next steps (`.env`, `docker compose up`) are identical either way.
+
+**Option 1 — `git` (simple, if you have a full dev environment already set up)**
+
+Just clone with your **existing** GitHub setup (SSH key, `gh auth login`, credential helper…):
 
 ```bash
-# Step 2: Download the stack config with the specific curl link of the current milestones [testnet-m6-v1]
-curl -L -o docker-compose.yml https://raw.githubusercontent.com/Interstellar-Network/containers/refs/tags/testnet-m6-v1/docker-compose.yml
-curl -L -o docker-ipfs-init.sh https://raw.githubusercontent.com/Interstellar-Network/containers/refs/tags/testnet-m6-v1/docker-ipfs-init.sh
+# shallow clone at the milestone TAG — `git clone --branch` accepts tags too
+# (the clone ends in "detached HEAD" state at the tag, which is what we want)
+git clone --depth 1 --branch testnet-m6-v1 git@github.com:Interstellar-Network/containers.git interstellar_m[x]_demo
+cd interstellar_m[x]_demo
 chmod +x docker-ipfs-init.sh
 ```
 
+**Option 2 — `curl` + http auth with a fine-grained PAT**
+
+Use the fine-grained token created above ([A GitHub personal access token](#a-github-classic-personal-access-token-required-to-run-the-stack)):
+
 ```bash
-# Step 3: Place the .env file we send in this directory
+mkdir interstellar_m[x]_demo && cd interstellar_m[x]_demo
+GITHUB_TOKEN=github_pat_…your-fine-grained-token…
+curl -L -H "Authorization: Bearer $GITHUB_TOKEN" -o docker-compose.yml https://raw.githubusercontent.com/Interstellar-Network/containers/refs/tags/testnet-m6-v1/docker-compose.yml
+curl -L -H "Authorization: Bearer $GITHUB_TOKEN" -o docker-ipfs-init.sh https://raw.githubusercontent.com/Interstellar-Network/containers/refs/tags/testnet-m6-v1/docker-ipfs-init.sh
+chmod +x docker-ipfs-init.sh
 ```
-> specific for current Milestone delivery - previous .env should not be reused
+
+**Step 2 — Place the `.env` file (applies to BOTH options above)**
+
+Place the `.env` file we send you in the working directory — next to `docker-compose.yml`.
+It is **NOT** part of the private `containers` repository, so **neither** `git clone` **nor** `curl`
+fetches it — you must copy it there yourself.
+
+> It contains the two secrets the stack requires — **both are mandatory**, `docker compose up`
+> fails without them: `BITCOIN_TESTNET_API_KEY` (Bitcoin testnet RPC provider used by the BTC
+> worker) and `MOONPAY_SECRET_KEY` (MoonPay URL signing, used by the fiat on/off-ramp).
+
+⚠️ Ask us directly for an updated `.env` file — previous milestone `.env` files should not be reused.
+
+**Step 3 — Start Docker (if needed)**
+
 ```bash
-# Step 4: Start Docker (if needed)
 sudo service docker start  # (for most Linux distros)
-
-# Step 5: Launch the stack
-sudo docker compose down --timeout 1 && sudo docker compose up --force-recreate
 ```
 
-### ⏳ Waiting for Master Circuit Generation
-
-Once the node and service are running, the system will automatically trigger the **generation of master circuits** from the hardware description files.
-
-These circuits are compiled using the Verilog logic generated from the original master circuits specifications, processed through the logic synthesis pipeline. This step may take several minutes depending on the environment.
-
-During this time, monitor the logs and wait for the following sequence of messages:
+**Step 4 — Launch the stack**
 
 ```bash
-[ocw-circuits] callback_new_skcd_signed sent number : <number> 1-Success  - 0-Fail
-[ocw-circuits] callback_new_display_circuits_package_signed: (<CID_1>, <message_digits_number>), (<CID_2>, <pinpad_digits_number>) for <account_id>
+sudo docker compose down --volumes --timeout 1 && sudo docker compose up --force-recreate
 ```
-Shortly before these messages, you will also see large blob uploads to IPFS such as:
-```bash
-Requested started id=<...> method=POST uri=http://ipfs:5001/api/v0/add
-```
-These blobs correspond to the master visual circuits (SKCD display circuits), which are the result 
-of the hardware synthesis pipeline. Their appearance in the logs is a strong indicator 
-that the build process has completed.
 
-> ℹ️ You can identify this moment easily by spotting two large IPFS file hashes being 
-> logged together — one for the secure keypad circuit and one for the display message circuit 
-> i.e one time code These hashes will later be used for visual challenge rendering and validation.
+> `down --volumes` also removes the named volumes, so you always start from a clean state.
+> With **Podman**, remove the named volumes manually if needed:
+> `podman volume rm $(podman volume ls -q | grep -E 'containers_|interstellar_')`.
 
-Detailed example from `integritee_node-1` 
+**Step 5 — Wait for master circuit generation**
+
+On first launch, the stack automatically generates the master circuits. The stack is ready once `integritee_node-1` logs both of the following:
+
 ```bash
-Requested started id=1059 method=POST uri=http://ipfs:5001/api/v0/add
-[fetch_from_remote_grpc_web] content_type: application/json
 [ocw-circuits] callback_new_skcd_signed sent number : 1
-[ocw-circuits] callback_new_display_circuits_package_signed: ("QmUx8mMo8GgGdUhcgFQVg2sexkVfyq1sViruZiBadUfs4d",2),("QmcwXyZNmLXnjeoA25YSzj41G1sr6ZsHgZZBQVWvcfe1qn",10) for d43593c715fdd31c61141abd04a99fd6822c8558854ccde39a5684e7a56da27d (5GrwvaEF...)
+[ocw-circuits] callback_new_display_circuits_package_signed: ("<CID_1>",2),("<CID_2>",10) for <account_id> (5GrwvaEF...)
 ```
 
-```
-[ocw-circuits] Hello from pallet-ocw-circuits.
-🛌 Idle (0 peers), best: #6 (...), finalized #3 (...), ⬇ 0 ⬆ 0
-```
-You can also verify the runtime is ready using [Polkadot.js](https://polkadot.js.org/apps/?rpc=ws://localhost:9944)
 
-:::info VCA System Layer
+## 3. Install the Demo App
 
-While waiting for the stack to fully initialize, you can explore the architecture and rationale behind 
-the **[VCA System Layer](/developers/category/vca-system-layer)**. This layer is responsible for producing the `VCA Token`, 
-the core cryptographic artifact used by the Trusted Action Validation Protocol (`TAVP`).
+Both demo apps are **preconfigured to connect to `localhost`** — the local stack launched in section 2.
 
-The token is generated through a hardware-secure pipeline starting from VHDL logic descriptions, synthesized into 
-Verilog and compiled using the`Yosis` and `abc` logic synthesis toolchain. The resulting master circuits define both the secure display and interaction logic — including the Secure Circuit Descriptor (`scd`) and its runtime variant, `skcd`, used for verifiable evaluation.
-
-Once built, these circuits are uploaded to IPFS and used to enable real-time, **privacy-preserving visual cryptographic** 
-**challenges**, ensuring each critical **user interaction** is verifiable and **resistant to malware, phishing, and adversarial AI**.
-
+:::warning The **same** build on every channel — and it needs the **local** stack
+The APK you get from the **GitHub release** or from **Firebase App Distribution**, and the iOS
+`.app` you get from the **GitHub release** — are all **the very same builds**: they are configured
+for the **local dev stack** (`wss://127.0.0.1:2090`, `ws://127.0.0.1:9944`, IPFS
+`127.0.0.1:5001`), **not** for a hosted testnet.
+So: **start the stack first** (section 2), install the app (below) and expose the stack ports to
+the device/emulator (section 4).
 :::
 
+### Android
 
-## 3. Install the Android Demo App
+#### Download the APK
 
-### Download the APK
-
-Use the specific apk link for the cuurent milestones
+Download the APKs from the current milestone's GitHub release — e.g. the [M6 v1 release](https://github.com/Interstellar-Network/wallet-app-internal/releases/tag/m6-v1) (APKs preconfigured to connect to `localhost`):
 
 - `androidApp-arm64-release.apk` — for Android devices and Apple Silicon(M1/M2/M3/M4)
 - `androidApp-x86_64-release.apk` — for Android emulators running on x86_64 platforms (e.g., Windows PCs, Intel-based Mac)
 
-> **Latest version recommended**
+> **Latest version recommended** — the `m6-v1` release ships the current APKs (both architectures); new versions follow each release — check the [releases page](https://github.com/Interstellar-Network/wallet-app-internal/releases).
 
 :::tip Recommended Test Setup – Hardware & Emulator Guidance
 
@@ -153,7 +269,7 @@ The app uses local secure storage and cached configuration; keeping a previous v
 
 
 
-### Option 1: Physical Device
+#### Option 1: Physical Device
 
 1. Transfer the APK to your phone or download it directly from the device 
 2. Allow app installation from external sources
@@ -166,7 +282,7 @@ The app uses local secure storage and cached configuration; keeping a previous v
 :::warning
 Ensure that your device is configured for **english** language
 :::
-### Option 2: Emulator
+#### Option 2: Emulator
 
 1. [Create](https://developer.android.com/studio/run/managing-avds#createavd)  a `Pixel 7` or equivalent emulator with the **API 35** system image (`x86_64`)
 2. Edit the emulator and make sure the API level is **35 or lower** — API 36+ crashes in the emulator (see the note below)
@@ -205,14 +321,63 @@ Enabling this setting ensures more reliable emulator behavior, especially for na
 
 :::
 
+:::info Or: install from Firebase App Distribution (Android)
+The same build is also distributed through **Firebase App Distribution** — installs straight from
+the browser, device only. See [App Distribution — Android & iOS](/developers/Milestones/M6/components_delivered/app_distribution).
+:::
+
+### iOS
+
+iOS does **not** use Firebase: the app is archived with `xcodebuild`, exported and uploaded to
+**App Store Connect**, where it shows up in **TestFlight**. Since **TestFlight only delivers to
+real devices**, the current release offers **two** channels — the direct zipped `.app` download
+(available now) and **TestFlight** (⚠️ the TestFlight account is approved but the setup is
+**still pending**, so the build is **not** available there yet):
+
+:::info Why is the Simulator build a zip?
+Unlike an Android APK — a single binary file — an iOS `.app` is a **folder**, so it cannot be
+downloaded and installed as-is: it is packaged as a **zip** (`iosApp-Simulator.app.zip`), which
+you unzip before installing (steps in the table below).
+:::
+
+| What you want | Channel | What you do |
+| --- | --- | --- |
+| Run the app in the **iOS Simulator** | direct `.app` download | download the zipped `.app` from the [M6 v1 release](https://github.com/Interstellar-Network/wallet-app-internal/releases/tag/m6-v1) eg "iosApp-Simulator.app.zip", unzip it, then in Xcode *Device > Install Simulated Package…* (or `xcrun simctl install booted <app>.app`) |
+| Run the app on a **real device** | **TestFlight** ⚠️ **pending setup** | install the **TestFlight** app, accept the invitation, then install the build — ⚠️ **not available yet** for this release (account approved but setup pending, see [App Distribution](/developers/Milestones/M6/components_delivered/app_distribution)) |
+
+:::warning Real devices vs the local stack
+The build is preconfigured to reach the stack at `127.0.0.1` — on a **real device**, that is the
+device itself, so the local stack running on your computer is **not** reachable this way. Use the
+**iOS Simulator** channel for local-stack testing.
+`TODO(#328)`: document the real-device story (hosted stack or port forwarding) if/when relevant.
+:::
+
+Full details (and what the maintainer does to publish): [App Distribution — Android & iOS](/developers/Milestones/M6/components_delivered/app_distribution).
+
 ---
 
-## 2. Link App to your local Interstellar stack:
+## 4. Link App to your local Interstellar stack:
 
-The Android app is preconfigured to connect to `localhost`
-To allow the Android app to connect to your local blockchain and IPFS stack:
+The demo app is preconfigured to connect to `localhost`
+To allow the demo app to connect to your local blockchain and IPFS stack, pick the scenario that
+matches your setup — these are **options**, not sequential steps:
 
-### Step 1: `adb reverse` Setup
+| Client | What you need | Section |
+| --- | --- | --- |
+| **iOS Simulator** | nothing — it reaches `127.0.0.1` natively | [below](#ios-simulator--no-forwarding-needed) |
+| **Android emulator or device** (same machine as the stack) | `adb reverse` for the three ports | [below](#android-emulator-or-device--adb-reverse-setup) |
+| **Client and stack on different machines** | `ssh` port forwarding | [below](#optional-client-and-stack-on-different-machines--ssh-port-forwarding) |
+
+### iOS Simulator — no forwarding needed
+
+The **iOS Simulator runs on your computer** and reaches `127.0.0.1` natively — **no `adb reverse`
+is needed**. If the stack runs on **the same Mac** as the simulator, no port forwarding is needed
+either — but note that **macOS as a stack host is not supported** (see the [MacOS section
+above](#macos-as-stack-host)). If the stack runs on a **remote Linux host**, use the [`ssh` port
+forwarding option below](#optional-client-and-stack-on-different-machines--ssh-port-forwarding).
+The `adb reverse` section below applies to the **Android** device/emulator.
+
+### Android emulator or device — `adb reverse` setup
 > **On** the **Desktop** connected to the **Device** or running the **Emulator** 
 (Windows, Mac OS, Linux)
 
@@ -236,7 +401,7 @@ $env:Path += ";$env:LOCALAPPDATA\Android\Sdk\platform-tools"
 
 ```bash
 adb reverse tcp:9944 tcp:9944   # Substrate WS
-adb reverse tcp:2090 tcp:2090   # Integritee node port
+adb reverse tcp:2090 tcp:2090   # Worker trusted port
 adb reverse tcp:5001 tcp:5001   # IPFS
 
 ```
@@ -248,17 +413,39 @@ Make sure `adb` is properly configured and the emulator or device is detected
  You can also check the reverse setup with `adb reverse --list`
 :::
 
-> This works for both emulators and real devices connected via USB
+> This works for both Android emulators and real devices connected via USB; the iOS Simulator
+> needs no forwarding (see [the option above](#ios-simulator--no-forwarding-needed)).
 
-### Step 2 (optional): `ssh` Port Forwarding 
-> **On** the **System** or **VM** running the **Blockchain stack** (WSL2, Remote VM)
+### (Optional) Client and stack on different machines — `ssh` port forwarding
 
-If the emulator is running (or the device is connected) on a different network interface than the backend 
-(e.g., the backend runs in WSL2 and the Android emulator or device is connected 
-via USB to Windows), 
-you may need to configure port forwarding between the desktop and the blockchain.
+If the app client (emulator, simulator or device) and the stack run on **different machines**, the
+app's `127.0.0.1` endpoints cannot reach the stack host — you need to forward the three ports
+(`9944`, `2090`, `5001`) between the two machines. The commands are run **on the machine running
+the stack** (remote VM, WSL2…). Two examples below; adapt them to your setup.
 
-**WSL2 -> Windows example:**
+> ⚠️ **Note on SSH:** SSH connections and port forwarding are highly dependent on your specific
+> machine setup (usernames, SSH keys, IP addresses, firewall rules, etc.). The commands below are
+> **just examples** to illustrate the mechanism — you will likely need to adjust them to your
+> environment.
+
+#### Example: Linux stack host -> Linux or macOS client host
+
+If the stack runs on one Linux machine (e.g., a remote VM or server) and the app client is on
+another (Linux, or **macOS when testing the iOS Simulator**), run the forwarding **from the stack
+host**, pushing the three ports to the machine that runs the app client:
+
+```bash
+# Run this ON the stack host, [client_host_ip] being the machine
+# running the app (emulator, simulator or device):
+ssh -N -R 9944:localhost:9944 -R 5001:localhost:5001 -R 2090:localhost:2090 [user]@[client_host_ip]
+```
+
+> The reverse direction — SSH-ing **from the emulator/simulator host** to the stack host and
+> forwarding the ports back (`-L`) — works equally well; this is left as an exercise for the
+> reader.
+
+#### Example: WSL2 stack -> Windows client
+
 ```bash
 export WSL_HOST_IP=$(ip route | awk '/default/ {print $3}')
 ```

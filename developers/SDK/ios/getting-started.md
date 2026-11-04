@@ -18,7 +18,7 @@ One SwiftUI `View`, one `InterstellarSdk.create(...)` call. No pinpad, no balanc
 | macOS | Apple Silicon (M1/M2/M3/M4) |
 | Xcode | 15+ (the SDK package targets **iOS 17**) — see [Step 0](#step-0--install-xcode-and-a-simulator) |
 | **Rust / KMP / Gradle / linker flags** | **not needed** — the published package ships the compiled frameworks |
-| Interstellar stack | the local Docker stack from the [M6 tutorial](../../Milestones/M6/local-demo-with-docker.md) (defaults: `wss://127.0.0.1:2090` / `ws://127.0.0.1:9944` / IPFS `5001`) |
+| Interstellar stack | the local Docker stack from the [local stack guide](../../Milestones/android_app_local_node_launch.md) (defaults: `wss://127.0.0.1:2090` / `ws://127.0.0.1:9944` / IPFS `5001`) |
 | SDK access | read access to the private [`wallet-app-internal`](https://github.com/Interstellar-Network/wallet-app-internal) repo — **the repo that hosts the SDK's release** — the SDK is published as an asset of its **private** release (see [SDK access](../intro.md#status--scope-please-read)) |
 
 ## Step 0 — Install Xcode and a Simulator
@@ -249,7 +249,7 @@ The Keychain key is **NOT deleted when the app is uninstalled** — reinstalling
 
 ## Step 5 — Run it against the local stack
 
-1. Start the Docker stack (node `9944`, worker `2090`, IPFS `5001`) — see the [M6 tutorial](../../Milestones/M6/local-demo-with-docker.md).
+1. Start the Docker stack (node `9944`, worker `2090`, IPFS `5001`) — see the [local stack guide](../../Milestones/android_app_local_node_launch.md).
 
    ::::important Docker stack and Xcode on different machines
    The Simulator reaches host `127.0.0.1` ports **of the machine running Xcode** only. If you run
@@ -662,17 +662,13 @@ checkout** instead of from the published zip.
 The SDK is a Swift package in the repository (`iosSdk/`), so you can add **that folder** as a
 local Swift package (*File > Add Package Dependencies… > Add Local…* → `wallet-app-internal/iosSdk`).
 
-Its two binary targets point at the **local build outputs**, so the Rust libraries must be built
-once first:
-
-```bash
-# in the wallet-app-internal checkout
-./iosApp/scripts/publish-ios-sdk.sh --version <version> --no-publish
-# → iosApp/build/sdk/{substrate_clientFFI,rendererFFI}.xcframework
-```
-
-After that, the package resolves like the published one — Xcode links **and embeds** the
-frameworks, no linker flags.
+Option A does **not** resolve as-is: the two binary targets in the source `Package.swift` point
+at `../build/sdk/` — `wallet-app-internal/build/sdk/` relative to the repository root — while
+the build script (`./iosApp/scripts/publish-ios-sdk.sh --version <version> --no-publish`) writes
+its outputs to `iosApp/build/sdk/`. The two paths **do not match**, so the local package fails
+to resolve until the mismatch is reconciled. This is one more reason the whole flow is marked
+unsupported above (`TODO(M7)`: align the publish script output path with the source
+`Package.swift`).
 
 ### B. Build the SDK into your app target (what the reference app does)
 
@@ -699,7 +695,7 @@ The iOS SDK is **arm64 only** (the device slice and the arm64 simulator slice) �
 | The app links but crashes on launch with a missing symbol | the frameworks were not embedded — make sure the SDK product is set to **Embed & Sign** in *Frameworks, Libraries, and Embedded Content* |
 | App stuck on "Initializing…" | the local stack isn't reachable — check Docker is up and the URLs match |
 | Init throws `Keychain init failed` | rare Keychain entitlement issue on device — try the simulator first, then check signing team/entitlements |
-| The QR scanner shows nothing in the Simulator | the iOS Simulator has **no camera** — feed it one with [FauxCam](https://github.com/mkemalgokce/fauxcam) (paste the URI in its **QR** tab), see [the M6 demo notes](../../Milestones/M6/local-demo-with-docker#31--ios-simulator-scanning-the-walletconnect-qr) |
+| The QR scanner shows nothing in the Simulator | the iOS Simulator has **no camera** — feed it one with [FauxCam](https://github.com/mkemalgokce/fauxcam) (paste the URI in its **QR** tab), see [the iOS port notes](../../Milestones/M6/components_delivered/ios_port.md#scanning-the-walletconnect-qr-in-the-simulator-fauxcam) |
 | "save to files" opens a **white window** instead of the file explorer | a transient Simulator issue: *Device → Erase All Content and Settings*, then reinstall the app — see [Overview](./index.md) |
 
 Next: [**API Reference**](./api-reference.md) and the [**VCA pinpad guide**](./pinpad.md).

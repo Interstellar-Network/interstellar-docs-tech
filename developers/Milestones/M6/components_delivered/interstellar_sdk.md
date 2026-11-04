@@ -14,7 +14,7 @@ Milestone 6 delivers the **first version of the (semi) public Interstellar SDK**
 This delivery covers three inseparable parts:
 
 1. **The SDK itself** — the `InterstellarSdk` public API on Android (Kotlin, `gg.interstellar.wallet`) and iOS (Swift, `InterstellarSdk`), both speaking the **same uniffi FFI surface** to the shared Rust core (Android via committed uniffi-Kotlin bindings; iOS via uniffi-Swift bindings). The two platforms expose the **same function names**, so an app ports from one to the other without renaming anything.
-2. **The documentation** — a complete public API reference (every public member documented) plus per-platform pinpad/VCA integration guides.
+2. **The documentation** — a complete public API reference for each platform (`api-reference.md`: every public member is either **documented** or explicitly listed in a "not part of the supported contract" table) plus per-platform pinpad/VCA integration guides.
 3. **The integration guide** — per-platform getting-started walkthroughs that start from a fresh app in Android Studio / Xcode and end with a screen displaying the **root account ID**.
 
 The wallet application shipped for this milestone is the **reference integration** of that SDK: every documented feature is exercised by the app on both platforms.
@@ -99,4 +99,4 @@ The SDK is delivered as a **technical preview** on top of the private `wallet-ap
 - [iOS Port](./ios_port.md) — the iOS wallet app and the iOS SDK.
 - [App Distribution — Android & iOS](./app_distribution.md) — how to install the app.
 
-The WalletConnect/Reown interoperability delivered in **M5** remains testable through the same app and flows — see the [M5 documentation](/developers/Milestones/M5/local-demo-with-docker) and the running tutorial in [Local Demo with Docker](../local-demo-with-docker.md).
+The WalletConnect/Reown interoperability delivered in **M5** remains testable through the same app and flows — see the [M5 documentation](/developers/Milestones/M5/local-demo-with-docker) and the [M6 reviewer shortcut](/developers/Milestones/M6/quick-start-evaluator).

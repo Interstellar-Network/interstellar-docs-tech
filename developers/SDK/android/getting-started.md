@@ -19,7 +19,7 @@ One Activity, one `TextView`, one `InterstellarSdk.create(...)` call. No Compose
 | JDK | 17 (Android Studio's embedded JBR is fine) |
 | Android SDK | `compileSdk 37` |
 | **Rust / NDK / cargo** | **not needed** — the published AAR already ships the prebuilt native libraries (`arm64-v8a` + `x86_64`) |
-| Interstellar stack | the local Docker stack from the [M6 tutorial](../../Milestones/M6/local-demo-with-docker.md) must be running (the SDK's default endpoints are `wss://127.0.0.1:2090` / `ws://127.0.0.1:9944` / IPFS `5001`) |
+| Interstellar stack | the local Docker stack from the [local stack guide](../../Milestones/android_app_local_node_launch.md) must be running (the SDK's default endpoints are `wss://127.0.0.1:2090` / `ws://127.0.0.1:9944` / IPFS `5001`) |
 | SDK access | read access to the private [`wallet-app-internal`](https://github.com/Interstellar-Network/wallet-app-internal) repo — **the repo that hosts the SDK's Maven registry** — plus a GitHub **classic** PAT with the `read:packages` scope — see [Get access to the SDK](#step-2--get-access-to-the-sdk) |
 
 :::info Which artifact?
@@ -136,16 +136,9 @@ Why this repository? The Maven package could be published to **any** Maven regis
 
 ### 2.2 — A GitHub **classic** personal access token
 
-GitHub Packages only authenticates with a **classic** PAT — fine-grained tokens are *not* supported. From the official [Gradle registry](https://docs.github.com/en/packages/working-with-a-github-packages-registry/working-with-the-gradle-registry#authenticating-to-github-packages) documentation:
+GitHub Packages only authenticates with a **classic** PAT — fine-grained tokens are *not* supported ([official docs](https://docs.github.com/en/packages/working-with-a-github-packages-registry/working-with-the-gradle-registry#authenticating-to-github-packages)).
 
-> GitHub Packages only supports authentication using a personal access token (classic). For more information, see [Managing your personal access tokens](https://docs.github.com/en/authentication/keeping-your-account-and-data-secure/managing-your-personal-access-tokens).
-
-The short version:
-
-1. **GitHub → Settings → Developer settings → Personal access tokens → Tokens (classic) → Generate new token (classic)**.
-2. Select the **`read:packages`** scope (that is all a consumer needs).
-3. If the organisation enforces SAML SSO, click **Configure SSO** and authorize the token for `Interstellar-Network`.
-4. Copy the token (`ghp_…`) — GitHub shows it only once.
+Create the token by following **[A GitHub **classic** personal access token (required to run the stack)](/developers/Milestones/android_app_local_node_launch#a-github-classic-personal-access-token-required-to-run-the-stack)** in the local stack guide — the **same** classic PAT (`read:packages` scope) is used there to pull the stack's container images and here for the Maven registry. **Only the `read:packages` scope is needed for the SDK.**
 
 ### 2.3 — Give the token to Gradle
 
@@ -436,7 +429,7 @@ What happens on first launch:
 
 ## Step 5 — Run it against the local stack
 
-1. Start the Docker stack (node `9944`, worker `2090`, IPFS `5001`) — see the [M6 tutorial](../../Milestones/M6/local-demo-with-docker.md).
+1. Start the Docker stack (node `9944`, worker `2090`, IPFS `5001`) — see the [local stack guide](../../Milestones/android_app_local_node_launch.md).
 
    ::::important Docker stack and Android Studio on different machines
    The `adb reverse` commands below only forward the ports of the machine running **Android Studio**
@@ -897,6 +890,6 @@ artifact unless you want to patch the SDK.
 | `Received status code 402` while publishing (maintainers) | the organisation's GitHub Packages budget is exhausted — see the [Packages billing docs](https://docs.github.com/en/billing/concepts/product-billing/github-packages) |
 | `OutOfMemoryError` / D8 dex merge fails | raise `org.gradle.jvmargs` to `-Xmx2048M` in the project's `gradle.properties` |
 | App shows `SDK init failed: …` at start | the local stack isn't reachable — check Docker + `adb reverse` for **all three** ports |
-| Init succeeds but no balances | expected for a fresh account — fund the coin address (see the [M6 tutorial](../../Milestones/M6/local-demo-with-docker.md)) |
+| Init succeeds but no balances | expected for a fresh account — fund the coin address (see the [local stack guide](../../Milestones/android_app_local_node_launch.md)) |
 
 Next: [**API Reference**](./api-reference.md) and the [**VCA pinpad guide**](./pinpad.md).
