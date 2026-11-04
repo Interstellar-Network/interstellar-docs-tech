@@ -100,7 +100,7 @@ Just clone with your **existing** GitHub setup (SSH key, `gh auth login`, creden
 ```bash
 # shallow clone at the milestone TAG — `git clone --branch` accepts tags too
 # (the clone ends in "detached HEAD" state at the tag, which is what we want)
-git clone --depth 1 --branch testnet-m6-v1 https://github.com/Interstellar-Network/containers interstellar_m[x]_demo
+git clone --depth 1 --branch testnet-m6-v1 git@github.com:Interstellar-Network/containers.git interstellar_m[x]_demo
 cd interstellar_m[x]_demo
 chmod +x docker-ipfs-init.sh
 ```
