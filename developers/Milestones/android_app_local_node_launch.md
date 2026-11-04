@@ -9,7 +9,7 @@ This setup enables full offline testing without relying on a hosted VPS.
 This compatibility note applies to the **backend stack**, tested on Ubuntu 24.04 LTS (x86_64) using Docker (`docker-compose`) or Podman (with manually installed `podman-compose`*).  
 The stack is expected to work on other recent Linux distributions, but this has not been officially verified.
 
-Known issue: May fail on Apple Silicon (M1/M2/M3/M4) - due to current SIMD usage and QEMU/Rosetta limitations - crash on M1/M2 (not tested on M3/M4)
+Known issue: **does NOT work on Apple Silicon Macs (M1/M2/M3/M4)** — with Docker Desktop on the Mac directly, both Rosetta scenarios fail: **with** Rosetta the `node` container runs but the `service` **hangs at startup**; **without** Rosetta the `node` container **immediately fails with a core dump** (see [the MacOS details below](#macos-as-stack-host)). Tracking issue: [roadmap#133](https://github.com/Interstellar-Network/roadmap/issues/133).
 
 The **frontend** can run on any OS supported by Android Studio (Android emulator or physical device — expect some emulator limitations on Apple Silicon), and the demo app also runs in the **iOS Simulator** on macOS
 
