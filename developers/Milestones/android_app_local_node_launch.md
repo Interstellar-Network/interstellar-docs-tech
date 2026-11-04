@@ -196,16 +196,12 @@ sudo docker compose down --volumes --timeout 1 && sudo docker compose up --force
 
 **Step 5 — Wait for master circuit generation**
 
-On first launch the stack automatically generates the master circuits — this takes several minutes.
-The stack is ready once `integritee_node-1` logs both of the following:
+On first launch, the stack automatically generates the master circuits. The stack is ready once `integritee_node-1` logs both of the following:
 
 ```bash
 [ocw-circuits] callback_new_skcd_signed sent number : 1
 [ocw-circuits] callback_new_display_circuits_package_signed: ("<CID_1>",2),("<CID_2>",10) for <account_id> (5GrwvaEF...)
 ```
-
-The two CIDs in the second line are the master circuits uploaded to IPFS; they are used later
-for visual challenge rendering and validation.
 
 
 ## 3. Install the Demo App
