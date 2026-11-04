@@ -20,7 +20,7 @@ Known issue: **the stack does NOT work on Apple Silicon Macs** — tested and co
 | Requirement        | Install Guide |
 |--------------------|----------------|
 | **Docker & Docker Compose** | **Linux (recommended):** [Install Docker Engine](https://docs.docker.com/engine/install/) & [Install Docker Compose](https://docs.docker.com/compose/install/) — *or* [Install Podman](https://podman.io/getting-started/installation) & `podman-compose` |
-|                          | **MacOS (Stack Host): ⚠️ NOT SUPPORTED** *(see [the MacOS details below](#macos-as-stack-host-not-supported))* |
+|                          | **MacOS (Stack Host): ⚠️ NOT SUPPORTED** *(see [the MacOS details below](#macos-as-stack-host))* |
 | `curl`, `wget`, `jq` | Installed via `apt`/`brew` or default in most environments |
 | GitHub access | read access to the **private** [`containers`](https://github.com/Interstellar-Network/containers) repo + a GitHub **classic** PAT — see [Get access to the private repositories](#get-access-to-the-private-repositories) |
 | Android Studio     |  [Install Android Studio](https://developer.android.com/studio) |
@@ -359,14 +359,22 @@ Full details (and what the maintainer does to publish): [App Distribution — An
 ## 4. Link App to your local Interstellar stack:
 
 The demo app is preconfigured to connect to `localhost`
-To allow the demo app to connect to your local blockchain and IPFS stack:
+To allow the demo app to connect to your local blockchain and IPFS stack, pick the scenario that
+matches your setup — these are **options**, not sequential steps:
 
-### Step 0: iOS Simulator — no forwarding needed
+| Client | What you need | Section |
+| --- | --- | --- |
+| **iOS Simulator** | nothing — it reaches `127.0.0.1` natively | [below](#ios-simulator--no-forwarding-needed) |
+| **Android emulator or device** (same machine as the stack) | `adb reverse` for the three ports | [below](#android-emulator-or-device--adb-reverse-setup) |
+| **Client and stack on different machines** | `ssh` port forwarding | [below](#optional-client-and-stack-on-different-machines--ssh-port-forwarding) |
+
+### iOS Simulator — no forwarding needed
 
 The **iOS Simulator runs on your computer** and reaches `127.0.0.1` natively — **no `adb reverse`
-or port forwarding is needed**. The steps below apply to the **Android** device/emulator.
+or port forwarding is needed**. The `adb reverse` section below applies to the **Android**
+device/emulator.
 
-### Step 1: `adb reverse` Setup
+### Android emulator or device — `adb reverse` setup
 > **On** the **Desktop** connected to the **Device** or running the **Emulator** 
 (Windows, Mac OS, Linux)
 
@@ -402,10 +410,11 @@ Make sure `adb` is properly configured and the emulator or device is detected
  You can also check the reverse setup with `adb reverse --list`
 :::
 
-> This works for both emulators and real devices connected via USB (Android); the iOS Simulator
-> needs no forwarding (see [Step 0](#step-0-ios-simulator--no-forwarding-needed)).
+> This works for both Android emulators and real devices connected via USB; the iOS Simulator
+> needs no forwarding (see [the option above](#ios-simulator--no-forwarding-needed)).
 
-### Step 2 (optional): `ssh` Port Forwarding 
+### (Optional) Client and stack on different machines — `ssh` port forwarding
+
 > **On** the **machine running the stack** (remote VM, WSL2…)
 
 If the app client (emulator, simulator or device) and the stack run on **different machines**, the
