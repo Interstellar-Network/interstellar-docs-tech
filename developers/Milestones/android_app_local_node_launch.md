@@ -187,8 +187,12 @@ sudo service docker start  # (for most Linux distros)
 **Step 4 — Launch the stack**
 
 ```bash
-sudo docker compose down --timeout 1 && sudo docker compose up --force-recreate
+sudo docker compose down --volumes --timeout 1 && sudo docker compose up --force-recreate
 ```
+
+> `down --volumes` also removes the named volumes, so you always start from a clean state.
+> With **Podman**, remove the named volumes manually if needed:
+> `podman volume rm $(podman volume ls -q | grep -E 'containers_|interstellar_')`.
 
 **Step 5 — Wait for master circuit generation**
 
