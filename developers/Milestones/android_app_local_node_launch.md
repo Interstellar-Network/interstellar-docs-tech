@@ -412,6 +412,22 @@ If the emulator is running (or the device is connected) on a different network i
 via USB to Windows), 
 you may need to configure port forwarding between the desktop and the blockchain.
 
+**Standard Linux/macOS -> Linux/macOS example:**
+
+> ⚠️ **Note on SSH:** SSH connections and port forwarding are highly dependent on your specific
+> machine setup (usernames, SSH keys, IP addresses, firewall rules, etc.). The commands below are
+> **just examples** to illustrate the mechanism — you will likely need to adjust them to your
+> environment.
+
+If you are running the stack on a standard Linux machine (e.g., a remote VM or another machine on
+your network) and want to access it from a Linux or macOS machine, you can forward the ports:
+
+```bash
+# Run this on the CLIENT machine (the one running the emulator/device),
+# pointing to the SERVER (the one running the blockchain stack):
+ssh -N -L 9944:localhost:9944 -L 5001:localhost:5001 -L 2090:localhost:2090 [user]@[stack_host_ip]
+```
+
 **WSL2 -> Windows example:**
 ```bash
 export WSL_HOST_IP=$(ip route | awk '/default/ {print $3}')
