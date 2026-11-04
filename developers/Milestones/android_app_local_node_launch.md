@@ -9,9 +9,7 @@ This setup enables full offline testing without relying on a hosted VPS.
 This compatibility note applies to the **backend stack**, tested on Ubuntu 24.04 LTS (x86_64) using Docker (`docker-compose`) or Podman (with manually installed `podman-compose`*).  
 The stack is expected to work on other recent Linux distributions, but this has not been officially verified.
 
-Known issue: **does NOT work on Apple Silicon Macs (M1/M2/M3/M4)** — with Docker Desktop on the Mac directly, both Rosetta scenarios fail: **with** Rosetta the `node` container runs but the `service` **hangs at startup**; **without** Rosetta the `node` container **immediately fails with a core dump** (see [the MacOS details below](#macos-as-stack-host)). Tracking issue: [roadmap#133](https://github.com/Interstellar-Network/roadmap/issues/133).
-
-The **frontend** can run on any OS supported by Android Studio (Android emulator or physical device — expect some emulator limitations on Apple Silicon), and the demo app also runs in the **iOS Simulator** on macOS
+Known issue: **the stack does NOT work on Apple Silicon Macs** — tested and confirmed failing on **M1/M2**; **M3/M4 not tested** (assume the same). See [the MacOS details below](#macos-as-stack-host) for every failing scenario and the tracking issue [roadmap#133](https://github.com/Interstellar-Network/roadmap/issues/133).
 
 *Compose tools are required to manage service startup dependencies (e.g., health checks).
 :::
@@ -36,13 +34,20 @@ The **frontend** can run on any OS supported by Android Studio (Android emulator
 <details>
 <summary>⚠️ MacOS (Stack Host): NOT supported — click for details</summary>
 
-MacOS is **not extensively tested** as a stack host, and the stack is **NOT supported** there. Two distinct cases:
+The stack is **NOT supported on macOS** — **it does NOT work, tested on M1/M2** (M3/M4 not
+tested, assume the same). Tracking issue: [roadmap#133](https://github.com/Interstellar-Network/roadmap/issues/133).
+Use **Linux** for the stack host. Three distinct cases, all failing:
 
-- ⚠️ **Inside a nested VM (eg a `tart` VM) — does NOT work.** The stack must run directly on
-  the machine: a nested VM does not expose usable virtualization to Docker, and the stack
-  **fails to start** with a virtualization error (screenshot below).
-- **Directly on the Mac (no VM) — may work**, but is not extensively tested and remains
-  unsupported. Use Linux for the stack host whenever possible.
+- ⚠️ **Inside a nested VM (eg a `tart` VM) — does NOT work.** The nested VM does not expose
+  usable virtualization to Docker, so Docker itself cannot start (virtualization error below).
+- ⚠️ **Directly on the Mac, Docker Desktop WITH Rosetta — does NOT work.** The `node` container
+  starts, but the `service` (Integritee worker) **hangs at startup** — the stack never becomes
+  ready.
+- ⚠️ **Directly on the Mac, Docker Desktop WITHOUT Rosetta — does NOT work.** The `node`
+  container **immediately fails with a core dump** (screenshot below).
+
+Both direct-on-Mac scenarios are consistent with the current SIMD usage of the worker/node
+not being fully supported by Rosetta/QEMU emulation on Apple Silicon.
 
 #### Docker Desktop setup (directly on the Mac)
 
@@ -69,6 +74,18 @@ no sign-in or configuration is needed:
 for x86_64 emulation on Apple Silicon):
 
 <img src="/img/MacOS_Docker_DefaultSettings.png" alt="Docker Default settings — verify Rosetta is enabled" width="600"/>
+
+#### Launching the stack on the Mac — both Rosetta scenarios fail
+
+Even with Docker Desktop correctly set up, the stack does **not** start on Apple Silicon:
+
+- **WITH Rosetta**: the `node` container runs, but the `service` (Integritee worker) **hangs at
+  startup** — the stack never becomes ready.
+- **WITHOUT Rosetta**: the `node` container **immediately fails with a core dump**:
+
+<img src="/img/MacOS_Docker_NodeCoreDump.png" alt="node container core dump on Apple Silicon without Rosetta" width="600"/>
+
+Tracking issue: [roadmap#133](https://github.com/Interstellar-Network/roadmap/issues/133).
 
 #### Inside a nested VM (eg `tart`) — does NOT work
 
