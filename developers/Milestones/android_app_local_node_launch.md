@@ -22,10 +22,7 @@ The **frontend** can run on any OS supported by Android Studio (Android emulator
 | Requirement        | Install Guide |
 |--------------------|----------------|
 | **Docker & Docker Compose** | **Linux (recommended):** [Install Docker Engine](https://docs.docker.com/engine/install/) & [Install Docker Compose](https://docs.docker.com/compose/install/) — *or* [Install Podman](https://podman.io/getting-started/installation) & `podman-compose` |
-|                          | **MacOS (Stack Host): ⚠️ NOT SUPPORTED** *(Not extensively tested — See Docker Desktop [Install guide](https://docs.docker.com/desktop/setup/install/mac-install/) or [Brew cask](https://formulae.brew.sh/cask/docker-desktop))* |
-|                          | ⚠️ Running the stack inside a **MacOS VM (eg `tart`) is NOT supported** — the VM exposes no usable nested virtualization to Docker, so the stack fails to start. Run the stack directly on the host machine instead. |
-|  | *Warning: This app was downloaded from the internet. You are asking for permission to open this application.* <img src="/img/MacOS_Docker_SecurityPrompt.png" alt="Docker Security Prompt" width="200"/> |
-|  | *Error: Docker Desktop requires a system with a working virtualization framework.* <img src="/img/MacOS_Docker_NoVirtualization.png" alt="Docker No Virtualization" width="300"/> |
+|                          | **MacOS (Stack Host): ⚠️ NOT SUPPORTED** *(see [the MacOS details below](#macos-as-stack-host-not-supported))* |
 | `curl`, `wget`, `jq` | Installed via `apt`/`brew` or default in most environments |
 | GitHub access | read access to the **private** [`containers`](https://github.com/Interstellar-Network/containers) repo + a GitHub **classic** PAT — see [Get access to the private repositories](#get-access-to-the-private-repositories) |
 | Android Studio     |  [Install Android Studio](https://developer.android.com/studio) |
@@ -33,6 +30,55 @@ The **frontend** can run on any OS supported by Android Studio (Android emulator
 | Xcode | [Install Xcode](https://apps.apple.com/app/xcode) — iOS only (to install the app in the iOS Simulator) |
 
 > You may also use **Podman** as an alternative to Docker.
+
+### MacOS as stack host
+
+<details>
+<summary>⚠️ MacOS (Stack Host): NOT supported — click for details</summary>
+
+MacOS is **not extensively tested** as a stack host, and the stack is **NOT supported** there. Two distinct cases:
+
+- ⚠️ **Inside a nested VM (eg a `tart` VM) — does NOT work.** The stack must run directly on
+  the machine: a nested VM does not expose usable virtualization to Docker, and the stack
+  **fails to start** with a virtualization error (screenshot below).
+- **Directly on the Mac (no VM) — may work**, but is not extensively tested and remains
+  unsupported. Use Linux for the stack host whenever possible.
+
+#### Docker Desktop setup (directly on the Mac)
+
+Install with Docker Desktop: [Install guide](https://docs.docker.com/desktop/setup/install/mac-install/)
+or [Brew cask](https://formulae.brew.sh/cask/docker-desktop).
+
+On the first launch you will go through the prompts below:
+
+**1. Gatekeeper security prompt** — *"This app was downloaded from the internet. You are asking for
+permission to open this application."*
+
+<img src="/img/MacOS_Docker_SecurityPrompt.png" alt="Docker Security Prompt" width="200"/>
+
+**2. Accept the service agreement**:
+
+<img src="/img/MacOS_Docker_AcceptAgreement.png" alt="Docker Accept Agreement" width="600"/>
+
+**3. "Welcome to Docker" onboarding page** — you can just click **"Skip"** in the top right;
+no sign-in or configuration is needed:
+
+<img src="/img/MacOS_Docker_Welcome.png" alt="Docker Welcome page — click Skip in the top right" width="600"/>
+
+**4. Settings** — the defaults are fine; just **double-check that "Rosetta" is enabled** (needed
+for x86_64 emulation on Apple Silicon):
+
+<img src="/img/MacOS_Docker_DefaultSettings.png" alt="Docker Default settings — verify Rosetta is enabled" width="600"/>
+
+#### Inside a nested VM (eg `tart`) — does NOT work
+
+If Docker Desktop runs inside a nested VM, the stack fails with:
+
+*Error: Docker Desktop requires a system with a working virtualization framework.*
+
+<img src="/img/MacOS_Docker_NoVirtualization.png" alt="Docker No Virtualization" width="300"/>
+
+</details>
 
 ## 2. Launch the Interstellar Stack Install 
 
