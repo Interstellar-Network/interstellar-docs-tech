@@ -21,8 +21,11 @@ The **frontend** can run on any OS supported by Android Studio (Android emulator
 
 | Requirement        | Install Guide |
 |--------------------|----------------|
-| Docker             | [Install Docker](https://docs.docker.com/engine/install/) |
-| Docker Compose     | [Install docker-compose](https://docs.docker.com/compose/install/) |
+| **Docker & Docker Compose** | **Linux (recommended):** [Install Docker Engine](https://docs.docker.com/engine/install/) & [Install Docker Compose](https://docs.docker.com/compose/install/) — *or* [Install Podman](https://podman.io/getting-started/installation) & `podman-compose` |
+|                          | **MacOS (Stack Host): ⚠️ NOT SUPPORTED** *(Not extensively tested — See Docker Desktop [Install guide](https://docs.docker.com/desktop/setup/install/mac-install/) or [Brew cask](https://formulae.brew.sh/cask/docker-desktop))* |
+|                          | ⚠️ Running the stack inside a **MacOS VM (eg `tart`) is NOT supported** — the VM exposes no usable nested virtualization to Docker, so the stack fails to start. Run the stack directly on the host machine instead. |
+|  | *Warning: This app was downloaded from the internet. You are asking for permission to open this application.* <img src="/img/MacOS_Docker_SecurityPrompt.png" alt="Docker Security Prompt" width="200"/> |
+|  | *Error: Docker Desktop requires a system with a working virtualization framework.* <img src="/img/MacOS_Docker_NoVirtualization.png" alt="Docker No Virtualization" width="300"/> |
 | `curl`, `wget`, `jq` | Installed via `apt`/`brew` or default in most environments |
 | GitHub access | read access to the **private** [`containers`](https://github.com/Interstellar-Network/containers) repo + a GitHub **classic** PAT — see [Get access to the private repositories](#get-access-to-the-private-repositories) |
 | Android Studio     |  [Install Android Studio](https://developer.android.com/studio) |
