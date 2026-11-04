@@ -402,31 +402,34 @@ Make sure `adb` is properly configured and the emulator or device is detected
  You can also check the reverse setup with `adb reverse --list`
 :::
 
-> This works for both emulators and real devices connected via USB
+> This works for both emulators and real devices connected via USB (Android); the iOS Simulator
+> needs no forwarding (see [Step 0](#step-0-ios-simulator--no-forwarding-needed)).
 
 ### Step 2 (optional): `ssh` Port Forwarding 
-> **On** the **System** or **VM** running the **Blockchain stack** (WSL2, Remote VM)
+> **On** the **machine running the stack** (remote VM, WSL2…)
 
-If the emulator is running (or the device is connected) on a different network interface than the backend 
-(e.g., the backend runs in WSL2 and the Android emulator or device is connected 
-via USB to Windows), 
-you may need to configure port forwarding between the desktop and the blockchain.
-
-**Standard Linux/macOS -> Linux/macOS example:**
+If the app client (emulator, simulator or device) and the stack run on **different machines**, the
+app's `127.0.0.1` endpoints cannot reach the stack host — you need to forward the three ports
+(`9944`, `2090`, `5001`) between the two machines. Two examples below; adapt them to your setup.
 
 > ⚠️ **Note on SSH:** SSH connections and port forwarding are highly dependent on your specific
 > machine setup (usernames, SSH keys, IP addresses, firewall rules, etc.). The commands below are
 > **just examples** to illustrate the mechanism — you will likely need to adjust them to your
 > environment.
 
-If you are running the stack on a standard Linux machine (e.g., a remote VM or another machine on
-your network) and want to access it from a Linux or macOS machine, you can forward the ports:
+If the stack runs on one Linux machine (e.g., a remote VM or server) and the app client is on
+another, run the forwarding **from the stack host**, pushing the three ports to the machine that
+runs the app client:
 
 ```bash
-# Run this on the CLIENT machine (the one running the emulator/device),
-# pointing to the SERVER (the one running the blockchain stack):
-ssh -N -L 9944:localhost:9944 -L 5001:localhost:5001 -L 2090:localhost:2090 [user]@[stack_host_ip]
+# Run this ON the stack host, [client_host_ip] being the machine
+# running the app (emulator, simulator or device):
+ssh -N -R 9944:localhost:9944 -R 5001:localhost:5001 -R 2090:localhost:2090 [user]@[client_host_ip]
 ```
+
+> The reverse direction — SSH-ing **from the emulator/simulator host** to the stack host and
+> forwarding the ports back (`-L`) — works equally well; this is left as an exercise for the
+> reader.
 
 **WSL2 -> Windows example:**
 ```bash
