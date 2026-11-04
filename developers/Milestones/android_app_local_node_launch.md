@@ -371,8 +371,11 @@ matches your setup — these are **options**, not sequential steps:
 ### iOS Simulator — no forwarding needed
 
 The **iOS Simulator runs on your computer** and reaches `127.0.0.1` natively — **no `adb reverse`
-or port forwarding is needed**. The `adb reverse` section below applies to the **Android**
-device/emulator.
+is needed**. If the stack runs on **the same Mac** as the simulator, no port forwarding is needed
+either — but note that **macOS as a stack host is not supported** (see the [MacOS section
+above](#macos-as-stack-host)). If the stack runs on a **remote Linux host**, use the [`ssh` port
+forwarding option below](#optional-client-and-stack-on-different-machines--ssh-port-forwarding).
+The `adb reverse` section below applies to the **Android** device/emulator.
 
 ### Android emulator or device — `adb reverse` setup
 > **On** the **Desktop** connected to the **Device** or running the **Emulator** 
@@ -415,20 +418,21 @@ Make sure `adb` is properly configured and the emulator or device is detected
 
 ### (Optional) Client and stack on different machines — `ssh` port forwarding
 
-> **On** the **machine running the stack** (remote VM, WSL2…)
-
 If the app client (emulator, simulator or device) and the stack run on **different machines**, the
 app's `127.0.0.1` endpoints cannot reach the stack host — you need to forward the three ports
-(`9944`, `2090`, `5001`) between the two machines. Two examples below; adapt them to your setup.
+(`9944`, `2090`, `5001`) between the two machines. The commands are run **on the machine running
+the stack** (remote VM, WSL2…). Two examples below; adapt them to your setup.
 
 > ⚠️ **Note on SSH:** SSH connections and port forwarding are highly dependent on your specific
 > machine setup (usernames, SSH keys, IP addresses, firewall rules, etc.). The commands below are
 > **just examples** to illustrate the mechanism — you will likely need to adjust them to your
 > environment.
 
+#### Example: Linux stack host -> Linux or macOS client host
+
 If the stack runs on one Linux machine (e.g., a remote VM or server) and the app client is on
-another, run the forwarding **from the stack host**, pushing the three ports to the machine that
-runs the app client:
+another (Linux, or **macOS when testing the iOS Simulator**), run the forwarding **from the stack
+host**, pushing the three ports to the machine that runs the app client:
 
 ```bash
 # Run this ON the stack host, [client_host_ip] being the machine
@@ -440,7 +444,8 @@ ssh -N -R 9944:localhost:9944 -R 5001:localhost:5001 -R 2090:localhost:2090 [use
 > forwarding the ports back (`-L`) — works equally well; this is left as an exercise for the
 > reader.
 
-**WSL2 -> Windows example:**
+#### Example: WSL2 stack -> Windows client
+
 ```bash
 export WSL_HOST_IP=$(ip route | awk '/default/ {print $3}')
 ```
