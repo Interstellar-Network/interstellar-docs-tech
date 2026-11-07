@@ -3,96 +3,77 @@ sidebar_label: 'Security Model'
 sidebar_position: 2
 ---
 
-import { Table, TableHeader, TableRow, TableCell, TableBody } from "@site/src/components/ui/table";
-import { Badge } from "@site/src/components/ui/badge";
+# Security Model
 
-# Interstellar Security Model
+> **Status of this page.** This page replaces the previous Security Model. It reflects the findings of the M6 review (ORBIT-VCA-2026-001), which showed that the code and keypad displayed by the VCA pinpad can be reconstructed from captured frames. It describes only what the current release provides. It applies identically to the wallet app and to the SDK.
 
-This document defines the core security model of the Interstellar authentication and transaction authorization system. It is structured around a **strong adversarial model** that assumes the attacker has significant control over the mobile device and surrounding environment.
+## 1. What the VCA pinpad guarantees, and what it does not
 
-## Security Philosophy
-Interstellar's security model is built to operate under the assumption that the **operating system can be compromised**. Instead of relying on malware detection, Interstellar builds cryptographic assurances into every user interaction that matters—from authentication to transaction signing—creating a secure enclave for critical actions, even in a hostile runtime environment.
+The pinpad provides **single-use, transaction-bound approval**: each approval challenge is generated for one transaction and is valid only within that transaction's window.
 
-Key principle: **Security must be verifiable, hardware-anchored, and human-auditable.**
+The pinpad does **not** protect the **confidentiality of what it displays**. Anything rendered for a human to perceive can be observed by a screen recorder or a camera. Dynamic visual cryptography relies on temporal integration (persistence of vision), and a recorder integrates captured frames the same way. Human readability and machine readability share one mechanism, so neither can be granted without the other.
 
-## Security Layers
+What dynamic visual cryptography provides is narrow: a **single** frame shows only a random subset of segments, so one screenshot does not reveal the code. Any capture of several frames, or a camera, recovers the code and the keypad.
 
-### 1. **Secure Element-Based Proxy Key System**
-- A non-extractable private key is generated and stored inside the mobile device’s Secure Element (SE).
-- All critical operations (authentication, transaction signing) are signed with this key.
-- Biometric unlocking occurs inside the SE, never exposed to the OS.
+## 2. Adversarial model
 
-**Benefits:**
-- No user secrets stored in app memory or storage.
-- Malware or rootkits cannot extract the private key.
+| Adversary | In scope | Protection in the current release |
+|---|---|---|
+| Replay of a recorded approval in another session | Yes | **Mitigated**: challenges are single-use and bound to one transaction |
+| Single screenshot of the approval screen | Yes | **Mitigated**: one frame does not reveal the code |
+| On-device malware capturing the screen (MediaProjection, accessibility service, root) | Yes | **Not mitigated** |
+| On-device malware or AI agent capturing the screen and injecting input | Yes | **Not mitigated**: it can complete the approval currently displayed |
+| Overlay or clipper malware that reads the displayed code and recipient | Yes | **Not mitigated** |
+| External camera with line of sight to the screen | Yes | **Not mitigated** |
 
-### 2. **On-Chain Key Attestation and Verification**
-- Each mobile SE proxy key is paired with a cryptographic attestation issued by the SE.
-- The Interstellar blockchain verifies this attestation during registration and signing events.
+MITRE ATT&CK T1410 (Screen Capture) is **not mitigated** by the pinpad.
 
-**Benefits:**
-- Only valid, hardware-bound devices can authenticate.
-- Prevents impersonation or spoofed devices.
+## 3. Security properties
 
-### 3. **Dynamic Visual Cryptography Authentication (VCA)**
-- Transaction payload and one-time validation code are encoded as high-speed visual frames (60–120 fps).
-- Frames are generated using garbled circuits on-chain.
-- Only a human eye can reconstruct the content using persistence of vision.
+### 3.1 Single-use, transaction-bound approval
 
-**Benefits:**
-- Prevents screen-scraping and overlay attacks.
-- Protects transaction integrity from clipper malware and UI tampering.
+Each challenge is valid for one transaction and one window. A recorded interaction has no reuse value, so cross-session replay is prevented.
 
-### 4. **TEE and MPC-backed Execution for Sensitive Logic**
-- Trusted Execution Environments run the core cryptographic functions (e.g., VCA rendering, MPC signing logic).
-- Multi-Party Computation (MPC) distributes key management across multiple trusted nodes for higher-value accounts.
-- Key shares are stored and processed within **dedicated sidechains**, ensuring isolation.
-- Attacker would need to compromise multiple sidechain nodes **and** trick consensus mechanisms backed by Polkadot’s economic security model.
+**Limit.** This does not protect the transaction currently being approved. An adversary that reads the live challenge can complete that approval. Device binding does not help when the adversary runs on the same device.
 
-**Benefits:**
-- No single device or actor can compromise a high-value key.
-- Greatly mitigates side-channel risks.
-- Makes targeted key theft economically unfeasible.
+### 3.2 Single-frame illegibility
 
-## Core Defense Goals
+Each frame lights a random subset of each digit's segments, so a single captured frame does not reveal the code.
 
-<Table>
-  <TableHeader>
-    <TableRow>
-      <TableCell> Security Objective </TableCell>
-      <TableCell> Interstellar Mechanism </TableCell>
-      <TableCell> Strength </TableCell>
-    </TableRow>
-  </TableHeader>
-  <TableBody>
-    <TableRow>
-      <TableCell>Key Theft Resistance</TableCell>
-      <TableCell>SE-stored proxy key, inaccessible from OS or app memory</TableCell>
-      <TableCell><Badge value="very-high" label="Very High" /></TableCell>
-    </TableRow>
-    <TableRow>
-      <TableCell>UI Integrity</TableCell>
-      <TableCell>Visual cryptography shares prevent overlay and spoofing</TableCell>
-      <TableCell><Badge value="high" label="High" /></TableCell>
-    </TableRow>
-    <TableRow>
-      <TableCell>Device Impersonation Defense</TableCell>
-      <TableCell>SE attestation verified on-chain; only real devices are accepted</TableCell>
-      <TableCell><Badge value="high" label="High" /></TableCell>
-    </TableRow>
-    <TableRow>
-      <TableCell>Payload Tampering Detection</TableCell>
-      <TableCell>Transaction details visually rendered via VCA, verifiable by the user</TableCell>
-      <TableCell><Badge value="high" label="High" /></TableCell>
-    </TableRow>
-    <TableRow>
-      <TableCell>Side-channel Attack Resistance</TableCell>
-      <TableCell>TEE enclaves isolate logic; MPC distributes key shares across sidechains—requires compromise of multiple nodes + economic consensus violation</TableCell>
-      <TableCell><Badge value="medium" label="Medium" /></TableCell>
-    </TableRow>
-  </TableBody>
-</Table>
+**Limit.** A per-pixel maximum or mean over a few captured frames reconstructs the code and keypad. This property offers no protection against any adversary able to capture more than one frame.
 
-## Summary
-The Interstellar security model operates on the assumption that the surrounding system is **untrusted**. By embedding authentication into hardware, decentralizing key operations, and leveraging human-only cryptographic display channels, it redefines what endpoint security means in a post-EDR era. It provides strong guarantees against a wide range of sophisticated mobile-based threats, ensuring trust without reliance on the mobile OS.
+## 4. Residual risk
 
+An adversary holding a screen-capture channel on the device (or a camera with line of sight), together with a way to enter input, can approve the transaction currently displayed without the user. In the current release, the pinpad adds no protection beyond single-use binding for that transaction.
+
+Future designs are outside the scope of this page and will be documented only once shipped.
+
+## Appendix A: claims withdrawn (review section 2.1)
+
+These statements asserted that captured frames carry no usable information. They are removed.
+
+| File | Withdrawn statement (summary) |
+|---|---|
+| `docs/Technoloy/About Deep Tech/Visual Cryptography Auhentication.mdx` (line 32) | Machines see only meaningless static |
+| `docs/Technoloy/About Deep Tech/Visual Cryptography Auhentication.mdx` (line 34) | A channel only humans can perceive and decode |
+| `docs/Technoloy/Deep Technology/Dynamic Visual Cryptograpy.mdx` (line 8) | Perceptible only to the human eye, meaningless to software or malware |
+| `docs/Security/Security Model.mdx` (line 40) | Only a human eye can reconstruct the content |
+| `docs/Security/Security Model.mdx` (line 43) | Prevents screen-scraping |
+| `docs/Technoloy/Key Differantiators/Vs. Oauth-PKCE-Passkey.mdx` (line 81) | Immune to screen capture or AI scraping |
+| `docs/Security/mitre_att_ck.md` (line 26) | T1410: screen content meaningless unless seen by a human; now marked not mitigated |
+| `docs/Technoloy/Deep Technology/Dynamic Visual Cryptograpy.mdx` (line 23) | Malware must reproduce the display logic frame by frame |
+
+## Appendix B: claims narrowed or removed (review section 2.2)
+
+| File | Previous statement (summary) | Replacement |
+|---|---|---|
+| Milestone pages, e.g. `developers/Milestones/M1/demo-tutorial/local-demo-with-docker.md` (line 119) and M2–M4 equivalents, `android_app_local_node_launch.md` (line 116) | Each interaction resistant to malware, phishing and adversarial AI | Each approval is single-use and bound to one transaction. The pinpad does not protect against malware or an AI agent able to capture the screen. See Security Model. |
+| `developers/SDK/intro.md` (line 15) | Core anti-injection guarantee | Anti-replay guarantee: each approval is single-use and bound to one transaction. An on-device agent with screen capture and input injection can complete an approval. |
+| `docs/Technoloy/Deep Technology/Dynamic Visual Cryptograpy.mdx` (line 35) | Information-theoretically secure by design | Removed. Replaced by: a single frame shows a random subset of segments; the displayed sequence is not secret against a recorder. |
+| `docs/Technoloy/About Deep Tech/Visual Cryptography Auhentication.mdx` (line 86) | Prevents overlay attacks and clipper malware | Removed. |
+
+## Appendix C: claims kept with a limit (review section 2.3)
+
+| File | Statement | Limit now stated |
+|---|---|---|
+| `docs/Technoloy/Deep Technology/Dynamic Visual Cryptograpy.mdx` (lines 21–33) | Device-bound, session-specific, no reuse value | Prevents cross-session replay only. Does not protect the transaction currently being approved, and device binding does not help against an adversary on the same device. |
